@@ -4881,6 +4881,20 @@
     "jscodeshift" "^0.11.0"
     "nullthrows" "^1.1.1"
 
+"react-native-drop-shadow@^0.0.4":
+  "integrity" "sha512-45Bsq24dcc1rK9H+42H91xEYN/Ql5S0693FseQWdCKgri6D+4vkFeL9dgtrSD5Bg3+RffjMbPDD7BuNS9BZuvg=="
+  "resolved" "https://registry.npmjs.org/react-native-drop-shadow/-/react-native-drop-shadow-0.0.4.tgz"
+  "version" "0.0.4"
+  dependencies:
+    "logkitty" "^0.7.1"
+
+"react-native-flexbox-grid@^0.3.2":
+  "integrity" "sha1-incJZTYKIvULxRCuq806Tnt0juU="
+  "resolved" "https://registry.npmjs.org/react-native-flexbox-grid/-/react-native-flexbox-grid-0.3.2.tgz"
+  "version" "0.3.2"
+  dependencies:
+    "prop-types" "^15.6.0"
+
 "react-native-gesture-handler@*", "react-native-gesture-handler@>= 1.0.0", "react-native-gesture-handler@>= 1.5.0", "react-native-gesture-handler@~2.1.0":
   "integrity" "sha512-1+qMhsXKKWTPAFi2ZY8rEhP/4xIevWNb1zLU9MzJkr7tRIEW4G+ipxjLyCw+7hQeqeeIbyZ8kkTyHAUuwTrHDA=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.1.1.tgz"
@@ -4983,7 +4997,7 @@
     "normalize-css-color" "^1.0.2"
     "prop-types" "^15.6.0"
 
-"react-native@*", "react-native@>=0.42.0", "react-native@>=0.57", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@0.64.3":
+"react-native@*", "react-native@>=0.42.0", "react-native@>=0.57", "react-native@>=0.61.5", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@0.64.3":
   "integrity" "sha512-2OEU74U0Ek1/WeBzPbg6XDsCfjF/9fhrNX/5TFgEiBKd5mNc9LOZ/OlMmkb7iues/ZZ/oc51SbEfLRQdcW0fVw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.64.3.tgz"
   "version" "0.64.3"

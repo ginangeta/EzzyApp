@@ -1,10 +1,11 @@
-import { StyleSheet, View, Text, Button, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, StatusBar } from "react-native";
 import React from "react";
 
 export default function Home({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.logo}>EzzyApp</Text>
+            <StatusBar translucent backgroundColor="#ffffff" barStyle="dark-content" />
+            <Image style={styles.logo} source={require('../../assets/logos/asili.png')} />
             <View style={styles.inputView} >
                 <TextInput
                     style={styles.inputText}
@@ -31,7 +32,6 @@ export default function Home({ navigation }) {
                 <Text style={styles.loginText}>Signup</Text>
             </TouchableOpacity>
 
-
         </View>
     );
 }
@@ -39,7 +39,7 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#003f5c',
+        backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
     },
