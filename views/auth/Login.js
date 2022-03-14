@@ -1,47 +1,112 @@
-import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, StatusBar } from "react-native";
-import React from "react";
+import { StyleSheet, View, Text, Image, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import React, { useState, useEffect } from "react";
+import Background from '../components/Background'
+import Logo from '../components/Logo'
+import Header from '../components/Header'
+import Button from '../components/Button'
+import TextInput from '../components/TextInput'
+import BackButton from '../components/BackButton'
+import { theme } from '../core/theme'
+import { phoneValidator } from '../helpers/phoneValidator'
+import { passwordValidator } from '../helpers/passwordValidator'
 
-export default function Home({ navigation }) {
+const Login = ({ navigation }) => {
+    const [phone, setPhone] = useState({ value: '', error: '' })
+    const [password, setPassword] = useState({ value: '', error: '' })
+
+    const onLoginPressed = () => {
+        const phoneError = phoneValidator(phone.value)
+        const passwordError = passwordValidator(password.value)
+        if (phoneError || passwordError) {
+            setPhone({ ...phone, error: phoneError })
+            setPassword({ ...password, error: passwordError })
+            return
+        }
+        // navigation.reset({
+        //     index: 0,
+        //     routes: [{ name: 'Dashboard' }],
+        // })
+        loginApi();
+    }
+
+    const loginApi = () => {
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                phoneNo: phone.value,
+                pinNo: password.value,
+                DeviceNo: "string"
+            })
+        }
+
+        fetch("http://54.225.69.7:8050/login", requestOptions)
+            .then(response => response.json())
+            .then(response => {
+                console.log(response, requestOptions);
+                navigation.navigate("Home");
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
     return (
-        <View style={styles.container}>
-            <StatusBar translucent backgroundColor="#ffffff" barStyle="dark-content" />
-            <Image style={styles.logo} source={require('../../assets/logos/asili.png')} />
-            <View style={styles.inputView} >
+        <Background>
+            <Logo />
+            <Header>Welcome back.</Header>
+            <KeyboardAvoidingView style={styles.container} >
                 <TextInput
-                    style={styles.inputText}
-                    placeholder="Email..."
-                    placeholderTextColor="#003f5c"
-                    onChangeText={text => this.setState({ email: text })} />
-            </View>
-            <View style={styles.inputView} >
+                    label="Phone"
+                    returnKeyType="next"
+                    value={phone.value}
+                    onChangeText={(text) => setPhone({ value: text, error: '' })}
+                    error={!!phone.error}
+                    errorText={phone.error}
+                    autoCapitalize="none"
+                    autoCompleteType="tel"
+                    textContentType="telephoneNumber"
+                    keyboardType="phone-pad"
+                />
                 <TextInput
+                    label="Password"
+                    returnKeyType="done"
+                    value={password.value}
+                    onChangeText={(text) => setPassword({ value: text, error: '' })}
+                    error={!!password.error}
+                    errorText={password.error}
                     secureTextEntry
-                    style={styles.inputText}
-                    placeholder="Password..."
-                    placeholderTextColor="#003f5c"
-                    onChangeText={text => this.setState({ password: text })} />
-            </View>
-            <TouchableOpacity>
-                <Text style={styles.forgot}>Forgot Password?</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.loginBtn}
-                onPress={() => navigation.navigate("Home")}>
-                <Text style={styles.loginText}>LOGIN</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("CoffeeList")}>
-                <Text style={styles.loginText}>Signup</Text>
-            </TouchableOpacity>
-
-        </View>
-    );
+                />
+                <View style={styles.forgotPassword}>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('ResetPasswordScreen')}
+                    >
+                        <Text style={styles.forgot}>Forgot your password?</Text>
+                    </TouchableOpacity>
+                </View>
+                <Button mode="contained" style={styles.loginBtn} onPress={onLoginPressed}>
+                    Login
+                </Button>
+            </KeyboardAvoidingView>
+        </Background>
+    )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#ffffff',
+        width: '100%',
+        maxWidth: 340,
+        alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    logoImage: {
+        marginBottom: 40
     },
     logo: {
         fontWeight: "bold",
@@ -60,16 +125,14 @@ const styles = StyleSheet.create({
     },
     inputText: {
         height: 50,
-        color: "white"
+        color: "black"
     },
     forgot: {
-        color: "white",
+        color: "black",
         fontSize: 11
     },
     loginBtn: {
-        width: "80%",
-        backgroundColor: "#3e6cce",
-        borderRadius: 25,
+        backgroundColor: "#348bd3",
         height: 50,
         alignItems: "center",
         justifyContent: "center",
@@ -80,3 +143,5 @@ const styles = StyleSheet.create({
         color: "white"
     }
 });
+
+export default Login;

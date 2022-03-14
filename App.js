@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Home from "./views/Home";
@@ -14,7 +14,28 @@ import CoffeeList from "./views/CoffeeList";
 
 const Stack = createStackNavigator();
 
-export default function App() {
+const App = () => {
+  useEffect(() => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ApiKey: "abcdef12345",
+        SecretKey: "abcdef12345"
+      })
+    }
+
+    fetch("http://54.225.69.7:8050/Token", requestOptions)
+      .then(response => response.json())
+      .then(response => {
+        global.token = response;
+        global.apiKey = 'abcdef12345';
+        console.log(response, token, apiKey);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, [])
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -31,3 +52,5 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+export default App;

@@ -2,7 +2,7 @@ import { StyleSheet, View, Text, Button, Image, TouchableOpacity, StatusBar } fr
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import React from "react";
 
-export default function Home({ navigation }) {
+const Home = ({ navigation }) => {
     const [hasOpacity, setHasOpacity] = React.useState(false)
 
     return (
@@ -240,3 +240,5 @@ const styles = StyleSheet.create({
         height: 90,
     }
 });
+
+export default Home;
