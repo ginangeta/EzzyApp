@@ -9,27 +9,19 @@ export default function LoanDial({ navigation }) {
     const onDeleteHandler = (index) => setText(text.slice(0, -1));
 
     const toConfirmation = () => {
-        if (global.transactionType == "Loan") {
+        if (!text) {
             Toast.show({
-                type: 'info',
-                text1: 'Coming Soon ⌛',
+                type: 'error',
+                text1: 'Failed',
+                text2: 'Amount Cannot Be Empty 🛑',
                 position: 'bottom'
             });
-
+            return
         } else {
-            if (!text) {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Failed',
-                    text2: 'Amount Cannot Be Empty 🛑',
-                    position: 'bottom'
-                });
-                return
-            } else {
-                global.transaction_amount = text;
-                navigation.navigate("Password");
-            }
+            global.transaction_amount = text;
+            navigation.navigate("Password");
         }
+
     }
 
     return (

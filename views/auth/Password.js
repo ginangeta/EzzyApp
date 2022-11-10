@@ -20,7 +20,12 @@ export default function Password({ navigation }) {
             });
             console.log("Here");
         } else {
-            verifyPassword(text)
+            if (global.transactionType == "Loan") {
+                verfyLoan()
+            } else {
+
+                verifyPassword(text)
+            }
         }
     }
 
@@ -61,6 +66,59 @@ export default function Password({ navigation }) {
                     Toast.show({
                         type: 'error',
                         text1: 'Transaction Failed',
+                        text2: 'Incorrect Credentials 🛑',
+                        position: 'bottom'
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                Toast.show({
+                    type: 'error',
+                    text1: err,
+                    position: 'bottom'
+                });
+            });
+    }
+
+    const verfyLoan = () => {
+
+        const loanRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                DeviceID: "",
+                AccountNo: global.LoanAccountNumber,
+                Amount: global.transaction_amount,
+                PhoneNo: global.account_phone
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", loanRequestOptions)
+            .then((response) => response.json())
+            .then(response => {
+                console.log(response, "\n", loanRequestOptions);
+                if (response[0].Is_Successful) {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Loan Request Successful',
+                        text2: 'KES ' + global.transaction_amount + ' Loan Being Processed. A notification will be sent out once the application has been approved 😊',
+                        position: 'bottom'
+                    });
+
+                    navigation.navigate("Home");
+
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Loan Request Failed',
                         text2: 'Incorrect Credentials 🛑',
                         position: 'bottom'
                     });

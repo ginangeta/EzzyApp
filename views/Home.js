@@ -15,9 +15,18 @@ const WithdrawItem = ({ item, onPress, backgroundColor, textColor }) => (
     </TouchableOpacity>
 );
 
+const LoanItem = ({ item, onPress, backgroundColor, textColor }) => (
+    <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
+        <Text style={[styles.title, textColor]}>{item.LoanCode}</Text>
+        <Text style={[styles.sub_title, textColor]}>Min: {item.MinAmount} - Max: {item.MaxAmount}</Text>
+    </TouchableOpacity>
+);
+
 const Home = ({ navigation }) => {
     const [hasWithdrawOpacity, setHasWithdrawOpacity] = React.useState(false);
     const [hasDepositOpacity, setHasDepositOpacity] = React.useState(false);
+    const [hasLoanOpacity, setHasLoanOpacity] = React.useState(false);
+    const [selectedLoanId, setSelectedLoanId] = React.useState(null);
     const [selectedDepositId, setSelectedDepositId] = React.useState(null);
     const [selectedWithdrawId, setSelectedWithdrawId] = React.useState(null);
 
@@ -53,7 +62,7 @@ const Home = ({ navigation }) => {
     };
 
     const setChosenDepositAccount = (depositAccountNumber, depositAccountName) => {
-        // setHasDepositOpacity(!hasDepositOpacity)
+        setHasDepositOpacity(!hasDepositOpacity)
 
         // Toast.show({
         //     type: 'error',
@@ -83,6 +92,37 @@ const Home = ({ navigation }) => {
         );
     };
 
+    const setChosenLoanAccount = (loanAccountNumber, loanAccountName) => {
+        setHasLoanOpacity(!hasLoanOpacity)
+
+        // Toast.show({
+        //     type: 'error',
+        //     text1: loanAccountName,
+        //     position: 'bottom'
+        // });
+
+        global.transactionType = "Loan";
+        global.LoanAccountNumber = loanAccountNumber;
+        global.loanAccountName = loanAccountName;
+
+
+        toDial();
+    }
+
+    const renderLoanAccountList = ({ item }) => {
+        const backgroundColor = item.AccountNo === selectedLoanId ? '#ebeef2' : '#ffffff';
+        const color = item.AccountNo === selectedLoanId ? 'grey' : 'black';
+
+        return (
+            <LoanItem
+                item={item}
+                onPress={() => setChosenLoanAccount(item.AccountNo, item.LoanCode)}
+                backgroundColor={{ backgroundColor }}
+                textColor={{ color }}
+            />
+        );
+    };
+
     const toDial = () => {
         navigation.navigate("Dial")
 
@@ -98,7 +138,7 @@ const Home = ({ navigation }) => {
                         <Image style={styles.topSideIcon} source={require('../assets/icons/alarm.png')} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.topIconsContainer}
-                        onPress={() => navigation.navigate("")}>
+                        onPress={() => navigation.navigate("Login")}>
                         <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
                     </TouchableOpacity>
                 </View>
@@ -158,14 +198,22 @@ const Home = ({ navigation }) => {
                     </Col>
                     <Col sm={6} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
-                            onPress={() => navigation.navigate("")}>
+                            onPress={() => {
+                                Toast.show({
+                                    type: 'info',
+                                    text1: 'Coming Soon ⌛',
+                                    position: 'bottom'
+                                });
+                            }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/money-transfer.png')} />
                         </TouchableOpacity>
                         <Text style={styles.menuItemText}>Mobile Money</Text>
                     </Col>
                     <Col sm={6} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
-                            onPress={() => navigation.navigate("Loan")}>
+                            onPress={() => {
+                                setHasLoanOpacity(!hasLoanOpacity)
+                            }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/signing.png')} />
                         </TouchableOpacity>
                         <Text style={styles.menuItemText}>Request Loan</Text>
@@ -173,25 +221,39 @@ const Home = ({ navigation }) => {
                 </Row>
             </View>
 
-            <View style={[styles.listContainer, { opacity: hasWithdrawOpacity ? 1.0 : 0 }]}>
-                <Text style={styles.listTitle}>Select Account to Withdraw From</Text>
-                <FlatList style={[styles.homeMenuList]}
-                    data={global.debitable_accounts}
-                    renderItem={renderWithdrawAccountList}
-                    keyExtractor={(item) => item.AccountNo}
-                    extraData={selectedWithdrawId}
-                />
-            </View>
+            {hasWithdrawOpacity ?
+                <View style={[styles.listContainer]}>
+                    <Text style={styles.listTitle}>Select Account to Withdraw From</Text>
+                    <FlatList style={[styles.homeMenuList]}
+                        data={global.debitable_accounts}
+                        renderItem={renderWithdrawAccountList}
+                        keyExtractor={(item) => item.AccountNo}
+                        extraData={selectedWithdrawId}
+                    />
+                </View> : null
+            }
 
-            <View style={[styles.listContainer, { opacity: hasDepositOpacity ? 1.0 : 0 }]}>
-                <Text style={styles.listTitle}>Select Account to Deposit To</Text>
-                <FlatList style={[styles.homeMenuList]}
-                    data={global.creditable_accounts}
-                    renderItem={renderDepositAccountList}
-                    keyExtractor={(item) => item.AccountNo}
-                    extraData={selectedDepositId}
-                />
-            </View>
+            {hasDepositOpacity ?
+                <View style={[styles.listContainer]}>
+                    <Text style={styles.listTitle}>Select Account to Deposit To</Text>
+                    <FlatList style={[styles.homeMenuList]}
+                        data={global.creditable_accounts}
+                        renderItem={renderDepositAccountList}
+                        keyExtractor={(item) => item.AccountNo}
+                        extraData={selectedDepositId}
+                    />
+                </View> : null}
+
+            {hasLoanOpacity ?
+                <View style={[styles.listContainer]}>
+                    <Text style={styles.listTitle}>Select Account to Borrow From</Text>
+                    <FlatList style={[styles.homeMenuList]}
+                        data={global.loan_accounts}
+                        renderItem={renderLoanAccountList}
+                        keyExtractor={(item) => item.AccountNo}
+                        extraData={selectedLoanId}
+                    />
+                </View> : null}
 
             {/* <View style={[styles.homeMoneyMenu, { opacity: hasWithdrawOpacity ? 1.0 : 0 }]} >
                 <Row size={12}>
