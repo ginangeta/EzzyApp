@@ -3,93 +3,55 @@ import { Column as Col, Row } from 'react-native-flexbox-grid';
 import React, { useState } from "react";
 import Toast from 'react-native-toast-message';
 
-export default function Password({ navigation }) {
+export default function LoanDial({ navigation }) {
     const [text, setText] = useState("");
-    const timeout = React.useRef(null);
-
     const onPressHandler = (index) => setText(text + index);
     const onDeleteHandler = (index) => setText(text.slice(0, -1));
 
-    const getPassword = () => {
-        if (text != global.account_pin) {
+    const toConfirmation = () => {
+        if (global.transactionType == "Loan") {
             Toast.show({
-                type: 'error',
-                text1: 'Transaction Failed',
-                text2: 'Incorrect Credentials 🛑',
+                type: 'info',
+                text1: 'Coming Soon ⌛',
                 position: 'bottom'
             });
-            console.log("Here");
+
         } else {
-            verifyPassword(text)
-        }
-    }
-
-    const verifyPassword = () => {
-
-        const transactionRequestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                key: {
-                    Api_Key: global.apiKey,
-                    Token: global.token
-                },
-                Acccount: global.withdrawAccountNumber,
-                Amount: global.transaction_amount,
-                PhoneNo: global.account_phone
-            })
-        }
-
-        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", transactionRequestOptions)
-            .then((response) => response.json())
-            .then(response => {
-                console.log(response, "\n", transactionRequestOptions);
-                if (response[0].Is_Successful) {
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Transaction Successful',
-                        text2: 'KES ' + global.transaction_amount + ' Withdrawn 😊',
-                        position: 'bottom'
-                    });
-
-                    navigation.navigate("Home");
-
-                } else {
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Transaction Failed',
-                        text2: 'Incorrect Credentials 🛑',
-                        position: 'bottom'
-                    });
-                }
-            })
-            .catch(err => {
-                console.log(err);
+            if (!text) {
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: 'Failed',
+                    text2: 'Amount Cannot Be Empty 🛑',
                     position: 'bottom'
                 });
-            });
+                return
+            } else {
+                global.transaction_amount = text;
+                navigation.navigate("Password");
+            }
+        }
     }
-
 
     return (
         <View style={styles.container}>
-            <StatusBar translucent backgroundColor="#3e6cce" barStyle="light-content" />
+            <TouchableOpacity style={styles.back}
+                onPress={() => navigation.navigate("Home")}>
+                <Image style={styles.backIcon} source={require('../assets/icons/black-left-arrow.png')} />
+            </TouchableOpacity>
             <View style={styles.dailPad}>
                 <View style={styles.dailPadInput}>
                     <TextInput
                         style={styles.dailPadInputText}
-                        placeholder="Password"
-                        secureTextEntry={true}
+                        placeholder="Enter amount!"
                         onChangeText={newText => setText(newText)}
                         editable={false}
                         value={text} />
                 </View>
+                <Row size={12}>
+                    <Col sm={12} style={styles.dailPadItem}>
+                        <Text style={styles.dailPadCurrency}>KSH</Text>
+                    </Col>
+                </Row>
                 <Row size={12}>
                     <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
                         <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 1)}>
@@ -143,9 +105,8 @@ export default function Password({ navigation }) {
                 </Row>
                 <Row size={12}>
                     <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer}
-                            onPress={() => navigation.navigate("Dial")}>
-                            <Text style={styles.dailPadItemCancel}>Cancel</Text>
+                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, '00')}>
+                            <Text style={styles.dailPadItemText}>00</Text>
                         </TouchableOpacity>
                     </Col>
                     <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
@@ -155,18 +116,19 @@ export default function Password({ navigation }) {
                     </Col>
                     <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
                         <TouchableOpacity style={styles.dailPadContainer} onPress={onDeleteHandler.bind(this, 0)}>
-                            <Image style={styles.dailPadDelete} source={require('../../assets/icons/delete-white.png')} />
+                            <Image style={styles.dailPadDelete} source={require('../assets/icons/delete.png')} />
                         </TouchableOpacity>
                     </Col>
                 </Row>
                 <Row size={12} style={{ marginBottom: 0 }}>
                     <Col sm={12} md={12} lg={12} style={{ marginBottom: 0 }}>
                         <TouchableOpacity style={styles.confirmation}
-                            onPress={getPassword}>
-                            <Text style={styles.confirmationText}>SUBMIT</Text>
+                            onPress={toConfirmation}>
+                            <Text style={styles.confirmationText}>CONTINUE</Text>
                         </TouchableOpacity>
                     </Col>
                 </Row>
+
             </View>
         </View>
     );
@@ -175,25 +137,24 @@ export default function Password({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#3e6cce',
-        alignItems: 'center',
+        backgroundColor: 'white',
+        alignItems: 'flex-start',
         justifyContent: 'flex-start',
     },
     dailPadInput: {
         width: "100%",
-        marginBottom: 50,
         justifyContent: 'center',
         alignItems: 'center'
     },
     dailPadInputText: {
-        fontSize: 45,
+        fontSize: 35,
         fontWeight: 'bold',
-        color: 'white',
+        color: 'black',
         textAlign: 'center'
     },
     dailPad: {
         position: 'absolute',
-        bottom: 60,
+        bottom: 0,
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -209,16 +170,12 @@ const styles = StyleSheet.create({
     },
     dailPadItemText: {
         fontSize: 30,
-        color: 'white',
-        fontWeight: "700",
-    }, dailPadItemCancel: {
-        fontSize: 20,
-        color: 'white',
+        color: 'black',
         fontWeight: "700",
     },
     dailPadDelete: {
-        height: 30,
-        width: 40
+        height: 40,
+        width: 50
     },
     dailPadCurrency: {
         fontSize: 20,
@@ -238,7 +195,15 @@ const styles = StyleSheet.create({
     },
     confirmationText: {
         color: "white",
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: "700"
+    },
+    back: {
+        height: 20,
+        width: 20,
+        marginTop: 50,
+        marginLeft: 15,
+        padding: 10,
+        position: 'absolute'
     }
 });

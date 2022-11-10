@@ -1,9 +1,92 @@
-import { StyleSheet, View, Text, Button, Image, TouchableOpacity, StatusBar } from "react-native";
+import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, StatusBar, SafeAreaView } from "react-native";
 import { Column as Col, Row } from 'react-native-flexbox-grid';
+import Toast from 'react-native-toast-message';
 import React from "react";
 
+const DepositItem = ({ item, onPress, backgroundColor, textColor }) => (
+    <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
+        <Text style={[styles.title, textColor]}>{item.ProductType}</Text>
+    </TouchableOpacity>
+);
+
+const WithdrawItem = ({ item, onPress, backgroundColor, textColor }) => (
+    <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
+        <Text style={[styles.title, textColor]}>{item.ProductType}</Text>
+    </TouchableOpacity>
+);
+
 const Home = ({ navigation }) => {
-    const [hasOpacity, setHasOpacity] = React.useState(false)
+    const [hasWithdrawOpacity, setHasWithdrawOpacity] = React.useState(false);
+    const [hasDepositOpacity, setHasDepositOpacity] = React.useState(false);
+    const [selectedDepositId, setSelectedDepositId] = React.useState(null);
+    const [selectedWithdrawId, setSelectedWithdrawId] = React.useState(null);
+
+    const setChosenWithdrawAccount = (withdrawAccountNumber, withdrawAccountName) => {
+        setHasWithdrawOpacity(!hasWithdrawOpacity)
+
+        // Toast.show({
+        //     type: 'error',
+        //     text1: withdrawAccountNumber,
+        //     position: 'bottom'
+        // });
+
+        global.transactionType = "Deposit";
+        global.withdrawAccountNumber = withdrawAccountNumber;
+        global.withdrawAccountName = withdrawAccountName;
+
+        toDial();
+
+    }
+
+    const renderWithdrawAccountList = ({ item }) => {
+        const backgroundColor = item.AccountNo === selectedWithdrawId ? '#ebeef2' : '#ffffff';
+        const color = item.AccountNo === selectedWithdrawId ? 'grey' : 'black';
+
+        return (
+            <WithdrawItem
+                item={item}
+                onPress={() => setChosenWithdrawAccount(item.AccountNo, item.ProductType)}
+                backgroundColor={{ backgroundColor }}
+                textColor={{ color }}
+            />
+        );
+    };
+
+    const setChosenDepositAccount = (depositAccountNumber, depositAccountName) => {
+        // setHasDepositOpacity(!hasDepositOpacity)
+
+        // Toast.show({
+        //     type: 'error',
+        //     text1: depositAccountNumber,
+        //     position: 'bottom'
+        // });
+
+        global.transactionType = "Withdraw";
+        global.depositAccountNumber = depositAccountNumber;
+        global.depositAccountName = depositAccountName;
+
+
+        toDial();
+    }
+
+    const renderDepositAccountList = ({ item }) => {
+        const backgroundColor = item.AccountNo === selectedDepositId ? '#ebeef2' : '#ffffff';
+        const color = item.AccountNo === selectedDepositId ? 'grey' : 'black';
+
+        return (
+            <DepositItem
+                item={item}
+                onPress={() => setChosenDepositAccount(item.AccountNo, item.ProductType)}
+                backgroundColor={{ backgroundColor }}
+                textColor={{ color }}
+            />
+        );
+    };
+
+    const toDial = () => {
+        navigation.navigate("Dial")
+
+    }
 
     return (
         <View style={styles.container}>
@@ -12,11 +95,11 @@ const Home = ({ navigation }) => {
                 <View style={styles.topHomeIcons}>
                     <TouchableOpacity style={styles.topIconsContainer}
                         onPress={() => navigation.navigate("")}>
-                        <Image style={styles.topIcons} source={require('../assets/icons/notification.png')} />
+                        <Image style={styles.topSideIcon} source={require('../assets/icons/alarm.png')} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.topIconsContainer}
                         onPress={() => navigation.navigate("")}>
-                        <Image style={styles.topIcons} source={require('../assets/icons/more.png')} />
+                        <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.userInfo}>
@@ -25,29 +108,29 @@ const Home = ({ navigation }) => {
                         <Image style={styles.imagestyle} source={require('../assets/users/team-1.jpg')} />
                     </TouchableOpacity>
                     <View style={styles.homeHeaderText}>
-                        <Text style={styles.salutation}>Morning</Text>
-                        <Text style={styles.userName}> Gina</Text>
+                        <Text style={styles.salutation}>Hello,</Text>
+                        <Text style={styles.userName}>{global.member_details.Name}</Text>
                     </View>
                 </View>
                 <View style={styles.userBalance}>
                     <View style={styles.userBalanceHeader}>
-                        <Text>Balance</Text>
-                        <Text style={{ fontWeight: "bold" }}>Last Month</Text>
+                        <Text>Ordinary</Text>
+                        {/* <Text style={{ fontWeight: "bold" }}>Last Month</Text> */}
                     </View>
-                    <Text style={styles.balance}>KES 20,000</Text>
+                    <Text style={styles.balance}>KES {global.account_balance.ordinary}</Text>
                     <View style={styles.userBalanceHeader}>
                         <View>
-                            <Text>Income</Text>
+                            <Text>Deposits</Text>
                             <Text style={styles.userBalanceAmount}>
                                 <Image style={styles.topIcons} source={require('../assets/icons/income.png')} />
-                                +KES 10,000
+                                KES {global.account_balance.deposits}
                             </Text>
                         </View>
                         <View>
-                            <Text>Expenses</Text>
+                            <Text>Shares</Text>
                             <Text style={styles.userBalanceAmount}>
                                 <Image style={styles.topIcons} source={require('../assets/icons/expenses.png')} />
-                                -KES 10,000
+                                KES {global.account_balance.shares}
                             </Text>
                         </View>
                     </View>
@@ -58,7 +141,7 @@ const Home = ({ navigation }) => {
                     <Col sm={6} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
                             onPress={() => {
-                                setHasOpacity(!hasOpacity)
+                                setHasDepositOpacity(!hasDepositOpacity)
                             }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/banknotes.png')} />
                         </TouchableOpacity>
@@ -66,10 +149,12 @@ const Home = ({ navigation }) => {
                     </Col>
                     <Col sm={6} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
-                            onPress={() => navigation.navigate("Dial")}>
+                            onPress={() => {
+                                setHasWithdrawOpacity(!hasWithdrawOpacity)
+                            }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/withdraw.png')} />
                         </TouchableOpacity>
-                        <Text style={styles.menuItemText}>Withdraw Cash</Text>
+                        <Text style={styles.menuItemText}>Withdraw Money</Text>
                     </Col>
                     <Col sm={6} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
@@ -88,7 +173,27 @@ const Home = ({ navigation }) => {
                 </Row>
             </View>
 
-            <View style={[styles.homeMoneyMenu, { opacity: hasOpacity ? 1.0 : 0 }]} >
+            <View style={[styles.listContainer, { opacity: hasWithdrawOpacity ? 1.0 : 0 }]}>
+                <Text style={styles.listTitle}>Select Account to Withdraw From</Text>
+                <FlatList style={[styles.homeMenuList]}
+                    data={global.debitable_accounts}
+                    renderItem={renderWithdrawAccountList}
+                    keyExtractor={(item) => item.AccountNo}
+                    extraData={selectedWithdrawId}
+                />
+            </View>
+
+            <View style={[styles.listContainer, { opacity: hasDepositOpacity ? 1.0 : 0 }]}>
+                <Text style={styles.listTitle}>Select Account to Deposit To</Text>
+                <FlatList style={[styles.homeMenuList]}
+                    data={global.creditable_accounts}
+                    renderItem={renderDepositAccountList}
+                    keyExtractor={(item) => item.AccountNo}
+                    extraData={selectedDepositId}
+                />
+            </View>
+
+            {/* <View style={[styles.homeMoneyMenu, { opacity: hasWithdrawOpacity ? 1.0 : 0 }]} >
                 <Row size={12}>
                     <Col sm={4} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
@@ -109,7 +214,7 @@ const Home = ({ navigation }) => {
                         </TouchableOpacity>
                     </Col>
                 </Row>
-            </View>
+            </View> */}
         </View>
     );
 }
@@ -121,15 +226,40 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
     },
+
+    listContainer: {
+        position: 'absolute',
+        bottom: 0,
+        padding: 10,
+        marginBottom: 50,
+        marginHorizontal: 30,
+        backgroundColor: "white",
+        borderRadius: 30
+    },
+    item: {
+        padding: 20,
+        marginVertical: 8,
+        marginHorizontal: 16,
+        borderBottomColor: 'lightgrey',
+        borderBottomWidth: 1
+    },
+    title: {
+        fontSize: 20,
+        textTransform: 'capitalize',
+    },
     topHomeIcons: {
         backgroundColor: 'white',
         justifyContent: 'flex-end',
         flexDirection: 'row'
     },
+    topSideIcon: {
+        height: 25,
+        width: 25,
+    },
     topIconsContainer: {
         width: 25,
         height: 25,
-        marginLeft: 5,
+        marginLeft: 15,
         marginTop: 10,
         alignItems: "flex-end"
     },
@@ -163,7 +293,7 @@ const styles = StyleSheet.create({
     userName: {
         fontWeight: "bold",
         color: '#000000',
-        fontSize: 22,
+        fontSize: 18,
     },
     imagestyle: {
         width: 70,
@@ -220,9 +350,17 @@ const styles = StyleSheet.create({
         height: 80,
     },
     menuItemText: {
-        fontSize: 18,
+        fontSize: 16,
         color: 'black',
         width: 70,
+        fontWeight: '700',
+        textAlign: 'center',
+        marginHorizontal: 10,
+        marginTop: 10,
+    },
+    listTitle: {
+        fontSize: 16,
+        color: 'black',
         fontWeight: '700',
         textAlign: 'center',
         marginTop: 10,

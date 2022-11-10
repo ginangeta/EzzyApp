@@ -1,11 +1,36 @@
 import { StyleSheet, View, Text, TextInput, Button, Image, TouchableOpacity, StatusBar } from "react-native";
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import React, { useState } from "react";
+import Toast from 'react-native-toast-message';
 
 export default function Dial({ navigation }) {
     const [text, setText] = useState("");
     const onPressHandler = (index) => setText(text + index);
     const onDeleteHandler = (index) => setText(text.slice(0, -1));
+
+    const toConfirmation = () => {
+        if (global.transactionType == "Deposit") {
+            Toast.show({
+                type: 'info',
+                text1: 'Coming Soon ⌛',
+                position: 'bottom'
+            });
+
+        } else {
+            if (!text) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Failed',
+                    text2: 'Amount Cannot Be Empty 🛑',
+                    position: 'bottom'
+                });
+                return
+            } else {
+                global.transaction_amount = text;
+                navigation.navigate("Password");
+            }
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -98,7 +123,7 @@ export default function Dial({ navigation }) {
                 <Row size={12} style={{ marginBottom: 0 }}>
                     <Col sm={12} md={12} lg={12} style={{ marginBottom: 0 }}>
                         <TouchableOpacity style={styles.confirmation}
-                            onPress={() => navigation.navigate("Password")}>
+                            onPress={toConfirmation}>
                             <Text style={styles.confirmationText}>CONTINUE</Text>
                         </TouchableOpacity>
                     </Col>
