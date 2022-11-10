@@ -18,7 +18,7 @@ const WithdrawItem = ({ item, onPress, backgroundColor, textColor }) => (
 const LoanItem = ({ item, onPress, backgroundColor, textColor }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
         <Text style={[styles.title, textColor]}>{item.LoanCode}</Text>
-        <Text style={[styles.sub_title, textColor]}>Min: {item.MinAmount} - Max: {item.MaxAmount}</Text>
+        <Text style={[styles.sub_title, textColor]}>Min Limit: {item.MinAmount} - Max Limit: {item.MaxAmount}</Text>
     </TouchableOpacity>
 );
 
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         padding: 10,
-        marginBottom: 50,
+        marginBottom: 80,
         marginHorizontal: 30,
         backgroundColor: "white",
         borderRadius: 30
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1
     },
     title: {
-        fontSize: 20,
+        fontSize: 18,
         textTransform: 'capitalize',
     },
     topHomeIcons: {
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     listTitle: {
-        fontSize: 16,
+        fontSize: 20,
         color: 'black',
         fontWeight: '700',
         textAlign: 'center',
