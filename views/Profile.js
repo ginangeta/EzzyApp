@@ -1,5 +1,6 @@
 import { Platform, StyleSheet, View, Text, FlatList, Button, Image, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Toast from 'react-native-toast-message';
 
 export default function Profile({ navigation }) {
     const [text, setText] = useState("");
@@ -17,6 +18,51 @@ export default function Profile({ navigation }) {
             <Text>{item.date}</Text>
         </TouchableOpacity>
     );
+
+    useEffect(() => {
+
+        const balanceRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                phoneNo: global.account_phone,
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/BalanceEnquiry", balanceRequestOptions)
+            .then((balance_response) => balance_response.json())
+            .then(balance_response => {
+
+                if (balance_response[0].Is_Successful) {
+                    const api_balance_details = balance_response[0].Account;
+
+                    console.log(api_balance_details);
+                    global.account_balance_raw = api_balance_details;
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: "Balance Inquiry Failed",
+                        position: 'bottom'
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log("Balance Error: ", error);
+                Toast.show({
+                    type: 'error',
+                    text1: error,
+                    position: 'bottom'
+                });
+            });
+
+    });
 
     const renderAccountList = ({ item }) => {
 

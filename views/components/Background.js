@@ -1,14 +1,16 @@
 import React from 'react'
-import { ImageBackground, StyleSheet, View } from 'react-native'
+import { ImageBackground, StyleSheet, View, StatusBar } from 'react-native'
 import { theme } from '../core/theme'
 
 export default function Background({ children }) {
   return (
     <ImageBackground
-      source={require('../src/assets/blue_bg.jpg')}
+      source={require('../src/assets/blue_fluid.jpg')}
       resizeMode="cover"
       style={styles.background}
       imageStyle={{ opacity: 0.4 }}>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
+
       <View style={styles.container} behavior="padding">
         {children}
       </View>

@@ -257,7 +257,7 @@ export default function Password({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <StatusBar translucent backgroundColor="#3e6cce" barStyle="light-content" />
+            <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
             <View style={styles.dailPad}>
                 <View style={styles.dailPadInput}>
                     <TextInput

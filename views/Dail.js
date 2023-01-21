@@ -34,6 +34,7 @@ export default function Dial({ navigation }) {
 
     return (
         <View style={styles.container}>
+            <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
             <TouchableOpacity style={styles.back}
                 onPress={() => navigation.navigate("Home")}>
                 <Image style={styles.backIcon} source={require('../assets/icons/black-left-arrow.png')} />

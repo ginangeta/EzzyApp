@@ -268,7 +268,7 @@ const Home = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar translucent backgroundColor="#FFFFFF" barStyle="dark-content" />
+            <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
             <View style={styles.homeHeader} >
                 <View style={styles.topHomeIcons}>
                     <TouchableOpacity style={styles.topIconsContainer}

@@ -171,7 +171,8 @@ const Login = ({ navigation }) => {
 
         // await Keychain.setGenericPassword(login_username, login_password);
 
-        proceedLogin();
+        loginApi(login_username, login_password, true);
+
     }
 
     const proceedLogin = () => {
