@@ -11,7 +11,6 @@ export default function Profile({ navigation }) {
                 <Text style={{
                     fontWeight: "bold",
                 }}>
-                    <Image style={styles.topIcons} source={String(item.Amount).includes("-") ? require('../assets/icons/expenses.png') : require('../assets/icons/income.png')} />
                     KES {item.Amount}
                 </Text>
             </View>
@@ -33,27 +32,25 @@ export default function Profile({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.homeHeader} >
-                <View style={styles.topHomeIcons}>
-                    <TouchableOpacity style={styles.topIconsContainer}
-                        onPress={() => navigation.navigate("")}>
-                        <Image style={styles.topSideIcon} source={require('../assets/icons/alarm.png')} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.topIconsContainer}
-                        onPress={() => navigation.navigate("Login")}>
-                        <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
-                    </TouchableOpacity>
-                </View>
                 <View style={styles.userInfo}>
                     <TouchableOpacity style={styles.userImg}
                         onPress={() => navigation.navigate("")}>
-                        <Image style={styles.imagestyle} source={require('../assets/users/team-1.jpg')} />
+                        <Image style={styles.imagestyle} source={require('../assets/users/user.jpg')} />
                     </TouchableOpacity>
                     <View style={styles.homeHeaderText}>
                         <Text style={styles.salutation}></Text>
                         <Text style={styles.userName}>{global.member_details.Name}</Text>
                     </View>
+
+                    <View style={styles.topHomeIcons}>
+                        <TouchableOpacity style={styles.topIconsContainer}
+                            onPress={() => navigation.navigate("Login")}>
+                            <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
+
             <View style={styles.homeMenu} >
                 <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
                 <ScrollView style={{ marginTop: 10 }}
@@ -79,33 +76,36 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     topHomeIcons: {
+        display: 'flex',
+        marginTop: 10,
         backgroundColor: 'white',
-        justifyContent: 'flex-end',
+        justifyContent: "space-between",
         flexDirection: 'row'
     },
     topSideIcon: {
-        height: 25,
-        width: 25,
+        height: 50,
+        width: 50,
     },
     topIconsContainer: {
-        width: 25,
-        height: 25,
+        width: 60,
+        height: 60,
         marginLeft: 15,
         marginTop: 10,
         alignItems: "flex-end"
     },
     homeHeader: {
-        height: '40%',
+        height: '50%',
         paddingTop: 50,
         paddingHorizontal: 30,
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
+        backgroundColor: 'white',
         overflow: 'hidden',
     },
     userInfo: {
-        marginTop: 0,
+        marginTop: 15,
         justifyContent: "center",
         alignItems: "center",
         flexDirection: 'column'
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     },
     homeHeaderText: {
         marginLeft: 15,
+        marginBottom: 10,
         flexDirection: 'column',
         justifyContent: 'center',
     },
@@ -149,6 +150,7 @@ const styles = StyleSheet.create({
         color: "#3e6cce",
     },
     homeMenu: {
+        backgroundColor: 'white',
         position: 'absolute',
         width: "100%",
         bottom: 0,
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
         borderRadius: 30
     },
     item: {
-        padding: 20,
+        padding: 10,
         marginVertical: 8,
         marginHorizontal: 16,
         borderBottomColor: 'lightgrey',

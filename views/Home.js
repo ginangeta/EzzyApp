@@ -272,7 +272,7 @@ const Home = ({ navigation }) => {
                 <View style={styles.userInfo}>
                     <TouchableOpacity style={styles.userImg}
                         onPress={() => navigation.navigate("")}>
-                        <Image style={styles.imagestyle} source={require('../assets/users/team-1.jpg')} />
+                        <Image style={styles.imagestyle} source={require('../assets/users/user.jpg')} />
                     </TouchableOpacity>
                     <View style={styles.homeHeaderText}>
                         <Text style={styles.salutation}>Hello,</Text>
@@ -286,7 +286,7 @@ const Home = ({ navigation }) => {
                     <Text style={styles.balance}>KES {userBalance.value}</Text>
                 </View>) : null}
                 {!hasBalanceOpacity ? (<View style={styles.userBalanceButton}>
-                    <Text style={{ marginStart: 25 }}>Note: Balance Inquiry is a billable transaction</Text>
+                    <Text style={{ marginStart: 30, marginBottom: 10 }}>Note: Balance Inquiry is a billable transaction</Text>
                     <AnimateLoadingButton
                         ref={c => (this.balanceButton = c)}
                         width={300}

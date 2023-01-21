@@ -1,7 +1,6 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity, KeyboardAvoidingView, Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication'
-import * as SecureStore from 'expo-secure-store';
 import React, { useState, useEffect } from "react";
 import Background from '../components/Background';
 import Toast from 'react-native-toast-message';
@@ -41,56 +40,21 @@ const Login = ({ navigation }) => {
 
     useEffect(() => {
         getData();
-        checkUserStatus();
+        checkDeviceForHardware();
+        checkForFingerprints();
     }, []);
 
-    const checkUserStatus = async () => {
-        try {
-            const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
-
-            console.log("Console" + credentials);
-
-            if (credentials != null) {
-                checkDeviceForHardware(credentials);
-            } else {
-                console.log('No saved credentials');
-            }
-        } catch (error) {
-            console.log("Check status error: " + error);
-        }
-    }
-
-    const checkDeviceForHardware = async (credentials) => {
+    const checkDeviceForHardware = async () => {
         let compatible = await LocalAuthentication.hasHardwareAsync();
         setState({ compatible });
-
-        console.log("Checking Device:" + compatible);
-
-        if (compatible) {
-            checkForFingerprints(credentials);
-        } else {
-            console.log("Device is not Compatible");
-        }
     };
 
-    const checkForFingerprints = async (credentials) => {
+    const checkForFingerprints = async () => {
         let fingerprints = await LocalAuthentication.isEnrolledAsync();
         setState({ fingerprints });
-
-        console.log("Fingerprints is enrolled:" + fingerprints);
-
-        if (fingerprints) {
-            if (Platform.OS === 'android') {
-                showAndroidAlert(credentials);
-            } else {
-                scanFingerprint(credentials);
-            }
-        } else {
-            console.log("No fingerprints enrolled");
-        }
     };
 
-    const scanFingerprint = async (credentials) => {
+    const scanFingerprint = async () => {
         let result = await LocalAuthentication.authenticateAsync(
             'Scan your finger.'
         );
@@ -98,14 +62,9 @@ const Login = ({ navigation }) => {
         setState({
             result: JSON.stringify(result),
         });
-
-        if (result["success"] == true) {
-            console.log(credentials);
-            loginApi(credentials['username'], credentials['password'], true);
-        }
     };
 
-    const showAndroidAlert = (credentials) => {
+    const showAndroidAlert = () => {
         Alert.alert(
             'Fingerprint Scan',
             'Place your finger over the touch sensor and press scan.',
@@ -113,7 +72,7 @@ const Login = ({ navigation }) => {
                 {
                     text: 'Scan',
                     onPress: () => {
-                        scanFingerprint(credentials);
+                        scanFingerprint();
                     },
                 },
                 {
@@ -125,59 +84,6 @@ const Login = ({ navigation }) => {
         );
     };
 
-    const showBiometricOptionAlert = () => {
-        Alert.alert(
-            'Biometric Options',
-            'Would you like to use the biometric feature?',
-            [
-                {
-                    text: 'Yes',
-                    onPress: () => {
-                        promptForBiometrics();
-                    },
-                },
-                {
-                    text: 'No',
-                    onPress: () => {
-                        proceedLogin();
-                        console.log('Cancel')
-                    },
-                    style: 'cancel',
-                },
-            ]
-        );
-    };
-
-    const promptForBiometrics = async () => {
-        const login_username = phone.value;
-        const login_password = password.value;
-
-        const login = {
-            username: login_username,
-            password: login_password
-        }
-
-        try {
-            await SecureStore.setItemAsync('Credentials', JSON.stringify(login));
-        } catch (err) {
-            console.log("Prompt Biometrics Error: " + err);
-            Toast.show({
-                type: 'error',
-                text1: 'Biometrics Prompt Error',
-                text2: 'Kindly try again later🛑',
-                position: 'bottom'
-            });
-        };
-
-        // await Keychain.setGenericPassword(login_username, login_password);
-
-        proceedLogin();
-    }
-
-    const proceedLogin = () => {
-        utilitiesApi();
-    }
-
     const onLoginPressed = () => {
 
         const phoneError = phoneValidator(phone.value)
@@ -188,10 +94,10 @@ const Login = ({ navigation }) => {
             return
         }
 
-        loginApi(phone.value, password.value);
+        loginApi();
     }
 
-    const loginApi = (phone_input, password_input, is_logged_in = false) => {
+    const loginApi = () => {
 
         loginButton.showLoading(true);
 
@@ -206,9 +112,9 @@ const Login = ({ navigation }) => {
                     Api_Key: global.apiKey,
                     Token: global.token
                 },
-                phoneNo: phone_input.replace(/ /g, ''),
-                pinNo: password_input,
-                DeviceNo: phone_input
+                phoneNo: phone.value.replace(/ /g, ''),
+                pinNo: password.value,
+                DeviceNo: phone.value
             })
         }
 
@@ -218,15 +124,11 @@ const Login = ({ navigation }) => {
                 console.log(response, "\n", loginRequestOptions);
                 if (response[0].Is_Successfull) {
                     global.member_details = response[0].MemberDetails[0];
-                    global.account_pin = password_input;
-                    global.account_phone = phone_input;
-                    storeData(phone_input);
+                    global.account_pin = password.value;
+                    global.account_phone = phone.value;
+                    storeData(phone.value);
+                    utilitiesApi();
 
-                    if (is_logged_in == true) {
-                        proceedLogin();
-                    } else {
-                        showBiometricOptionAlert();
-                    }
                 } else {
                     Toast.show({
                         type: 'error',
@@ -328,7 +230,7 @@ const Login = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/GetDebitableAccounts", debitableAccountRequest)
             .then((debitable_acc_response) => debitable_acc_response.json())
             .then(debitable_acc_response => {
-                console.log("Before Error: ", debitable_acc_response, "\n", debitableAccountRequest);
+                // console.log("Before Error: ", debitable_acc_response, "\n", debitableAccountRequest);
 
                 if (debitable_acc_response[0].Is_Successful) {
                     const debitable_accounts = debitable_acc_response[0].debitables;
@@ -507,7 +409,8 @@ const Login = ({ navigation }) => {
                     onPress={onLoginPressed}
                 />
 
-                {/* <View style={{ marginTop: 10 }}>
+
+                <View style={{ marginTop: 10 }}>
                     {state.fingerprints === true ? <AnimateLoadingButton
                         ref={c => (this.loginButton = c)}
                         width={300}
@@ -521,10 +424,11 @@ const Login = ({ navigation }) => {
                                 : scanFingerprint
                         }
                     /> : ""}
-                </View> */}
+                </View>
+
 
             </KeyboardAvoidingView>
-        </Background >
+        </Background>
     )
 }
 
