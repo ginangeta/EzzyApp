@@ -5,10 +5,10 @@ import { theme } from '../core/theme'
 export default function Background({ children }) {
   return (
     <ImageBackground
-      source={require('../src/assets/background_dot.png')}
-      resizeMode="repeat"
+      source={require('../src/assets/blue_bg.jpg')}
+      resizeMode="cover"
       style={styles.background}
-    >
+      imageStyle={{ opacity: 0.4 }}>
       <View style={styles.container} behavior="padding">
         {children}
       </View>

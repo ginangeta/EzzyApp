@@ -84,8 +84,11 @@ const Home = ({ navigation }) => {
         global.transactionType = "Deposit";
         global.depositAccountNumber = depositAccountNumber;
         global.depositAccountName = depositAccountName;
+        global.transaction_account = global.account_phone;
 
-        navigation.navigate("AccountDial")
+        toDial();
+
+        // navigation.navigate("AccountDial")
     }
 
     const renderDepositAccountList = ({ item }) => {
@@ -172,6 +175,14 @@ const Home = ({ navigation }) => {
         global.transactionType = "Loan";
         global.LoanAccountNumber = global.ChapChapLoanAccountNumber;
         global.loanAccountName = global.ChapChaploanAccountName;
+
+        toDial();
+    }
+
+    const withdrawMoney = () => {
+        global.transactionType = "Withdraw";
+        global.withdrawAccountNumber = global.ordinaryAccNo;
+        global.withdrawAccountName = global.ordinaryAccName;
 
         toDial();
     }
@@ -325,7 +336,8 @@ const Home = ({ navigation }) => {
                     <Col sm={4} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
                             onPress={() => {
-                                setHasWithdrawOpacity(!hasWithdrawOpacity)
+                                // setHasWithdrawOpacity(!hasWithdrawOpacity)
+                                withdrawMoney()
                             }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/withdraw.png')} />
                         </TouchableOpacity>
@@ -410,7 +422,7 @@ const Home = ({ navigation }) => {
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setHasWithdrawOpacity(!hasWithdrawOpacity)}>
-                                <Text style={styles.textStyle}>Hide</Text>
+                                <Text style={styles.textStyle}>Cancel</Text>
                             </Pressable>
                         </View>
                     </View>
@@ -440,7 +452,7 @@ const Home = ({ navigation }) => {
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setHasDepositOpacity(!hasDepositOpacity)}>
-                                <Text style={styles.textStyle}>Hide</Text>
+                                <Text style={styles.textStyle}>Cancel</Text>
                             </Pressable>
                         </View>
                     </View>
@@ -470,7 +482,7 @@ const Home = ({ navigation }) => {
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setHasLoanOpacity(!hasLoanOpacity)}>
-                                <Text style={styles.textStyle}>Hide</Text>
+                                <Text style={styles.textStyle}>Cancel</Text>
                             </Pressable>
                         </View>
                     </View>
@@ -500,7 +512,7 @@ const Home = ({ navigation }) => {
                             <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setHasUtilitiesOpacity(!hasUtilitiesOpacity)}>
-                                <Text style={styles.textStyle}>Hide</Text>
+                                <Text style={styles.textStyle}>Cancel</Text>
                             </Pressable>
                         </View>
                     </View>

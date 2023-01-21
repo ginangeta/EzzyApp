@@ -364,7 +364,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     dailPadInputText: {
-        fontSize: 45,
+        fontSize: 40,
+        padding: 10,
+        width: '80%',
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center'

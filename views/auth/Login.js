@@ -48,7 +48,7 @@ const Login = ({ navigation }) => {
         try {
             const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
 
-            console.log("Console" + credentials);
+            console.log("Console Credentials:" + credentials);
 
             if (credentials != null) {
                 checkDeviceForHardware(credentials);
@@ -436,6 +436,14 @@ const Login = ({ navigation }) => {
 
                 if (creditable_acc_response[0].Is_Successful) {
                     const creditable_accounts = creditable_acc_response[0].debitables;
+
+                    creditable_accounts.forEach(account => {
+                        if (account.ProductName == "ORDINARY ACCOUNTS") {
+                            global.ordinaryAccNo = account.AccountNo;
+                            global.ordinaryAccName = account.ProductName;
+                        }
+
+                    });
 
                     console.log(creditable_accounts);
                     global.creditable_accounts = creditable_accounts;
