@@ -22,14 +22,17 @@ export default function Password({ navigation }) {
         } else {
             if (global.transactionType == "Loan") {
                 verfyLoan()
-            } else {
-
-                verifyPassword(text)
+            } else if (global.transactionType == "Deposit") {
+                verfyDeposit()
+            } else if (global.transactionType == "Utilities") {
+                verfyUtilities()
+            } else if (global.transactionType == "Withdraw") {
+                verifyWithdrawal(text)
             }
         }
     }
 
-    const verifyPassword = () => {
+    const verifyWithdrawal = () => {
 
         const transactionRequestOptions = {
             method: 'POST',
@@ -70,6 +73,123 @@ export default function Password({ navigation }) {
                         position: 'bottom'
                     });
                 }
+            })
+            .catch(err => {
+                console.log(err);
+                Toast.show({
+                    type: 'error',
+                    text1: err,
+                    position: 'bottom'
+                });
+            });
+    }
+
+    const verfyUtilities = () => {
+
+        const transactionRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                UtilityType: global.UtilitiesType,
+                SourcAcccount: global.transaction_account,
+                Amount: global.transaction_amount,
+                PhoneNo: global.account_phone
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/PayUtility", transactionRequestOptions)
+            .then((response) => response.json())
+            .then(response => {
+                console.log(response, "\n", transactionRequestOptions);
+                if (response[0].Is_Successful) {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Transaction Successful',
+                        text2: 'KES ' + global.transaction_amount + ' Paid 😊',
+                        position: 'bottom'
+                    });
+
+                    navigation.navigate("Home");
+
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Transaction Failed',
+                        text2: 'Incorrect Credentials 🛑',
+                        position: 'bottom'
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                Toast.show({
+                    type: 'error',
+                    text1: err,
+                    position: 'bottom'
+                });
+            });
+    }
+
+    const verfyDeposit = () => {
+
+        const transactionRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                IsMpesa: true,
+                SourcAcccount: global.depositAccountNumber,
+                DestAcccount: global.transaction_account,
+                Amount: global.transaction_amount,
+                PhoneNo: global.account_phone
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/Deposit", transactionRequestOptions)
+            .then((response) => response.json())
+            .then(response => {
+                console.log(response, "\n", transactionRequestOptions);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Transaction Successful',
+                    text2: 'KES ' + global.transaction_amount + ' Deposited 😊',
+                    position: 'bottom'
+                });
+
+                navigation.navigate("Home");
+
+
+                // if (response[0].Is_Successful) {
+                //     Toast.show({
+                //         type: 'success',
+                //         text1: 'Transaction Successful',
+                //         text2: 'KES ' + global.transaction_amount + ' Deposited 😊',
+                //         position: 'bottom'
+                //     });
+
+                //     navigation.navigate("Home");
+
+                // } else {
+                //     Toast.show({
+                //         type: 'error',
+                //         text1: 'Transaction Failed',
+                //         text2: 'Incorrect Credentials 🛑',
+                //         position: 'bottom'
+                //     });
+                // }
             })
             .catch(err => {
                 console.log(err);

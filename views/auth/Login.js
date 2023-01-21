@@ -1,20 +1,40 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from "react";
-import Background from '../components/Background'
+import Background from '../components/Background';
 import Toast from 'react-native-toast-message';
-import Logo from '../components/Logo'
-import Header from '../components/Header'
-import Button from '../components/Button'
-import AnimateLoadingButton from 'react-native-animate-loading-button';
-import TextInput from '../components/TextInput'
-import BackButton from '../components/BackButton'
-import { theme } from '../core/theme'
-import { phoneValidator } from '../helpers/phoneValidator'
-import { passwordValidator } from '../helpers/passwordValidator'
+import Logo from '../components/Logo';
+import Header from '../components/Header';
+import Button from '../components/Button';
+import AnimateLoadingButton from "react-native-animate-loading-button";
+import TextInput from '../components/TextInput';
+import BackButton from '../components/BackButton';
+import { theme } from '../core/theme';
+import { phoneValidator } from '../helpers/phoneValidator';
+import { passwordValidator } from '../helpers/passwordValidator';
 
 const Login = ({ navigation }) => {
-    const [phone, setPhone] = useState({ value: '', error: '' })
+    const [phone, setPhone] = useState({ value: '', error: '' });
     const [password, setPassword] = useState({ value: '', error: '' })
+
+    const getData = async (userPhone) => {
+        try {
+            const value = await AsyncStorage.getItem('user_phone')
+            if (value !== null) {
+                setPhone({ value: value, error: '' })
+                console.log(value);
+            } else {
+                console.log("Error: Empty Value");
+            }
+        } catch (e) {
+            console.log("Error: " + e);
+        }
+    }
+
+    useEffect(() => {
+        getData();
+    }, []);
+
     const onLoginPressed = () => {
 
         const phoneError = phoneValidator(phone.value)
@@ -43,7 +63,7 @@ const Login = ({ navigation }) => {
                     Api_Key: global.apiKey,
                     Token: global.token
                 },
-                phoneNo: phone.value,
+                phoneNo: phone.value.replace(/ /g, ''),
                 pinNo: password.value,
                 DeviceNo: phone.value
             })
@@ -56,8 +76,9 @@ const Login = ({ navigation }) => {
                 if (response[0].Is_Successfull) {
                     global.member_details = response[0].MemberDetails[0];
                     global.account_pin = password.value;
-
-                    balanceApi();
+                    global.account_phone = phone.value;
+                    storeData(phone.value);
+                    utilitiesApi();
 
                 } else {
                     Toast.show({
@@ -78,9 +99,22 @@ const Login = ({ navigation }) => {
             });
     }
 
-    const balanceApi = () => {
+    const storeData = async (value) => {
+        try {
+            await AsyncStorage.setItem('user_phone', value)
+        } catch (e) {
+            Toast.show({
+                type: 'error',
+                text1: 'Saving Phone Number Failed',
+                text2: 'System Issue 🏗️',
+                position: 'bottom'
+            });
+        }
+    }
 
-        const balanceRequestOptions = {
+    const utilitiesApi = () => {
+
+        const utilitiesRequestOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -91,44 +125,21 @@ const Login = ({ navigation }) => {
                     Api_Key: global.apiKey,
                     Token: global.token
                 },
-                phoneNo: phone.value,
             })
         }
 
+        fetch("https://testasili.devopsfoundry.cloud:8050/GetUtilityType", utilitiesRequestOptions)
+            .then((utilities_response) => utilities_response.json())
+            .then(utilities_response => {
+                // console.log("Before Error: ", utilities_response[0].Is_Successful);
 
-        const snakeCase = (string) => {
-            const toSnakeCase = (str = "") => {
-                const strArr = str.split(" ");
-                const snakeArr = strArr.reduce((acc, val) => {
-                    return acc.concat(val.toLowerCase());
-                }, []);
-                return snakeArr.join("_");
-            };
-            const newText = toSnakeCase(string);
-            return newText
-        };
+                let utilities_arr = {};
 
+                if (utilities_response[0].Is_Successful) {
+                    api_utilities_details = utilities_response[0].utilties;
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/BalanceEnquiry", balanceRequestOptions)
-            .then((balance_response) => balance_response.json())
-            .then(balance_response => {
-                // console.log("Before Error: ", balance_response[0].Is_Successful);
-
-                let balance_arr = {};
-
-                if (balance_response[0].Is_Successful) {
-                    api_balance_details = balance_response[0].Account;
-                    api_balance_details.forEach(api_balance_detail => {
-                        // console.log(api_balance_detail, "\n")
-                        balance_acc_name = api_balance_detail.AccountType.trim();
-                        balance_acc_amount = api_balance_detail.Amount;
-
-                        balance_arr[snakeCase(balance_acc_name)] = balance_acc_amount;
-
-                    });
-                    console.log(balance_arr);
-                    global.account_balance = balance_arr;
-                    global.account_phone = phone.value;
+                    console.log(api_utilities_details);
+                    global.account_utilities = api_utilities_details;
                     // navigation.navigate("Home");
 
                     debitablesApi();
@@ -136,13 +147,13 @@ const Login = ({ navigation }) => {
                 } else {
                     Toast.show({
                         type: 'error',
-                        text1: "Balance Inquiry Failed",
+                        text1: "Utilities Inquiry Failed",
                         position: 'bottom'
                     });
                 }
             })
             .catch((error) => {
-                console.log("Balance Error: ", error);
+                console.log("Utilities Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -170,7 +181,7 @@ const Login = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/GetDebitableAccounts", debitableAccountRequest)
             .then((debitable_acc_response) => debitable_acc_response.json())
             .then(debitable_acc_response => {
-                // console.log("Before Error: ", debitable_acc_response);
+                // console.log("Before Error: ", debitable_acc_response, "\n", debitableAccountRequest);
 
                 if (debitable_acc_response[0].Is_Successful) {
                     const debitable_accounts = debitable_acc_response[0].debitables;
@@ -196,8 +207,8 @@ const Login = ({ navigation }) => {
                 });
             });
 
-    }    
-    
+    }
+
     const loanAccountsApi = () => {
         const loanAccountRequest = {
             method: 'POST',
@@ -221,9 +232,19 @@ const Login = ({ navigation }) => {
 
                 if (loan_acc_response[0].Is_Successful) {
                     const loan_accounts = loan_acc_response[0].EAmount;
+                    loan_accounts.forEach(loan => {
+                        if (loan.LoanCode == "Chap Chap") {
+                            global.ChapChapLoanAccountNumber = loan.AccountNo;
+                            global.ChapChaploanAccountName = loan.LoanCode;
+                        } else {
+                            console.log("Other Loan Type");
+                        }
+                    });
 
-                    console.log(loan_accounts);
-                    global.loan_accounts = loan_accounts;
+                    const new_loan_account = loan_accounts.filter(item => item.LoanCode != "Chap Chap")
+
+                    console.log(new_loan_account);
+                    global.loan_accounts = new_loan_account;
                     creditablesApi();
                     // navigation.navigate("Home")
                 } else {
@@ -271,7 +292,7 @@ const Login = ({ navigation }) => {
 
                     console.log(creditable_accounts);
                     global.creditable_accounts = creditable_accounts;
-                    navigation.navigate("Home")
+                    navigation.navigate("Main")
                 } else {
                     Toast.show({
                         type: 'error',

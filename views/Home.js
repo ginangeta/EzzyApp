@@ -1,7 +1,8 @@
-import { StyleSheet, View, Text, FlatList, Image, TouchableOpacity, StatusBar, SafeAreaView } from "react-native";
+import { StyleSheet, View, Modal, Text, Pressable, FlatList, Image, TouchableOpacity, StatusBar, SafeAreaView } from "react-native";
+import AnimateLoadingButton from 'react-native-animate-loading-button';
 import { Column as Col, Row } from 'react-native-flexbox-grid';
+import React, { useState, useEffect } from "react";
 import Toast from 'react-native-toast-message';
-import React from "react";
 
 const DepositItem = ({ item, onPress, backgroundColor, textColor }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
@@ -22,13 +23,23 @@ const LoanItem = ({ item, onPress, backgroundColor, textColor }) => (
     </TouchableOpacity>
 );
 
+const UtilityItem = ({ item, onPress, backgroundColor, textColor }) => (
+    <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
+        <Text style={[styles.title, textColor]}>{item.Description}</Text>
+    </TouchableOpacity>
+);
+
 const Home = ({ navigation }) => {
-    const [hasWithdrawOpacity, setHasWithdrawOpacity] = React.useState(false);
-    const [hasDepositOpacity, setHasDepositOpacity] = React.useState(false);
-    const [hasLoanOpacity, setHasLoanOpacity] = React.useState(false);
-    const [selectedLoanId, setSelectedLoanId] = React.useState(null);
-    const [selectedDepositId, setSelectedDepositId] = React.useState(null);
-    const [selectedWithdrawId, setSelectedWithdrawId] = React.useState(null);
+    const [hasWithdrawOpacity, setHasWithdrawOpacity] = useState(false);
+    const [hasDepositOpacity, setHasDepositOpacity] = useState(false);
+    const [hasBalanceOpacity, setHasBalanceOpacity] = useState(false);
+    const [hasLoanOpacity, setHasLoanOpacity] = useState(false);
+    const [hasUtilitiesOpacity, setHasUtilitiesOpacity] = useState(false);
+    const [selectedLoanId, setSelectedLoanId] = useState(null);
+    const [selectedDepositId, setSelectedDepositId] = useState(null);
+    const [selectedWithdrawId, setSelectedWithdrawId] = useState(null);
+    const [selectedUtilitiesType, setSelectedUtilitiesType] = useState(null);
+    const [userBalance, setUserBalance] = useState({ value: '' });
 
     const setChosenWithdrawAccount = (withdrawAccountNumber, withdrawAccountName) => {
         setHasWithdrawOpacity(!hasWithdrawOpacity)
@@ -39,7 +50,7 @@ const Home = ({ navigation }) => {
         //     position: 'bottom'
         // });
 
-        global.transactionType = "Deposit";
+        global.transactionType = "Withdraw";
         global.withdrawAccountNumber = withdrawAccountNumber;
         global.withdrawAccountName = withdrawAccountName;
 
@@ -70,12 +81,11 @@ const Home = ({ navigation }) => {
         //     position: 'bottom'
         // });
 
-        global.transactionType = "Withdraw";
+        global.transactionType = "Deposit";
         global.depositAccountNumber = depositAccountNumber;
         global.depositAccountName = depositAccountName;
 
-
-        toDial();
+        navigation.navigate("AccountDial")
     }
 
     const renderDepositAccountList = ({ item }) => {
@@ -123,8 +133,125 @@ const Home = ({ navigation }) => {
         );
     };
 
+    const setChosenUtilitiesAccount = (utilitiesTypeNumber, utilitiesTypeName) => {
+        setHasUtilitiesOpacity(!hasUtilitiesOpacity)
+
+        // Toast.show({
+        //     type: 'error',
+        //     text1: utilitiesTypeName,
+        //     position: 'bottom'
+        // });
+
+        global.transactionType = "Utilities";
+        global.UtilitiesType = utilitiesTypeNumber;
+        global.UtilitiesName = utilitiesTypeName;
+
+        navigation.navigate("AccountDial")
+
+    }
+
+    const renderUtilitiesList = ({ item }) => {
+        const backgroundColor = item.Type === selectedUtilitiesType ? '#ebeef2' : '#ffffff';
+        const color = item.Type === selectedUtilitiesType ? 'grey' : 'black';
+
+        return (
+            <UtilityItem
+                item={item}
+                onPress={() => setChosenUtilitiesAccount(item.Type, item.Description)}
+                backgroundColor={{ backgroundColor }}
+                textColor={{ color }}
+            />
+        );
+    };
+
     const toDial = () => {
         navigation.navigate("Dial")
+    }
+
+    const chapchapLoan = () => {
+        global.transactionType = "Loan";
+        global.LoanAccountNumber = global.ChapChapLoanAccountNumber;
+        global.loanAccountName = global.ChapChaploanAccountName;
+
+        toDial();
+    }
+
+    const snakeCase = (string) => {
+        const toSnakeCase = (str = "") => {
+            const strArr = str.split(" ");
+            const snakeArr = strArr.reduce((acc, val) => {
+                return acc.concat(val.toLowerCase());
+            }, []);
+            return snakeArr.join("_");
+        };
+        const newText = toSnakeCase(string);
+        return newText
+    };
+
+    const balanceApi = () => {
+
+        balanceButton.showLoading(true);
+
+        const balanceRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                phoneNo: global.account_phone,
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/BalanceEnquiry", balanceRequestOptions)
+            .then((balance_response) => balance_response.json())
+            .then(balance_response => {
+                // console.log("Before Error: ", balance_response[0].Is_Successful);
+
+                let balance_arr = {};
+
+                if (balance_response[0].Is_Successful) {
+                    api_balance_details = balance_response[0].Account;
+                    api_balance_details.forEach(api_balance_detail => {
+                        console.log(api_balance_detail, "\n")
+                        balance_acc_name = api_balance_detail.AccountType.trim();
+                        balance_acc_amount = api_balance_detail.Amount;
+
+                        balance_arr[snakeCase(balance_acc_name)] = balance_acc_amount;
+
+                    });
+
+                    if (balance_arr.ordinary) {
+                        setUserBalance({ value: balance_arr.ordinary })
+                    } else {
+                        setUserBalance({ value: "" })
+                    }
+
+                    console.log(balance_arr);
+                    global.account_balance_raw = api_balance_details;
+                    global.account_balance = balance_arr;
+                    // navigation.navigate("Home");
+                    setHasBalanceOpacity(!hasBalanceOpacity)
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: "Balance Inquiry Failed",
+                        position: 'bottom'
+                    });
+                }
+            })
+            .catch((error) => {
+                console.log("Balance Error: ", error);
+                Toast.show({
+                    type: 'error',
+                    text1: error,
+                    position: 'bottom'
+                });
+            }).finally(() => balanceButton.showLoading(false));
 
     }
 
@@ -152,33 +279,41 @@ const Home = ({ navigation }) => {
                         <Text style={styles.userName}>{global.member_details.Name}</Text>
                     </View>
                 </View>
-                <View style={styles.userBalance}>
+                {hasBalanceOpacity ? (<View style={styles.userBalance}>
                     <View style={styles.userBalanceHeader}>
-                        <Text>Ordinary</Text>
-                        {/* <Text style={{ fontWeight: "bold" }}>Last Month</Text> */}
+                        <Text>Account Balance</Text>
                     </View>
-                    <Text style={styles.balance}>KES {global.account_balance.ordinary}</Text>
-                    <View style={styles.userBalanceHeader}>
-                        <View>
-                            <Text>Deposits</Text>
-                            <Text style={styles.userBalanceAmount}>
-                                <Image style={styles.topIcons} source={require('../assets/icons/income.png')} />
-                                KES {global.account_balance.deposits}
-                            </Text>
-                        </View>
-                        <View>
-                            <Text>Shares</Text>
-                            <Text style={styles.userBalanceAmount}>
-                                <Image style={styles.topIcons} source={require('../assets/icons/expenses.png')} />
-                                KES {global.account_balance.shares}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
+                    <Text style={styles.balance}>KES {userBalance.value}</Text>
+                </View>) : null}
+                {!hasBalanceOpacity ? (<View style={styles.userBalanceButton}>
+                    <Text style={{ marginStart: 25 }}>Note: Balance Inquiry is a billable transaction</Text>
+                    <AnimateLoadingButton
+                        ref={c => (this.balanceButton = c)}
+                        width={300}
+                        height={50}
+                        title="View Balance"
+                        backgroundColor="#348bd3"
+                        borderRadius={4}
+                        onPress={balanceApi}
+                    />
+                </View>) : null}
             </View>
+
+            {/* Service */}
             <View style={styles.homeMenu} >
-                <Row size={12}>
-                    <Col sm={6} md={4} lg={3} style={styles.menuItem}>
+                <Text style={{
+                    position: 'absolute',
+                    top: 0,
+                    marginBottom: 50,
+                    marginTop: 5,
+                    fontWeight: "bold",
+                    color: '#000000',
+                    fontSize: 18,
+                }}>Services</Text>
+                <Row size={12} style={{
+                    marginTop: 5,
+                }}>
+                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
                             onPress={() => {
                                 setHasDepositOpacity(!hasDepositOpacity)
@@ -187,7 +322,7 @@ const Home = ({ navigation }) => {
                         </TouchableOpacity>
                         <Text style={styles.menuItemText}>Deposit Money</Text>
                     </Col>
-                    <Col sm={6} md={4} lg={3} style={styles.menuItem}>
+                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
                             onPress={() => {
                                 setHasWithdrawOpacity(!hasWithdrawOpacity)
@@ -196,7 +331,7 @@ const Home = ({ navigation }) => {
                         </TouchableOpacity>
                         <Text style={styles.menuItemText}>Withdraw Money</Text>
                     </Col>
-                    <Col sm={6} md={4} lg={3} style={styles.menuItem}>
+                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
                             onPress={() => {
                                 Toast.show({
@@ -205,78 +340,172 @@ const Home = ({ navigation }) => {
                                     position: 'bottom'
                                 });
                             }}>
-                            <Image style={styles.menuIcons} source={require('../assets/icons/money-transfer.png')} />
+                            <Image style={styles.menuIcons} source={require('../assets/icons/bank-transfer.png')} />
                         </TouchableOpacity>
-                        <Text style={styles.menuItemText}>Mobile Money</Text>
+                        <Text style={styles.menuItemText}>Bank Transfer</Text>
                     </Col>
-                    <Col sm={6} md={4} lg={3} style={styles.menuItem}>
+                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
+                        <TouchableOpacity style={styles.menuIconsContainer}
+                            onPress={() => {
+                                chapchapLoan()
+                            }}>
+                            <Image style={styles.menuIcons} source={require('../assets/icons/loan.png')} />
+                        </TouchableOpacity>
+                        <Text style={styles.menuItemText}>Chapchap Loan</Text>
+                    </Col>
+                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
                         <TouchableOpacity style={styles.menuIconsContainer}
                             onPress={() => {
                                 setHasLoanOpacity(!hasLoanOpacity)
                             }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/signing.png')} />
                         </TouchableOpacity>
-                        <Text style={styles.menuItemText}>Request Loan</Text>
+                        <Text style={styles.menuItemText}>Loan</Text>
+                    </Col>
+                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
+                        <TouchableOpacity style={styles.menuIconsContainer}
+                            onPress={() => {
+                                Toast.show({
+                                    type: 'info',
+                                    text1: 'Coming Soon ⌛',
+                                    position: 'bottom'
+                                });
+                            }}>
+                            <Image style={styles.menuIcons} source={require('../assets/icons/simcard.png')} />
+                        </TouchableOpacity>
+                        <Text style={styles.menuItemText}>Buy Airtime</Text>
+                    </Col>
+                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
+                        <TouchableOpacity style={styles.menuIconsContainer}
+                            onPress={() => {
+                                setHasUtilitiesOpacity(!hasUtilitiesOpacity)
+                            }}>
+                            <Image style={styles.menuIcons} source={require('../assets/icons/all-utilities.png')} />
+                        </TouchableOpacity>
+                        <Text style={styles.menuItemText}>Pay Utilities</Text>
                     </Col>
                 </Row>
             </View>
 
-            {hasWithdrawOpacity ?
-                <View style={[styles.listContainer]}>
-                    <Text style={styles.listTitle}>Select Account to Withdraw From</Text>
-                    <FlatList style={[styles.homeMenuList]}
-                        data={global.debitable_accounts}
-                        renderItem={renderWithdrawAccountList}
-                        keyExtractor={(item) => item.AccountNo}
-                        extraData={selectedWithdrawId}
-                    />
-                </View> : null
-            }
+            {/* Withdraw Modal */}
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={hasWithdrawOpacity}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setHasWithdrawOpacity(!hasWithdrawOpacity)
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={[styles.listContainer]}>
+                            <Text style={styles.listTitle}>Select Account to Withdraw From</Text>
+                            <View style={styles.divider}></View>
+                            <FlatList style={[styles.homeMenuList]}
+                                data={global.debitable_accounts}
+                                renderItem={renderWithdrawAccountList}
+                                keyExtractor={(item) => item.AccountNo}
+                                extraData={selectedWithdrawId}
+                            />
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setHasWithdrawOpacity(!hasWithdrawOpacity)}>
+                                <Text style={styles.textStyle}>Hide</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
 
-            {hasDepositOpacity ?
-                <View style={[styles.listContainer]}>
-                    <Text style={styles.listTitle}>Select Account to Deposit To</Text>
-                    <FlatList style={[styles.homeMenuList]}
-                        data={global.creditable_accounts}
-                        renderItem={renderDepositAccountList}
-                        keyExtractor={(item) => item.AccountNo}
-                        extraData={selectedDepositId}
-                    />
-                </View> : null}
+            {/* Deposit Modal */}
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={hasDepositOpacity}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setHasDepositOpacity(!hasDepositOpacity)
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={[styles.listContainer]}>
+                            <Text style={styles.listTitle}>Select Account to Deposit To</Text>
+                            <View style={styles.divider}></View>
+                            <FlatList style={[styles.homeMenuList]}
+                                data={global.creditable_accounts}
+                                renderItem={renderDepositAccountList}
+                                keyExtractor={(item) => item.AccountNo}
+                                extraData={selectedDepositId}
+                            />
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setHasDepositOpacity(!hasDepositOpacity)}>
+                                <Text style={styles.textStyle}>Hide</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
 
-            {hasLoanOpacity ?
-                <View style={[styles.listContainer]}>
-                    <Text style={styles.listTitle}>Select Account to Borrow From</Text>
-                    <FlatList style={[styles.homeMenuList]}
-                        data={global.loan_accounts}
-                        renderItem={renderLoanAccountList}
-                        keyExtractor={(item) => item.AccountNo}
-                        extraData={selectedLoanId}
-                    />
-                </View> : null}
+            {/* Loan Modal */}
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={hasLoanOpacity}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setHasLoanOpacity(!hasLoanOpacity)
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={[styles.listContainer]}>
+                            <Text style={styles.listTitle}>Select Account to Borrow From</Text>
+                            <View style={styles.divider}></View>
+                            <FlatList style={[styles.homeMenuList]}
+                                data={global.loan_accounts}
+                                renderItem={renderLoanAccountList}
+                                keyExtractor={(item) => item.AccountNo}
+                                extraData={selectedLoanId}
+                            />
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setHasLoanOpacity(!hasLoanOpacity)}>
+                                <Text style={styles.textStyle}>Hide</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
 
-            {/* <View style={[styles.homeMoneyMenu, { opacity: hasWithdrawOpacity ? 1.0 : 0 }]} >
-                <Row size={12}>
-                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
-                        <TouchableOpacity style={styles.menuIconsContainer}
-                            onPress={() => navigation.navigate("Dial")}>
-                            <Image style={styles.homeMenuIcons} source={require('../assets/icons/airtel.png')} />
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
-                        <TouchableOpacity style={styles.homeMenuIconsContainer}
-                            onPress={() => navigation.navigate("Dial")}>
-                            <Image style={styles.homeMenuIcons} source={require('../assets/icons/mpesa.png')} />
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.menuItem}>
-                        <TouchableOpacity style={styles.homeMenuIconsContainer}
-                            onPress={() => navigation.navigate("Dial")}>
-                            <Image style={styles.homeMenuIcons} source={require('../assets/icons/card.png')} />
-                        </TouchableOpacity>
-                    </Col>
-                </Row>
-            </View> */}
+            {/* Utilities Modal */}
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={hasUtilitiesOpacity}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setHasUtilitiesOpacity(!hasUtilitiesOpacity)
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={[styles.listContainer]}>
+                            <Text style={styles.listTitle}>Select Account to Borrow From</Text>
+                            <View style={styles.divider}></View>
+                            <FlatList style={[styles.homeMenuList]}
+                                data={global.account_utilities}
+                                renderItem={renderUtilitiesList}
+                                keyExtractor={(item) => item.Type}
+                                extraData={selectedUtilitiesType}
+                            />
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setHasUtilitiesOpacity(!hasUtilitiesOpacity)}>
+                                <Text style={styles.textStyle}>Hide</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
         </View>
     );
 }
@@ -327,7 +556,8 @@ const styles = StyleSheet.create({
     },
     homeHeader: {
         backgroundColor: "#ffffff",
-        height: '40%',
+        height: '32%',
+        margin: 10,
         paddingTop: 50,
         paddingHorizontal: 30,
         position: 'absolute',
@@ -338,7 +568,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     userInfo: {
-        marginTop: 10,
+        marginTop: 0,
         justifyContent: "flex-start",
         alignItems: "center",
         flexDirection: 'row'
@@ -368,7 +598,10 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     userBalance: {
-        marginTop: 10,
+        marginTop: 20,
+    },
+    userBalanceButton: {
+        marginTop: 30,
     },
     userBalanceHeader: {
         marginTop: 10,
@@ -378,7 +611,7 @@ const styles = StyleSheet.create({
     balance: {
         marginTop: 10,
         fontWeight: "700",
-        fontSize: 30,
+        fontSize: 22,
         color: "#3e6cce",
     },
     userBalanceAmount: {
@@ -390,9 +623,8 @@ const styles = StyleSheet.create({
     homeMenu: {
         position: 'absolute',
         bottom: 0,
-        marginBottom: 50,
+        marginBottom: 0,
         marginHorizontal: 30
-
     },
     menuItem: {
         justifyContent: 'center',
@@ -400,19 +632,19 @@ const styles = StyleSheet.create({
         marginVertical: 30,
     },
     menuIconsContainer: {
-        width: 120,
-        height: 120,
+        width: 80,
+        height: 80,
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 60
     },
     menuIcons: {
-        width: 80,
-        height: 80,
+        width: 50,
+        height: 50,
     },
     menuItemText: {
-        fontSize: 16,
+        fontSize: 14,
         color: 'black',
         width: 70,
         fontWeight: '700',
@@ -424,8 +656,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: 'black',
         fontWeight: '700',
+        padding: 15,
         textAlign: 'center',
         marginTop: 10,
+    },
+    divider: {
+        width: "100%",
+        height: 1,
+        backgroundColor: "lightgray"
     },
     homeMoneyMenu: {
         position: 'absolute',
@@ -438,6 +676,47 @@ const styles = StyleSheet.create({
     homeMenuIcons: {
         width: 90,
         height: 90,
+    },
+    centeredView: {
+        flex: 1,
+        backgroundColor: "#00000099",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    buttonOpen: {
+        backgroundColor: "#F194FF",
+    },
+    buttonClose: {
+        backgroundColor: "#d10d06",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
     }
 });
 
