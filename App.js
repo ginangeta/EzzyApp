@@ -1,17 +1,38 @@
 import "react-native-gesture-handler";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect } from "react";
-import Toast from 'react-native-toast-message';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Main from "./views/Main";
+import React, { useState, useEffect, useCallback } from "react";
+import * as SplashScreen from 'expo-splash-screen';
+import Toast from 'react-native-toast-message';
 import Login from "./views/auth/Login";
+import Main from "./views/Main";
 
 
 const Stack = createStackNavigator();
 
+// SplashScreen.preventAutoHideAsync();
+
 const App = () => {
+
   useEffect(() => {
+    prepare();
+  }, [])
+
+  async function prepare() {
+    try {
+      await new Promise((resolve, reject) => {
+        resolve(getToken());
+      });
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      console.log("Done Promise");
+      // SplashScreen.hideAsync();
+    }
+  }
+
+  const getToken = () => {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -33,30 +54,7 @@ const App = () => {
         console.log(err);
 
       });
-
-
-    // const getData = async () => {
-    //   try {
-    //     const value = await AsyncStorage.getItem('user_phone')
-    //     if (value !== null) {
-    //       global.user_phone = value;
-    //       console.log(value);
-    //     } else {
-    //       console.log('Here');
-    //       return 0;
-    //     }
-    //   } catch (e) {
-    //     Toast.show({
-    //       type: 'error',
-    //       text1: 'Error obtaining phone number',
-    //       text2: e,
-    //       position: 'bottom'
-    //     });
-    //   }
-    // }
-
-
-  }, [])
+  }
 
   return (
     <>

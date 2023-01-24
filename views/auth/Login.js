@@ -22,8 +22,10 @@ const Login = ({ navigation }) => {
     const [state, setState] = useState({
         compatible: false,
         fingerprints: false,
+        savedLogins: false,
         result: '',
-    })
+    });
+
 
     const getData = async (userPhone) => {
         try {
@@ -31,6 +33,9 @@ const Login = ({ navigation }) => {
             if (value !== null) {
                 setPhone({ value: value, error: '' })
                 console.log(value);
+                setState({
+                    savedLogins: true,
+                }); 
             } else {
                 console.log("Error: Empty Value");
             }
@@ -51,6 +56,9 @@ const Login = ({ navigation }) => {
             console.log("Console Credentials:" + credentials);
 
             if (credentials != null) {
+                setState({
+                    savedLogins: true,
+                });
                 checkDeviceForHardware(credentials);
             } else {
                 console.log('No saved credentials');
@@ -126,26 +134,31 @@ const Login = ({ navigation }) => {
     };
 
     const showBiometricOptionAlert = () => {
-        Alert.alert(
-            'Biometric Options',
-            'Would you like to use the biometric feature?',
-            [
-                {
-                    text: 'Yes',
-                    onPress: () => {
-                        promptForBiometrics();
+
+        if (state.savedLogins == true) {
+            checkUserStatus();
+        } else {
+            Alert.alert(
+                'Biometric Options',
+                'Would you like to use the biometric feature?',
+                [
+                    {
+                        text: 'Yes',
+                        onPress: () => {
+                            promptForBiometrics();
+                        },
                     },
-                },
-                {
-                    text: 'No',
-                    onPress: () => {
-                        proceedLogin();
-                        console.log('Cancel')
+                    {
+                        text: 'No',
+                        onPress: () => {
+                            proceedLogin();
+                            console.log('Cancel')
+                        },
+                        style: 'cancel',
                     },
-                    style: 'cancel',
-                },
-            ]
-        );
+                ]
+            );
+        }
     };
 
     const promptForBiometrics = async () => {
@@ -235,6 +248,8 @@ const Login = ({ navigation }) => {
                         text2: 'Incorrect Credentials 🛑',
                         position: 'bottom'
                     });
+
+                    loginButton.showLoading(false);
                 }
             })
             .catch(err => {

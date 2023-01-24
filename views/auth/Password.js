@@ -2,23 +2,44 @@ import { StyleSheet, View, Text, TextInput, Button, Image, TouchableOpacity, Sta
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import React, { useState } from "react";
 import Toast from 'react-native-toast-message';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default function Password({ navigation }) {
     const [text, setText] = useState("");
-    const timeout = React.useRef(null);
+    const [loading, setLoading] = useState({
+        isLoading: false
+    });
 
     const onPressHandler = (index) => setText(text + index);
     const onDeleteHandler = (index) => setText(text.slice(0, -1));
 
     const getPassword = () => {
-        if (text != global.account_pin) {
+        setLoading({
+            isLoading: true,
+        });
+
+        console.log("Loading: " + loading.isLoading);
+        if (text.length < 0) {
+            Toast.show({
+                type: 'error',
+                text1: 'Transaction Failed',
+                text2: 'Kindly enter pin to proceed 🛑',
+                position: 'bottom'
+            });
+            setLoading({
+                isLoading: false,
+            });
+        } else if (text != global.account_pin) {
             Toast.show({
                 type: 'error',
                 text1: 'Transaction Failed',
                 text2: 'Incorrect Credentials 🛑',
                 position: 'bottom'
             });
-            console.log("Here");
+            setLoading({
+                isLoading: false,
+            });
+            console.log("Loading: " + loading.isLoading);
         } else {
             if (global.transactionType == "Loan") {
                 verfyLoan()
@@ -81,6 +102,11 @@ export default function Password({ navigation }) {
                     text1: err,
                     position: 'bottom'
                 });
+            }).finally(() => {
+                setLoading({
+                    isLoading: false,
+                });
+                console.log("Loading: " + loading.isLoading);
             });
     }
 
@@ -134,6 +160,11 @@ export default function Password({ navigation }) {
                     text1: err,
                     position: 'bottom'
                 });
+            }).finally(() => {
+                setLoading({
+                    isLoading: false,
+                });
+                console.log("Loading: " + loading.isLoading);
             });
     }
 
@@ -170,26 +201,6 @@ export default function Password({ navigation }) {
                 });
 
                 navigation.navigate("Home");
-
-
-                // if (response[0].Is_Successful) {
-                //     Toast.show({
-                //         type: 'success',
-                //         text1: 'Transaction Successful',
-                //         text2: 'KES ' + global.transaction_amount + ' Deposited 😊',
-                //         position: 'bottom'
-                //     });
-
-                //     navigation.navigate("Home");
-
-                // } else {
-                //     Toast.show({
-                //         type: 'error',
-                //         text1: 'Transaction Failed',
-                //         text2: 'Incorrect Credentials 🛑',
-                //         position: 'bottom'
-                //     });
-                // }
             })
             .catch(err => {
                 console.log(err);
@@ -198,6 +209,11 @@ export default function Password({ navigation }) {
                     text1: err,
                     position: 'bottom'
                 });
+            }).finally(() => {
+                setLoading({
+                    isLoading: false,
+                });
+                console.log("Loading: " + loading.isLoading);
             });
     }
 
@@ -251,12 +267,22 @@ export default function Password({ navigation }) {
                     text1: err,
                     position: 'bottom'
                 });
+            }).finally(() => {
+                setLoading({
+                    isLoading: false,
+                });
+                console.log("Loading: " + loading.isLoading);
             });
     }
 
 
     return (
         <View style={styles.container}>
+            <Spinner
+                visible={loading.isLoading}
+                textContent={'Loading...'}
+                textStyle={styles.spinnerTextStyle}
+            />
             <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
             <View style={styles.dailPad}>
                 <View style={styles.dailPadInput}>
@@ -410,15 +436,20 @@ const styles = StyleSheet.create({
         borderRadius: 30
     },
     confirmation: {
-        width: "100%",
+        width: "60%",
         justifyContent: 'center',
         padding: 20,
         alignItems: 'center',
-        backgroundColor: "#3e6cce",
+        alignSelf: 'center',
+        borderRadius: 30,
+        backgroundColor: "#7f9fe3",
     },
     confirmationText: {
         color: "white",
         fontSize: 22,
         fontWeight: "700"
-    }
+    },
+    spinnerTextStyle: {
+        color: '#FFF'
+    },
 });
