@@ -1,6 +1,7 @@
 import { Platform, StyleSheet, View, Text, FlatList, Button, Image, TouchableOpacity, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import Toast from 'react-native-toast-message';
+import RNRestart from 'react-native-restart'; 
 
 export default function Profile({ navigation }) {
     const [text, setText] = useState("");
@@ -49,7 +50,7 @@ export default function Profile({ navigation }) {
                     Toast.show({
                         type: 'error',
                         text1: "Balance Inquiry Failed",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -58,7 +59,7 @@ export default function Profile({ navigation }) {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
 
@@ -90,7 +91,7 @@ export default function Profile({ navigation }) {
 
                     <View style={styles.topHomeIcons}>
                         <TouchableOpacity style={styles.topIconsContainer}
-                            onPress={() => navigation.navigate("Login")}>
+                            onPress={() => RNRestart.Restart()}>
                             <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
                         </TouchableOpacity>
                     </View>

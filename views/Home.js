@@ -3,6 +3,7 @@ import AnimateLoadingButton from 'react-native-animate-loading-button';
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import React, { useState, useEffect } from "react";
 import Toast from 'react-native-toast-message';
+import RNRestart from 'react-native-restart';
 
 const DepositItem = ({ item, onPress, backgroundColor, textColor }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
@@ -47,7 +48,7 @@ const Home = ({ navigation }) => {
         // Toast.show({
         //     type: 'error',
         //     text1: withdrawAccountNumber,
-        //     position: 'bottom'
+        //     position: 'top'
         // });
 
         global.transactionType = "Withdraw";
@@ -78,7 +79,7 @@ const Home = ({ navigation }) => {
         // Toast.show({
         //     type: 'error',
         //     text1: depositAccountNumber,
-        //     position: 'bottom'
+        //     position: 'top'
         // });
 
         global.transactionType = "Deposit";
@@ -111,7 +112,7 @@ const Home = ({ navigation }) => {
         // Toast.show({
         //     type: 'error',
         //     text1: loanAccountName,
-        //     position: 'bottom'
+        //     position: 'top'
         // });
 
         global.transactionType = "Loan";
@@ -142,7 +143,7 @@ const Home = ({ navigation }) => {
         // Toast.show({
         //     type: 'error',
         //     text1: utilitiesTypeName,
-        //     position: 'bottom'
+        //     position: 'top'
         // });
 
         global.transactionType = "Utilities";
@@ -251,7 +252,7 @@ const Home = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Balance Inquiry Failed",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -260,7 +261,7 @@ const Home = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             }).finally(() => balanceButton.showLoading(false));
 
@@ -276,7 +277,7 @@ const Home = ({ navigation }) => {
                         <Image style={styles.topSideIcon} source={require('../assets/icons/alarm.png')} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.topIconsContainer}
-                        onPress={() => navigation.navigate("Login")}>
+                        onPress={() => { RNRestart.Restart() }}>
                         <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
                     </TouchableOpacity>
                 </View>
@@ -292,7 +293,7 @@ const Home = ({ navigation }) => {
                 </View>
                 {hasBalanceOpacity ? (<View style={styles.userBalance}>
                     <View style={styles.userBalanceHeader}>
-                        <Text>Account Balance</Text>
+                        <Text>Ordinary Account Balance</Text>
                     </View>
                     <Text style={styles.balance}>KES {userBalance.value}</Text>
                 </View>) : null}
@@ -349,7 +350,7 @@ const Home = ({ navigation }) => {
                                 Toast.show({
                                     type: 'info',
                                     text1: 'Coming Soon ⌛',
-                                    position: 'bottom'
+                                    position: 'top'
                                 });
                             }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/bank-transfer.png')} />
@@ -380,7 +381,7 @@ const Home = ({ navigation }) => {
                                 Toast.show({
                                     type: 'info',
                                     text1: 'Coming Soon ⌛',
-                                    position: 'bottom'
+                                    position: 'top'
                                 });
                             }}>
                             <Image style={styles.menuIcons} source={require('../assets/icons/simcard.png')} />

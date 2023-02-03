@@ -13,6 +13,7 @@ import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import Constants from 'expo-constants';
+import RNRestart from 'react-native-restart'; 
 import { phoneValidator } from '../helpers/phoneValidator';
 import { passwordValidator } from '../helpers/passwordValidator';
 
@@ -178,7 +179,7 @@ const Login = ({ navigation }) => {
                 type: 'error',
                 text1: 'Biometrics Prompt Error',
                 text2: 'Kindly try again later🛑',
-                position: 'bottom'
+                position: 'top'
             });
         };
 
@@ -246,7 +247,7 @@ const Login = ({ navigation }) => {
                         type: 'error',
                         text1: 'Login Failed',
                         text2: 'Incorrect Credentials 🛑',
-                        position: 'bottom'
+                        position: 'top'
                     });
 
                     loginButton.showLoading(false);
@@ -257,7 +258,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: err,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
     }
@@ -270,7 +271,7 @@ const Login = ({ navigation }) => {
                 type: 'error',
                 text1: 'Saving Phone Number Failed',
                 text2: 'System Issue 🏗️',
-                position: 'bottom'
+                position: 'top'
             });
         }
     }
@@ -311,7 +312,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Utilities Inquiry Failed",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -320,7 +321,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
     }
@@ -357,7 +358,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Can't get debitable account at this point",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -366,7 +367,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
 
@@ -414,7 +415,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Can't get loan accounts at this point",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -423,7 +424,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
 
@@ -468,7 +469,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Can't get creditable account at this point",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -477,7 +478,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             })
             .finally(() => loginButton.showLoading(false));

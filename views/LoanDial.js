@@ -14,7 +14,7 @@ export default function LoanDial({ navigation }) {
                 type: 'error',
                 text1: 'Failed',
                 text2: 'Amount Cannot Be Empty 🛑',
-                position: 'bottom'
+                position: 'top'
             });
             return
         } else {

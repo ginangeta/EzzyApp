@@ -24,7 +24,7 @@ export default function Password({ navigation }) {
                 type: 'error',
                 text1: 'Transaction Failed',
                 text2: 'Kindly enter pin to proceed 🛑',
-                position: 'bottom'
+                position: 'top'
             });
             setLoading({
                 isLoading: false,
@@ -34,7 +34,7 @@ export default function Password({ navigation }) {
                 type: 'error',
                 text1: 'Transaction Failed',
                 text2: 'Incorrect Credentials 🛑',
-                position: 'bottom'
+                position: 'top'
             });
             setLoading({
                 isLoading: false,
@@ -81,7 +81,7 @@ export default function Password({ navigation }) {
                         type: 'success',
                         text1: 'Transaction Successful',
                         text2: 'KES ' + global.transaction_amount + ' Withdrawn 😊',
-                        position: 'bottom'
+                        position: 'top'
                     });
 
                     navigation.navigate("Home");
@@ -91,7 +91,7 @@ export default function Password({ navigation }) {
                         type: 'error',
                         text1: 'Transaction Failed',
                         text2: 'Incorrect Credentials 🛑',
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -100,7 +100,7 @@ export default function Password({ navigation }) {
                 Toast.show({
                     type: 'error',
                     text1: err,
-                    position: 'bottom'
+                    position: 'top'
                 });
             }).finally(() => {
                 setLoading({
@@ -139,7 +139,7 @@ export default function Password({ navigation }) {
                         type: 'success',
                         text1: 'Transaction Successful',
                         text2: 'KES ' + global.transaction_amount + ' Paid 😊',
-                        position: 'bottom'
+                        position: 'top'
                     });
 
                     navigation.navigate("Home");
@@ -149,7 +149,7 @@ export default function Password({ navigation }) {
                         type: 'error',
                         text1: 'Transaction Failed',
                         text2: 'Incorrect Credentials 🛑',
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -158,7 +158,7 @@ export default function Password({ navigation }) {
                 Toast.show({
                     type: 'error',
                     text1: err,
-                    position: 'bottom'
+                    position: 'top'
                 });
             }).finally(() => {
                 setLoading({
@@ -197,7 +197,7 @@ export default function Password({ navigation }) {
                     type: 'success',
                     text1: 'Transaction Successful',
                     text2: 'KES ' + global.transaction_amount + ' Deposited 😊',
-                    position: 'bottom'
+                    position: 'top'
                 });
 
                 navigation.navigate("Home");
@@ -207,7 +207,7 @@ export default function Password({ navigation }) {
                 Toast.show({
                     type: 'error',
                     text1: err,
-                    position: 'bottom'
+                    position: 'top'
                 });
             }).finally(() => {
                 setLoading({
@@ -246,7 +246,7 @@ export default function Password({ navigation }) {
                         type: 'success',
                         text1: 'Loan Request Successful',
                         text2: 'KES ' + global.transaction_amount + ' Loan Being Processed. A notification will be sent out once the application has been approved 😊',
-                        position: 'bottom'
+                        position: 'top'
                     });
 
                     navigation.navigate("Home");
@@ -256,7 +256,7 @@ export default function Password({ navigation }) {
                         type: 'error',
                         text1: 'Loan Request Failed',
                         text2: 'Incorrect Credentials 🛑',
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -265,7 +265,7 @@ export default function Password({ navigation }) {
                 Toast.show({
                     type: 'error',
                     text1: err,
-                    position: 'bottom'
+                    position: 'top'
                 });
             }).finally(() => {
                 setLoading({

@@ -32,7 +32,7 @@ export default function Statement({ navigation }) {
                 Toast.show({
                     type: 'error',
                     text1: err,
-                    position: 'bottom'
+                    position: 'top'
                 });
                 console.log(err);
 

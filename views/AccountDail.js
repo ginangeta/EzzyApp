@@ -15,7 +15,7 @@ export default function AccountDial({ navigation }) {
                     type: 'error',
                     text1: 'Failed',
                     text2: 'Amount Cannot Be Empty 🛑',
-                    position: 'bottom'
+                    position: 'top'
                 });
                 return
             } else {
@@ -28,7 +28,7 @@ export default function AccountDial({ navigation }) {
                     type: 'error',
                     text1: 'Failed',
                     text2: 'Amount Cannot Be Empty 🛑',
-                    position: 'bottom'
+                    position: 'top'
                 });
                 return
             } else {
@@ -39,7 +39,7 @@ export default function AccountDial({ navigation }) {
             Toast.show({
                 type: 'info',
                 text1: 'Coming Soon ⌛',
-                position: 'bottom'
+                position: 'top'
             });
         }
     }

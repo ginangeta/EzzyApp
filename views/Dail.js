@@ -13,7 +13,7 @@ export default function Dial({ navigation }) {
             Toast.show({
                 type: 'info',
                 text1: 'Coming Soon ⌛',
-                position: 'bottom'
+                position: 'top'
             });
 
         } else {
@@ -22,7 +22,7 @@ export default function Dial({ navigation }) {
                     type: 'error',
                     text1: 'Failed',
                     text2: 'Amount Cannot Be Empty 🛑',
-                    position: 'bottom'
+                    position: 'top'
                 });
                 return
             } else {

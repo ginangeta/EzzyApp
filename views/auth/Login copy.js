@@ -134,7 +134,7 @@ const Login = ({ navigation }) => {
                         type: 'error',
                         text1: 'Login Failed',
                         text2: 'Incorrect Credentials 🛑',
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -143,7 +143,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: err,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
     }
@@ -156,7 +156,7 @@ const Login = ({ navigation }) => {
                 type: 'error',
                 text1: 'Saving Phone Number Failed',
                 text2: 'System Issue 🏗️',
-                position: 'bottom'
+                position: 'top'
             });
         }
     }
@@ -197,7 +197,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Utilities Inquiry Failed",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -206,7 +206,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
     }
@@ -243,7 +243,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Can't get debitable account at this point",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -252,7 +252,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
 
@@ -300,7 +300,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Can't get loan accounts at this point",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -309,7 +309,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             });
 
@@ -346,7 +346,7 @@ const Login = ({ navigation }) => {
                     Toast.show({
                         type: 'error',
                         text1: "Can't get creditable account at this point",
-                        position: 'bottom'
+                        position: 'top'
                     });
                 }
             })
@@ -355,7 +355,7 @@ const Login = ({ navigation }) => {
                 Toast.show({
                     type: 'error',
                     text1: error,
-                    position: 'bottom'
+                    position: 'top'
                 });
             })
             .finally(() => loginButton.showLoading(false));
