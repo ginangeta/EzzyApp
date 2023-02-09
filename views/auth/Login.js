@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity, KeyboardAvoidingView, Alert } from "react-native";
 import AnimateLoadingButton from "react-native-animate-loading-button";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from "react-native-vector-icons/Ionicons"
 import * as LocalAuthentication from 'expo-local-authentication';
 // import PhoneInput from 'react-native-smooth-phone-input';
 import * as SecureStore from 'expo-secure-store';
@@ -19,15 +20,15 @@ import { phoneValidator } from '../helpers/phoneValidator';
 import { passwordValidator } from '../helpers/passwordValidator';
 
 const Login = ({ navigation }) => {
-    const [phone, setPhone] = useState({ value: '', error: '' });
+    const [phone, setPhone] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
-    const [valid, setValid] = useState();
+    const [savedLogins, setSavedLogins] = useState(false)
     const [state, setState] = useState({
         compatible: false,
         fingerprints: false,
-        savedLogins: false,
         result: '',
-    });
+        error: '',
+    })
 
 
     const getData = async (userPhone) => {
@@ -36,9 +37,7 @@ const Login = ({ navigation }) => {
             if (value !== null) {
                 setPhone({ value: value, error: '' })
                 console.log(value);
-                setState({
-                    savedLogins: true,
-                });
+                setSavedLogins(true);
             } else {
                 console.log("Error: Empty Value");
             }
@@ -48,6 +47,10 @@ const Login = ({ navigation }) => {
     }
 
     useEffect(() => {
+        setState({
+            error: ''
+        });
+
         getData();
         checkUserStatus();
     }, []);
@@ -59,16 +62,41 @@ const Login = ({ navigation }) => {
             console.log("Console Credentials:" + credentials);
 
             if (credentials != null) {
-                setState({
-                    savedLogins: true,
-                });
-                checkDeviceForHardware(credentials);
+                setSavedLogins(true);
+                console.log("Console Status:" + savedLogins);
+                if (state.error != "user_cancel") {
+                    checkDeviceForHardware(credentials);
+                }
             } else {
                 console.log('No saved credentials');
+                Alert.alert(
+                    'No saved credentials',
+                    'Kindly login manually using your phone and pin to proceed.',
+                    [
+                        {
+                            text: 'Scan',
+                            onPress: () => {
+                                scanFingerprint(credentials);
+                            },
+                        },
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel'),
+                            style: 'cancel',
+                        },
+                    ]
+                );
             }
         } catch (error) {
             console.log("Check status error: " + error);
         }
+    }
+
+    const getBiometricsFunction = async () => {
+        const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
+
+        checkDeviceForHardware(credentials);
+
     }
 
     const checkDeviceForHardware = async (credentials) => {
@@ -91,11 +119,7 @@ const Login = ({ navigation }) => {
         console.log("Fingerprints is enrolled:" + fingerprints);
 
         if (fingerprints) {
-            if (Platform.OS === 'android') {
-                showAndroidAlert(credentials);
-            } else {
-                scanFingerprint(credentials);
-            }
+            scanFingerprint(credentials);
         } else {
             console.log("No fingerprints enrolled");
         }
@@ -106,8 +130,10 @@ const Login = ({ navigation }) => {
             'Scan your finger.'
         );
         console.log('Scan Result:', result);
+        console.log('Scan Result Error:', result['error']);
         setState({
             result: JSON.stringify(result),
+            error: result['error']
         });
 
         if (result["success"] == true) {
@@ -138,8 +164,11 @@ const Login = ({ navigation }) => {
 
     const showBiometricOptionAlert = () => {
 
-        if (state.savedLogins == true) {
-            checkUserStatus();
+        checkUserStatus();
+
+        if (savedLogins == true) {
+            // checkUserStatus();
+            proceedLogin();
         } else {
             Alert.alert(
                 'Biometric Options',
@@ -252,6 +281,8 @@ const Login = ({ navigation }) => {
                         text2: 'Incorrect Credentials 🛑',
                         position: 'top'
                     });
+
+                    console.log('Failed');
 
                     loginButton.showLoading(false);
                 }
@@ -467,7 +498,11 @@ const Login = ({ navigation }) => {
 
                     console.log(creditable_accounts);
                     global.creditable_accounts = creditable_accounts;
-                    navigation.navigate("Main")
+                    // navigation.navigate("Main")
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Main' }],
+                    });
                 } else {
                     Toast.show({
                         type: 'error',
@@ -505,26 +540,6 @@ const Login = ({ navigation }) => {
                     textContentType="telephoneNumber"
                     keyboardType="phone-pad"
                 />
-                {/* <PhoneInput
-                    ref={phoneInput}
-                    defaultValue={phone.value.toString()}
-                    defaultCode="KE"
-                    layout="first"
-                    withShadow
-                    autoFocus
-                    containerStyle={styles.phoneNumberView}
-                    textContainerStyle={{ paddingVertical: 0 }}
-                    onChangeText={(text) => {
-                        setPhone({ value: text, error: '' })
-                    }}
-                    onChangeFormattedText={text => {
-                        setPhone({ value: text, error: '' })
-                    }}
-                /> */}
-                {/* <PhoneInput
-                    onlyCountries={['de', 'es']}
-                    localization={{ 'Germany': 'Deutschland', 'Spain': 'España' }}
-                /> */}
                 <TextInput
                     label="Password"
                     returnKeyType="done"
@@ -535,13 +550,14 @@ const Login = ({ navigation }) => {
                     keyboardType="number-pad"
                     secureTextEntry
                 />
-                <View style={styles.forgotPassword}>
+                {/* <View style={styles.forgotPassword}>
                     <TouchableOpacity
-                        onPress={() => navigation.navigate('ResetPasswordScreen')}
+                        // onPress={() => navigation.navigate('ResetPasswordScreen')}
+                        onPress={getBiometricsFunction}
                     >
-                        <Text style={styles.forgot}>Forgot your password?</Text>
+                        <Text style={styles.forgot}>Use biometrics?</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
 
                 <View style={{ height: 20 }} />
 
@@ -555,23 +571,11 @@ const Login = ({ navigation }) => {
                     onPress={onLoginPressed}
                 />
 
-                {/* <View style={{ marginTop: 10 }}>
-                    {state.fingerprints === true ? <AnimateLoadingButton
-                        ref={c => (this.loginButton = c)}
-                        width={300}
-                        height={50}
-                        title="Biometric Login"
-                        backgroundColor="#a676de"
-                        borderRadius={4}
-                        onPress={
-                            Platform.OS === 'android'
-                                ? showAndroidAlert
-                                : scanFingerprint
-                        }
-                    /> : ""}
-                </View> */}
-
             </KeyboardAvoidingView>
+            {savedLogins ? <TouchableOpacity style={styles.back}
+                onPress={getBiometricsFunction}>
+                <Icon name={"ios-finger-print"} size={50} color={theme.colors.primary} />
+            </TouchableOpacity> : ''}
         </Background >
     )
 }
@@ -607,7 +611,7 @@ const styles = StyleSheet.create({
         color: "black"
     },
     forgot: {
-        color: "black",
+        color: theme.colors.primary,
         fontSize: 11
     },
     phoneNumberView: {
@@ -626,6 +630,14 @@ const styles = StyleSheet.create({
     },
     loginText: {
         color: "white"
+    },
+    back: {
+        marginTop: 40,
+        marginLeft: 5,
+        zIndex: 10,
+        padding: 20,
+        position: 'absolute',
+        bottom: 0,
     }
 });
 

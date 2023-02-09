@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react"
 import { StyleSheet, SafeAreaView, StatusBar, Text, View } from "react-native"
 import Constants from 'expo-constants';
-import PinBackground from '../components/PinBackground';
+import PinBackground from '../components/PinBackground'
 import Icon from "react-native-vector-icons/Ionicons"
 import ReactNativePinView from "react-native-pin-view"
+import { StackActions } from '@react-navigation/native';
 import { theme } from '../core/theme'
-import Spinner from 'react-native-loading-spinner-overlay';
+import Spinner from 'react-native-loading-spinner-overlay'
 import Toast from 'react-native-toast-message';
 // import { Constants } from 'expo';
 
@@ -192,7 +193,8 @@ function Password({ navigation }) {
                                     text2: 'Transaction Cancelled🛑',
                                     position: 'top'
                                 });
-                                navigation.navigate("Home")
+                                // navigation.navigate("Home")
+                                navigation.dispatch(StackActions.popToTop())
                             }
                             if (key === "three") {
                                 alert("You just click to 3")

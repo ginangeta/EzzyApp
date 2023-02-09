@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/Ionicons"
 import ReactNativePinView from "react-native-pin-view"
 import { theme } from '../core/theme'
 import Spinner from 'react-native-loading-spinner-overlay';
+import { StackActions } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 // import { Constants } from 'expo';
 
@@ -361,7 +362,8 @@ function Password({ navigation }) {
                                 text2: 'Transaction Cancelled🛑',
                                 position: 'top'
                             });
-                            navigation.navigate("Home")
+                            // navigation.navigate("Home")
+                            navigation.dispatch(StackActions.popToTop())
                         }
                         if (key === "custom_right") {
                             pinView.current.clear()

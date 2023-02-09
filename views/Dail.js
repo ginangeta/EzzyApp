@@ -1,5 +1,6 @@
 import { StyleSheet, SafeAreaView, View, Text, TextInput, Button, Image, TouchableOpacity, StatusBar } from "react-native";
 import { Column as Col, Row } from 'react-native-flexbox-grid';
+import { StackActions } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/Ionicons"
 import React, { useState } from "react";
 import { theme } from './core/theme'
@@ -42,7 +43,8 @@ export default function Dial({ navigation }) {
         }}>
             <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
             <TouchableOpacity style={styles.back}
-                onPress={() => navigation.navigate("Home")}>
+                // onPress={() => navigation.navigate("Home")}>
+                onPress={() => navigation.dispatch(StackActions.popToTop())}>
                 <Icon name={"ios-arrow-back-outline"} size={30} color={theme.colors.primary} />
             </TouchableOpacity>
             {/* <Icon name={"ios-chevron-back-circle-outline"} style={styles.back} size={40} color={theme.colors.primary} onPress={() => navigation.navigate("Home")} /> */}
