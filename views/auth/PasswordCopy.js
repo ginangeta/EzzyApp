@@ -279,7 +279,7 @@ export default function Password({ navigation }) {
         <View style={styles.container}>
             <Spinner
                 visible={loading.isLoading}
-                textContent={'Thank you for being patient. Processing transaction.....'}
+                textContent={'Loading...'}
                 textStyle={styles.spinnerTextStyle}
             />
             <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />

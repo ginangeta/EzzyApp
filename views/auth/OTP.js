@@ -300,7 +300,7 @@ function Password({ navigation }) {
         <Background>
             <Spinner
                 visible={loading.isLoading}
-                textContent={'Thank you for being patient. Processing transaction.....'}
+                textContent={'Loading...'}
                 textStyle={styles.spinnerTextStyle}
             />
             <StatusBar barStyle="dark-content" />

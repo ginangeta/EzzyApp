@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
-import { StyleSheet, SafeAreaView, StatusBar, Text } from "react-native"
+import { StyleSheet, SafeAreaView, StatusBar, Text, View } from "react-native"
 import Constants from 'expo-constants';
-import Background from '../components/Background';
+import PinBackground from '../components/PinBackground';
 import Icon from "react-native-vector-icons/Ionicons"
 import ReactNativePinView from "react-native-pin-view"
 import { theme } from '../core/theme'
@@ -118,84 +118,92 @@ function Password({ navigation }) {
     }
 
     return (
-        <Background>
+        <PinBackground>
             <Spinner
                 visible={loading.isLoading}
-                textContent={'Thank you for being patient. Processing transaction.....'}
+                textContent={'Loading...'}
                 textStyle={styles.spinnerTextStyle}
             />
             <StatusBar barStyle="dark-content" />
             <SafeAreaView
-                style={{ flex: 1, backgroundColor: "rgba(0,0,0,0)", justifyContent: 'center', alignItems: "center", width: "100%" }}>
-                <Text
-                    style={{
-                        paddingTop: 24,
-                        paddingBottom: 10,
-                        color: theme.colors.primary,
-                        fontSize: 28,
-                        textAlign: 'center',
-                    }}>
-                    Enter Pin
-                </Text>
-                <Text
-                    style={{
-                        paddingTop: 10,
-                        paddingBottom: 58,
-                        color: theme.colors.primary,
-                        fontSize: 18,
-                        textAlign: 'center',
-                    }}>
-                    Kindly input your mobile banking pin
-                </Text>
-                <ReactNativePinView
-                    inputSize={30}
-                    ref={pinView}
-                    pinLength={4}
-                    buttonSize={70}
-                    onValueChange={value => setEnteredPin(value)}
-                    buttonAreaStyle={{
-                        marginTop: 24,
-                    }}
-                    inputAreaStyle={{
-                        marginBottom: 34,
-                    }}
-                    inputViewEmptyStyle={{
-                        backgroundColor: "transparent",
-                        borderWidth: 1,
-                        borderColor: theme.colors.primary,
-                    }}
-                    inputViewFilledStyle={{
-                        backgroundColor: theme.colors.primary,
-                    }}
-                    buttonViewStyle={{
-                        borderWidth: 1,
-                        borderColor: theme.colors.primary,
-                    }}
-                    buttonTextStyle={{
-                        color: theme.colors.primary,
-                    }}
-                    onButtonPress={key => {
-                        if (key === "custom_right") {
-                            pinView.current.clear()
-                        }
-                        if (key === "custom_left") {
-                            Toast.show({
-                                type: 'info',
-                                text1: 'Cancelled',
-                                text2: 'Transaction Cancelled🛑',
-                                position: 'top'
-                            });
-                            navigation.navigate("Home")
-                        }
-                        if (key === "three") {
-                            alert("You just click to 3")
-                        }
-                    }}
-                    customRightButton={showRemoveButton ? <Icon name={"ios-backspace"} size={46} color={theme.colors.primary} /> : undefined}
-                    customLeftButton={showCancelButton ? <Icon name={"ios-close"} size={46} color={theme.colors.primary} /> : undefined}
-                />
+                style={{
+                    flex: 1, justifyContent: 'center', padding: 20,
+                    backgroundColor: "rgba(255, 255, 255, 0.5)", alignItems: "center", width: "100%"
+                }}>
+                <View style={{
+                    padding: 20,
+                    maxWidth: 340,
+                }}>
+                    <Text
+                        style={{
+                            paddingTop: 24,
+                            paddingBottom: 10,
+                            color: theme.colors.primary,
+                            fontSize: 28,
+                            textAlign: 'center',
+                        }}>
+                        Enter Pin
+                    </Text>
+                    <Text
+                        style={{
+                            paddingTop: 10,
+                            paddingBottom: 58,
+                            color: theme.colors.primary,
+                            fontSize: 18,
+                            textAlign: 'center',
+                        }}>
+                        Kindly input your mobile banking pin
+                    </Text>
+                    <ReactNativePinView
+                        inputSize={30}
+                        ref={pinView}
+                        pinLength={4}
+                        buttonSize={70}
+                        onValueChange={value => setEnteredPin(value)}
+                        buttonAreaStyle={{
+                            marginTop: 24,
+                        }}
+                        inputAreaStyle={{
+                            marginBottom: 34,
+                        }}
+                        inputViewEmptyStyle={{
+                            backgroundColor: "transparent",
+                            borderWidth: 1,
+                            borderColor: theme.colors.primary,
+                        }}
+                        inputViewFilledStyle={{
+                            backgroundColor: theme.colors.primary,
+                        }}
+                        buttonViewStyle={{
+                            borderWidth: 1,
+                            borderColor: theme.colors.primary,
+                        }}
+                        buttonTextStyle={{
+                            color: theme.colors.primary,
+                        }}
+                        onButtonPress={key => {
+                            if (key === "custom_right") {
+                                pinView.current.clear()
+                            }
+                            if (key === "custom_left") {
+                                Toast.show({
+                                    type: 'info',
+                                    text1: 'Cancelled',
+                                    text2: 'Transaction Cancelled🛑',
+                                    position: 'top'
+                                });
+                                navigation.navigate("Home")
+                            }
+                            if (key === "three") {
+                                alert("You just click to 3")
+                            }
+                        }}
+                        customRightButton={showRemoveButton ? <Icon name={"ios-backspace"} size={46} color={theme.colors.primary} /> : undefined}
+                        customLeftButton={showCancelButton ? <Icon name={"ios-close"} size={46} color={theme.colors.primary} /> : undefined}
+                    />
+                </View>
             </SafeAreaView>
-        </Background>
+        </PinBackground>
     )
 }
 
