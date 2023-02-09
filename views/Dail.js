@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     },
     dailPadInputText: {
         fontSize: 35,
-        fontWeight: 'bold',
+        fontWeight: '500',
         color: 'black',
         textAlign: 'center'
     },
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     dailPadItemText: {
         fontSize: 30,
         color: 'black',
-        fontWeight: "700",
+        fontWeight: "400",
     },
     dailPadDelete: {
         height: 40,

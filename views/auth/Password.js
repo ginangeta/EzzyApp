@@ -1,17 +1,36 @@
-import { StyleSheet, View, Text, TextInput, Button, Image, TouchableOpacity, StatusBar } from "react-native";
-import { Column as Col, Row } from 'react-native-flexbox-grid';
-import React, { useState } from "react";
-import Toast from 'react-native-toast-message';
+import React, { useEffect, useRef, useState } from "react"
+import { StyleSheet, SafeAreaView, StatusBar, Text } from "react-native"
+import Constants from 'expo-constants';
+import Background from '../components/Background';
+import Icon from "react-native-vector-icons/Ionicons"
+import ReactNativePinView from "react-native-pin-view"
+import { theme } from '../core/theme'
 import Spinner from 'react-native-loading-spinner-overlay';
+import Toast from 'react-native-toast-message';
+// import { Constants } from 'expo';
 
-export default function Password({ navigation }) {
-    const [text, setText] = useState("");
+function Password({ navigation }) {
+    const pinView = useRef(null)
+    const [showRemoveButton, setShowRemoveButton] = useState(false)
+    const [showCancelButton, setShowCancelButton] = useState(false)
+    const [enteredPin, setEnteredPin] = useState("")
     const [loading, setLoading] = useState({
         isLoading: false
     });
 
-    const onPressHandler = (index) => setText(text + index);
-    const onDeleteHandler = (index) => setText(text.slice(0, -1));
+    useEffect(() => {
+        if (enteredPin.length > 0) {
+            setShowRemoveButton(true)
+        } else {
+            setShowRemoveButton(false)
+        }
+        if (enteredPin.length === 4) {
+            // setShowCancelButton(true)
+            getPassword()
+        } else {
+            setShowCancelButton(true)
+        }
+    }, [enteredPin]);
 
     const getPassword = () => {
         setLoading({
@@ -19,7 +38,7 @@ export default function Password({ navigation }) {
         });
 
         console.log("Loading: " + loading.isLoading);
-        if (text.length < 0) {
+        if (enteredPin.length < 0) {
             Toast.show({
                 type: 'error',
                 text1: 'Transaction Failed',
@@ -29,7 +48,7 @@ export default function Password({ navigation }) {
             setLoading({
                 isLoading: false,
             });
-        } else if (text != global.account_pin) {
+        } else if (enteredPin != global.account_pin) {
             Toast.show({
                 type: 'error',
                 text1: 'Transaction Failed',
@@ -39,23 +58,18 @@ export default function Password({ navigation }) {
             setLoading({
                 isLoading: false,
             });
-            console.log("Loading: " + loading.isLoading);
+            console.log("Loading: " + global.account_pin);
         } else {
-            if (global.transactionType == "Loan") {
-                verfyLoan()
-            } else if (global.transactionType == "Deposit") {
-                verfyDeposit()
-            } else if (global.transactionType == "Utilities") {
-                verfyUtilities()
-            } else if (global.transactionType == "Withdraw") {
-                verifyWithdrawal(text)
-            }
+            verifyOTP(enteredPin)
+
         }
+
+        pinView.current.clearAll()
     }
 
-    const verifyWithdrawal = () => {
+    const verifyOTP = () => {
 
-        const transactionRequestOptions = {
+        const otpRequestOptions = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,29 +81,22 @@ export default function Password({ navigation }) {
                     Token: global.token
                 },
                 Acccount: global.withdrawAccountNumber,
-                Amount: global.transaction_amount,
                 PhoneNo: global.account_phone
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", transactionRequestOptions)
+        fetch("https://testasili.devopsfoundry.cloud:8050/GetOTP", otpRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", transactionRequestOptions);
+                console.log(response, "\n", otpRequestOptions);
                 if (response[0].Is_Successful) {
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Transaction Successful',
-                        text2: 'KES ' + global.transaction_amount + ' Withdrawn 😊',
-                        position: 'top'
-                    });
-
-                    navigation.navigate("Home");
-
+                    global.otp = response[0].otp;
+                    console.log("Input OTP: " + global.otp);
+                    navigation.navigate("OTP");
                 } else {
                     Toast.show({
                         type: 'error',
-                        text1: 'Transaction Failed',
+                        text1: 'Process Failed Not Sent',
                         text2: 'Incorrect Credentials 🛑',
                         position: 'top'
                     });
@@ -109,341 +116,90 @@ export default function Password({ navigation }) {
                 console.log("Loading: " + loading.isLoading);
             });
     }
-
-    const verfyUtilities = () => {
-
-        const transactionRequestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                key: {
-                    Api_Key: global.apiKey,
-                    Token: global.token
-                },
-                UtilityType: global.UtilitiesType,
-                SourcAcccount: global.transaction_account,
-                Amount: global.transaction_amount,
-                PhoneNo: global.account_phone
-            })
-        }
-
-        fetch("https://testasili.devopsfoundry.cloud:8050/PayUtility", transactionRequestOptions)
-            .then((response) => response.json())
-            .then(response => {
-                console.log(response, "\n", transactionRequestOptions);
-                if (response[0].Is_Successful) {
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Transaction Successful',
-                        text2: 'KES ' + global.transaction_amount + ' Paid 😊',
-                        position: 'top'
-                    });
-
-                    navigation.navigate("Home");
-
-                } else {
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Transaction Failed',
-                        text2: 'Incorrect Credentials 🛑',
-                        position: 'top'
-                    });
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                Toast.show({
-                    type: 'error',
-                    text1: err,
-                    position: 'top'
-                });
-            }).finally(() => {
-                setLoading({
-                    isLoading: false,
-                });
-                console.log("Loading: " + loading.isLoading);
-            });
-    }
-
-    const verfyDeposit = () => {
-
-        const transactionRequestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                key: {
-                    Api_Key: global.apiKey,
-                    Token: global.token
-                },
-                IsMpesa: true,
-                SourcAcccount: global.depositAccountNumber,
-                DestAcccount: global.transaction_account,
-                Amount: global.transaction_amount,
-                PhoneNo: global.account_phone
-            })
-        }
-
-        fetch("https://testasili.devopsfoundry.cloud:8050/Deposit", transactionRequestOptions)
-            .then((response) => response.json())
-            .then(response => {
-                console.log(response, "\n", transactionRequestOptions);
-                Toast.show({
-                    type: 'success',
-                    text1: 'Transaction Successful',
-                    text2: 'KES ' + global.transaction_amount + ' Deposited 😊',
-                    position: 'top'
-                });
-
-                navigation.navigate("Home");
-            })
-            .catch(err => {
-                console.log(err);
-                Toast.show({
-                    type: 'error',
-                    text1: err,
-                    position: 'top'
-                });
-            }).finally(() => {
-                setLoading({
-                    isLoading: false,
-                });
-                console.log("Loading: " + loading.isLoading);
-            });
-    }
-
-    const verfyLoan = () => {
-
-        const loanRequestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                key: {
-                    Api_Key: global.apiKey,
-                    Token: global.token
-                },
-                DeviceID: "",
-                AccountNo: global.LoanAccountNumber,
-                Amount: global.transaction_amount,
-                PhoneNo: global.account_phone
-            })
-        }
-
-        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", loanRequestOptions)
-            .then((response) => response.json())
-            .then(response => {
-                console.log(response, "\n", loanRequestOptions);
-                if (response[0].Is_Successful) {
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Loan Request Successful',
-                        text2: 'KES ' + global.transaction_amount + ' Loan Being Processed. A notification will be sent out once the application has been approved 😊',
-                        position: 'top'
-                    });
-
-                    navigation.navigate("Home");
-
-                } else {
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Loan Request Failed',
-                        text2: 'Incorrect Credentials 🛑',
-                        position: 'top'
-                    });
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                Toast.show({
-                    type: 'error',
-                    text1: err,
-                    position: 'top'
-                });
-            }).finally(() => {
-                setLoading({
-                    isLoading: false,
-                });
-                console.log("Loading: " + loading.isLoading);
-            });
-    }
-
 
     return (
-        <View style={styles.container}>
+        <Background>
             <Spinner
                 visible={loading.isLoading}
-                textContent={'Loading...'}
+                textContent={'Thank you for being patient. Processing transaction.....'}
                 textStyle={styles.spinnerTextStyle}
             />
-            <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
-            <View style={styles.dailPad}>
-                <View style={styles.dailPadInput}>
-                    <TextInput
-                        style={styles.dailPadInputText}
-                        placeholder="Password"
-                        secureTextEntry={true}
-                        onChangeText={newText => setText(newText)}
-                        editable={false}
-                        value={text} />
-                </View>
-                <Row size={12}>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 1)}>
-                            <Text style={styles.dailPadItemText}>1</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 2)}>
-                            <Text style={styles.dailPadItemText}>2</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 3)}>
-                            <Text style={styles.dailPadItemText}>3</Text>
-                        </TouchableOpacity>
-                    </Col>
-                </Row>
-                <Row size={12}>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 4)}>
-                            <Text style={styles.dailPadItemText}>4</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 5)}>
-                            <Text style={styles.dailPadItemText}>5</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 6)}>
-                            <Text style={styles.dailPadItemText}>6</Text>
-                        </TouchableOpacity>
-                    </Col>
-                </Row>
-                <Row size={12}>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 7)}>
-                            <Text style={styles.dailPadItemText}>7</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 8)}>
-                            <Text style={styles.dailPadItemText}>8</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 9)}>
-                            <Text style={styles.dailPadItemText}>9</Text>
-                        </TouchableOpacity>
-                    </Col>
-                </Row>
-                <Row size={12}>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer}
-                            onPress={() => navigation.navigate("Dial")}>
-                            <Text style={styles.dailPadItemCancel}>Cancel</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 0)}>
-                            <Text style={styles.dailPadItemText}>0</Text>
-                        </TouchableOpacity>
-                    </Col>
-                    <Col sm={4} md={4} lg={3} style={styles.dailPadItem}>
-                        <TouchableOpacity style={styles.dailPadContainer} onPress={onDeleteHandler.bind(this, 0)}>
-                            <Image style={styles.dailPadDelete} source={require('../../assets/icons/delete-white.png')} />
-                        </TouchableOpacity>
-                    </Col>
-                </Row>
-                <Row size={12} style={{ marginBottom: 0 }}>
-                    <Col sm={12} md={12} lg={12} style={{ marginBottom: 0 }}>
-                        <TouchableOpacity style={styles.confirmation}
-                            onPress={getPassword}>
-                            <Text style={styles.confirmationText}>SUBMIT</Text>
-                        </TouchableOpacity>
-                    </Col>
-                </Row>
-            </View>
-        </View>
-    );
+            <StatusBar barStyle="dark-content" />
+            <SafeAreaView
+                style={{ flex: 1, backgroundColor: "rgba(0,0,0,0)", justifyContent: 'center', alignItems: "center", width: "100%" }}>
+                <Text
+                    style={{
+                        paddingTop: 24,
+                        paddingBottom: 10,
+                        color: theme.colors.primary,
+                        fontSize: 28,
+                        textAlign: 'center',
+                    }}>
+                    Enter Pin
+                </Text>
+                <Text
+                    style={{
+                        paddingTop: 10,
+                        paddingBottom: 58,
+                        color: theme.colors.primary,
+                        fontSize: 18,
+                        textAlign: 'center',
+                    }}>
+                    Kindly input your mobile banking pin
+                </Text>
+                <ReactNativePinView
+                    inputSize={30}
+                    ref={pinView}
+                    pinLength={4}
+                    buttonSize={70}
+                    onValueChange={value => setEnteredPin(value)}
+                    buttonAreaStyle={{
+                        marginTop: 24,
+                    }}
+                    inputAreaStyle={{
+                        marginBottom: 34,
+                    }}
+                    inputViewEmptyStyle={{
+                        backgroundColor: "transparent",
+                        borderWidth: 1,
+                        borderColor: theme.colors.primary,
+                    }}
+                    inputViewFilledStyle={{
+                        backgroundColor: theme.colors.primary,
+                    }}
+                    buttonViewStyle={{
+                        borderWidth: 1,
+                        borderColor: theme.colors.primary,
+                    }}
+                    buttonTextStyle={{
+                        color: theme.colors.primary,
+                    }}
+                    onButtonPress={key => {
+                        if (key === "custom_right") {
+                            pinView.current.clear()
+                        }
+                        if (key === "custom_left") {
+                            Toast.show({
+                                type: 'info',
+                                text1: 'Cancelled',
+                                text2: 'Transaction Cancelled🛑',
+                                position: 'top'
+                            });
+                            navigation.navigate("Home")
+                        }
+                        if (key === "three") {
+                            alert("You just click to 3")
+                        }
+                    }}
+                    customRightButton={showRemoveButton ? <Icon name={"ios-backspace"} size={46} color={theme.colors.primary} /> : undefined}
+                    customLeftButton={showCancelButton ? <Icon name={"ios-close"} size={46} color={theme.colors.primary} /> : undefined}
+                />
+            </SafeAreaView>
+        </Background>
+    )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#3e6cce',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-    },
-    dailPadInput: {
-        width: "100%",
-        marginBottom: 50,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    dailPadInputText: {
-        fontSize: 40,
-        padding: 10,
-        width: '80%',
-        fontWeight: 'bold',
-        color: 'white',
-        textAlign: 'center'
-    },
-    dailPad: {
-        position: 'absolute',
-        bottom: 60,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    dailPadContainer: {
-        paddingHorizontal: 20,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    dailPadItem: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 100
-    },
-    dailPadItemText: {
-        fontSize: 30,
-        color: 'white',
-        fontWeight: "700",
-    }, dailPadItemCancel: {
-        fontSize: 20,
-        color: 'white',
-        fontWeight: "700",
-    },
-    dailPadDelete: {
-        height: 30,
-        width: 40
-    },
-    dailPadCurrency: {
-        fontSize: 20,
-        color: 'black',
-        fontWeight: "700",
-        backgroundColor: "#dfe7fa",
-        paddingHorizontal: 20,
-        paddingVertical: 8,
-        borderRadius: 30
-    },
-    confirmation: {
-        width: "60%",
-        justifyContent: 'center',
-        padding: 20,
-        alignItems: 'center',
-        alignSelf: 'center',
-        borderRadius: 30,
-        backgroundColor: "#7f9fe3",
-    },
     confirmationText: {
         color: "white",
         fontSize: 22,
@@ -453,3 +209,6 @@ const styles = StyleSheet.create({
         color: '#FFF'
     },
 });
+
+export default Password;
+

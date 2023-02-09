@@ -1,25 +1,27 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity, KeyboardAvoidingView, Alert } from "react-native";
+import AnimateLoadingButton from "react-native-animate-loading-button";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as LocalAuthentication from 'expo-local-authentication'
+import * as LocalAuthentication from 'expo-local-authentication';
+// import PhoneInput from 'react-native-smooth-phone-input';
 import * as SecureStore from 'expo-secure-store';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Background from '../components/Background';
 import Toast from 'react-native-toast-message';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
 import Button from '../components/Button';
-import AnimateLoadingButton from "react-native-animate-loading-button";
 import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
 import Constants from 'expo-constants';
-import RNRestart from 'react-native-restart'; 
+import RNRestart from 'react-native-restart';
 import { phoneValidator } from '../helpers/phoneValidator';
 import { passwordValidator } from '../helpers/passwordValidator';
 
 const Login = ({ navigation }) => {
     const [phone, setPhone] = useState({ value: '', error: '' });
     const [password, setPassword] = useState({ value: '', error: '' })
+    const [valid, setValid] = useState();
     const [state, setState] = useState({
         compatible: false,
         fingerprints: false,
@@ -36,7 +38,7 @@ const Login = ({ navigation }) => {
                 console.log(value);
                 setState({
                     savedLogins: true,
-                }); 
+                });
             } else {
                 console.log("Error: Empty Value");
             }
@@ -141,7 +143,7 @@ const Login = ({ navigation }) => {
         } else {
             Alert.alert(
                 'Biometric Options',
-                'Would you like to use the biometric feature?',
+                'Save password and use biometrics on next login?',
                 [
                     {
                         text: 'Yes',
@@ -195,7 +197,7 @@ const Login = ({ navigation }) => {
 
     const onLoginPressed = () => {
 
-        const phoneError = phoneValidator(phone.value)
+        const phoneError = phone.current?.isValidNumber(phone.value);
         const passwordError = passwordValidator(password.value)
         if (phoneError || passwordError) {
             setPhone({ ...phone, error: phoneError })
@@ -203,6 +205,7 @@ const Login = ({ navigation }) => {
             return
         }
 
+        console.log(phone.value, password.value);
         loginApi(phone.value, password.value);
     }
 
@@ -502,6 +505,26 @@ const Login = ({ navigation }) => {
                     textContentType="telephoneNumber"
                     keyboardType="phone-pad"
                 />
+                {/* <PhoneInput
+                    ref={phoneInput}
+                    defaultValue={phone.value.toString()}
+                    defaultCode="KE"
+                    layout="first"
+                    withShadow
+                    autoFocus
+                    containerStyle={styles.phoneNumberView}
+                    textContainerStyle={{ paddingVertical: 0 }}
+                    onChangeText={(text) => {
+                        setPhone({ value: text, error: '' })
+                    }}
+                    onChangeFormattedText={text => {
+                        setPhone({ value: text, error: '' })
+                    }}
+                /> */}
+                {/* <PhoneInput
+                    onlyCountries={['de', 'es']}
+                    localization={{ 'Germany': 'Deutschland', 'Spain': 'España' }}
+                /> */}
                 <TextInput
                     label="Password"
                     returnKeyType="done"
@@ -586,6 +609,12 @@ const styles = StyleSheet.create({
     forgot: {
         color: "black",
         fontSize: 11
+    },
+    phoneNumberView: {
+        width: '100%',
+        height: 55,
+        marginTop: 10,
+        backgroundColor: 'white'
     },
     loginBtn: {
         backgroundColor: "#348bd3",

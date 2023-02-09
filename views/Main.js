@@ -16,6 +16,7 @@ import LoanApplication from "./LoanApplication";
 import LoanGuarantors from "./LoanGuarantors";
 import Login from "./auth/Login";
 import Password from "./auth/Password";
+import OTP from "./auth/OTP";
 import Statements from "./Statements";
 
 const Stack = createStackNavigator();
@@ -137,6 +138,7 @@ const HomeStack = () => {
       <Stack.Screen name="LoanDial" component={LoanDial} options={{ headerShown: false }} />
       <Stack.Screen name="Loan" component={Loan} options={{ headerShown: false }} />
       <Stack.Screen name="Password" component={Password} options={{ headerShown: false }} />
+      <Stack.Screen name="OTP" component={OTP} options={{ headerShown: false }} />
       <Stack.Screen name="LoanGuarantors" component={LoanGuarantors} options={{ headerShown: false }} />
       <Stack.Screen name="LoanApplication" component={LoanApplication} options={{ headerShown: false }} />
     </Stack.Navigator>

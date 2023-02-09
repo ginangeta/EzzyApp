@@ -277,7 +277,7 @@ const Home = ({ navigation }) => {
                         <Image style={styles.topSideIcon} source={require('../assets/icons/alarm.png')} />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.topIconsContainer}
-                        onPress={() => { RNRestart.Restart() }}>
+                        onPress={() => { navigation.navigate("Login") }}>
                         <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
                     </TouchableOpacity>
                 </View>
@@ -502,7 +502,7 @@ const Home = ({ navigation }) => {
                     }}>
                     <View style={styles.centeredView}>
                         <View style={[styles.listContainer]}>
-                            <Text style={styles.listTitle}>Select Account to Borrow From</Text>
+                            <Text style={styles.listTitle}>Select Utility Type</Text>
                             <View style={styles.divider}></View>
                             <FlatList style={[styles.homeMenuList]}
                                 data={global.account_utilities}
