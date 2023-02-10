@@ -1,10 +1,11 @@
 import "react-native-gesture-handler";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Toast from 'react-native-toast-message';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { PanResponder } from "react-native"
 import Home from "./Home";
 import About from "./About";
 import Dial from "./Dail";
@@ -22,7 +23,11 @@ import Statements from "./Statements";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const Main = () => {
+const Main = (navigation) => {
+
+  const timerId = useRef(false);
+  const [timeForinactivityInSecond, setTimeForinactivityInSecond] = useState(3600);
+
   useEffect(() => {
     const requestOptions = {
       method: 'POST',
@@ -32,6 +37,8 @@ const Main = () => {
         SecretKey: "EZYCASH"
       })
     }
+
+    resetInactivityTimeout();
 
     fetch("https://testasili.devopsfoundry.cloud:8050/Token", requestOptions)
       .then(response => response.json())
@@ -46,9 +53,31 @@ const Main = () => {
       });
 
   }, [])
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponderCapture: () => {
+        resetInactivityTimeout();
+      }
+    })
+  )
+
+  const resetInactivityTimeout = () => {
+    clearTimeout(timerId.current);
+
+    timerId.current = setTimeout(() => {
+      console.log('System Timeout');
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: 'Login' }],
+      // });
+      // Stack.Navigator.
+    }, timeForinactivityInSecond * 10);
+  }
+
   return (
     <>
-      <Tab.Navigator
+      <Tab.Navigator {...panResponder.panHandlers}
         initialRouteName="Feed"
         screenOptions={({ route }) => ({
           headerStyle: { visible: false },

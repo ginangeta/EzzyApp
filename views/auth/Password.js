@@ -8,13 +8,17 @@ import { StackActions } from '@react-navigation/native';
 import { theme } from '../core/theme'
 import Spinner from 'react-native-loading-spinner-overlay'
 import Toast from 'react-native-toast-message';
+import { Countdown } from 'react-native-countdown-text';
+
 // import { Constants } from 'expo';
 
 function Password({ navigation }) {
     const pinView = useRef(null)
     const [showRemoveButton, setShowRemoveButton] = useState(false)
     const [showCancelButton, setShowCancelButton] = useState(false)
+    const [showRetryOTP, setShowRetryOTP] = useState(false)
     const [enteredPin, setEnteredPin] = useState("")
+    const [finishTime, setFinishTime] = useState(0)
     const [loading, setLoading] = useState({
         isLoading: false
     });
@@ -31,7 +35,9 @@ function Password({ navigation }) {
         } else {
             setShowCancelButton(true)
         }
+
     }, [enteredPin]);
+
 
     const getPassword = () => {
         setLoading({
@@ -81,8 +87,8 @@ function Password({ navigation }) {
                     Api_Key: global.apiKey,
                     Token: global.token
                 },
-                Acccount: global.withdrawAccountNumber,
-                PhoneNo: global.account_phone
+                PhoneNo: global.account_phone,
+                DeviceNo: ""
             })
         }
 
@@ -148,7 +154,7 @@ function Password({ navigation }) {
                     <Text
                         style={{
                             paddingTop: 10,
-                            paddingBottom: 58,
+                            paddingBottom: 10,
                             color: theme.colors.primary,
                             fontSize: 18,
                             textAlign: 'center',

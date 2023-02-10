@@ -14,8 +14,6 @@ import Button from '../components/Button';
 import TextInput from '../components/TextInput';
 import BackButton from '../components/BackButton';
 import { theme } from '../core/theme';
-import Constants from 'expo-constants';
-import RNRestart from 'react-native-restart';
 import { phoneValidator } from '../helpers/phoneValidator';
 import { passwordValidator } from '../helpers/passwordValidator';
 
@@ -431,15 +429,17 @@ const Login = ({ navigation }) => {
                 if (loan_acc_response[0].Is_Successful) {
                     const loan_accounts = loan_acc_response[0].EAmount;
                     loan_accounts.forEach(loan => {
+                        console.log("Before Error: ", loan.LoanCode);
                         if (loan.LoanCode == "Chap Chap") {
                             global.ChapChapLoanAccountNumber = loan.AccountNo;
                             global.ChapChaploanAccountName = loan.LoanCode;
+                            global.ChapChaploanLoanLimit = loan.MinAmount + " - " + loan.MaxAmount;
                         } else {
                             console.log("Other Loan Type");
                         }
                     });
 
-                    const new_loan_account = loan_accounts.filter(item => item.LoanCode != "Chap Chap")
+                    const new_loan_account = loan_accounts.filter(item => item.LoanCode == "Chap Chap")
 
                     console.log(new_loan_account);
                     global.loan_accounts = new_loan_account;

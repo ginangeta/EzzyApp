@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { ImageBackground, StyleSheet, SafeAreaView, StatusBar, Text } from "react-native"
+import { TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Text } from "react-native"
 import Constants from 'expo-constants';
 import Background from '../components/Background';
 import Icon from "react-native-vector-icons/Ionicons"
@@ -8,13 +8,17 @@ import { theme } from '../core/theme'
 import Spinner from 'react-native-loading-spinner-overlay';
 import { StackActions } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import { Countdown } from 'react-native-countdown-text';
+import moment from "moment";
 // import { Constants } from 'expo';
 
 function Password({ navigation }) {
     const pinView = useRef(null)
     const [showRemoveButton, setShowRemoveButton] = useState(false)
     const [showCancelButton, setShowCancelButton] = useState(false)
+    const [showRetryOTP, setShowRetryOTP] = useState(true)
     const [enteredPin, setEnteredPin] = useState("")
+    const [finishTime, setFinishTime] = useState(moment(new Date()).add(1, 'minutes').unix())
     const [loading, setLoading] = useState({
         isLoading: false
     });
@@ -31,6 +35,7 @@ function Password({ navigation }) {
         } else {
             setShowCancelButton(true)
         }
+        // startCountDown();
     }, [enteredPin]);
 
     const processTransaction = () => {
@@ -297,6 +302,68 @@ function Password({ navigation }) {
             });
     }
 
+    const startCountDown = () => {
+        setFinishTime(moment(new Date()).add(1, 'minutes').unix());
+        console.log(finishTime)
+        // setShowRetryOTP(!showRetryOTP);
+    }
+
+    const resetCountDown = () => {
+        setFinishTime(0);
+        console.log(finishTime)
+        setShowRetryOTP(!showRetryOTP);
+    }
+
+    const resendOTP = () => {
+        const otpRequestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                PhoneNo: global.account_phone,
+                DeviceNo: ""
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/GetOTP", otpRequestOptions)
+            .then((response) => response.json())
+            .then(response => {
+                console.log(response, "\n", otpRequestOptions);
+                if (response[0].Is_Successful) {
+                    global.otp = response[0].otp;
+                    console.log("Input OTP: " + global.otp);
+                    startCountDown();
+                    setShowRetryOTP(true);
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Process Failed Not Sent',
+                        text2: 'Incorrect Credentials 🛑',
+                        position: 'top'
+                    });
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                Toast.show({
+                    type: 'error',
+                    text1: err,
+                    position: 'top'
+                });
+            }).finally(() => {
+                setLoading({
+                    isLoading: false,
+                });
+                console.log("Loading: " + loading.isLoading);
+            });
+    }
+
     return (
         <Background>
             <Spinner
@@ -320,13 +387,39 @@ function Password({ navigation }) {
                 <Text
                     style={{
                         paddingTop: 10,
-                        paddingBottom: 58,
+                        paddingBottom: 10,
                         color: theme.colors.primary,
                         fontSize: 18,
                         textAlign: 'center',
                     }}>
                     Kindly input the one time pin sent to your registered number
                 </Text>
+                {showRetryOTP ? <Text
+                    style={{
+                        paddingTop: 10,
+                        paddingBottom: 58,
+                        color: theme.colors.secondary,
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                    }}>RESEND OTP:
+                    <Countdown finishTime={finishTime} format={' s'} onFinish={resetCountDown} />
+                </Text> :
+                    <TouchableOpacity style={styles.back}
+                        onPress={resendOTP}>
+                        <Text
+                            style={{
+                                paddingTop: 10,
+                                paddingBottom: 58,
+                                color: theme.colors.primary,
+                                fontSize: 18,
+                                textAlign: 'center',
+                                fontWeight: 'bold',
+                            }}>
+                            CLICK TO RESEND OTP
+                        </Text>
+                    </TouchableOpacity>
+                }
                 <ReactNativePinView
                     inputSize={30}
                     ref={pinView}

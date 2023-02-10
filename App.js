@@ -1,9 +1,7 @@
 import "react-native-gesture-handler";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useState, useEffect, useCallback } from "react";
-import * as SplashScreen from 'expo-splash-screen';
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Toast from 'react-native-toast-message';
 import Login from "./views/auth/Login";
 import Main from "./views/Main";
@@ -14,7 +12,6 @@ const Stack = createStackNavigator();
 // SplashScreen.preventAutoHideAsync();
 
 const App = () => {
-
   useEffect(() => {
     prepare();
   }, [])

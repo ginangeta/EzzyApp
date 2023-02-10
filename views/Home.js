@@ -3,7 +3,6 @@ import AnimateLoadingButton from 'react-native-animate-loading-button';
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import React, { useState, useEffect } from "react";
 import Toast from 'react-native-toast-message';
-import RNRestart from 'react-native-restart';
 
 const DepositItem = ({ item, onPress, backgroundColor, textColor }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
@@ -291,24 +290,40 @@ const Home = ({ navigation }) => {
                         <Text style={styles.userName}>{global.member_details.Name}</Text>
                     </View>
                 </View>
-                {hasBalanceOpacity ? (<View style={styles.userBalance}>
-                    <View style={styles.userBalanceHeader}>
-                        <Text>Ordinary Account Balance</Text>
+                {hasBalanceOpacity ? (
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}>
+                        <View style={styles.userBalance}>
+                            <View style={styles.userBalanceHeader}>
+                                <Text style={{ fontSize: 12 }}>Ordinary Account Balance</Text>
+                            </View>
+                            <Text style={styles.balance}>KES {userBalance.value}</Text>
+                        </View>
+                        <View style={[styles.userBalance, { alignItems: 'flex-end' }]}>
+                            <View style={styles.userBalanceHeader}>
+                                <Text style={{ fontSize: 12 }}>Chap Chap Loan Limit</Text>
+                            </View>
+                            <Text style={styles.balance}>{global.ChapChaploanLoanLimit}</Text>
+                        </View>
                     </View>
-                    <Text style={styles.balance}>KES {userBalance.value}</Text>
-                </View>) : null}
-                {!hasBalanceOpacity ? (<View style={styles.userBalanceButton}>
-                    <Text style={{ marginStart: 30, marginBottom: 10 }}>Note: Balance Inquiry is a billable transaction</Text>
-                    <AnimateLoadingButton
-                        ref={c => (this.balanceButton = c)}
-                        width={300}
-                        height={50}
-                        title="View Balance"
-                        backgroundColor="#348bd3"
-                        borderRadius={4}
-                        onPress={balanceApi}
-                    />
-                </View>) : null}
+                ) : null}
+                {!hasBalanceOpacity ? (
+                    <View style={styles.userBalanceButton}>
+                        <Text style={{ marginStart: 30, marginBottom: 10 }}>Note: Balance Inquiry is a billable transaction</Text>
+                        <AnimateLoadingButton
+                            ref={c => (this.balanceButton = c)}
+                            width={300}
+                            height={50}
+                            title="View Balance"
+                            backgroundColor="#348bd3"
+                            borderRadius={4}
+                            onPress={balanceApi}
+                        />
+                    </View>
+                ) : null}
             </View>
 
             {/* Service */}
