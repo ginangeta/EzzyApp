@@ -1,7 +1,6 @@
 import { Platform, StyleSheet, View, Text, FlatList, Button, Image, TouchableOpacity, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import Toast from 'react-native-toast-message';
-import RNRestart from 'react-native-restart'; 
 
 export default function Profile({ navigation }) {
     const [text, setText] = useState("");
@@ -91,7 +90,7 @@ export default function Profile({ navigation }) {
 
                     <View style={styles.topHomeIcons}>
                         <TouchableOpacity style={styles.topIconsContainer}
-                            onPress={() => RNRestart.Restart()}>
+                            onPress={() => { navigation.navigate("Login") }}>
                             <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
                         </TouchableOpacity>
                     </View>
@@ -100,15 +99,15 @@ export default function Profile({ navigation }) {
 
             <View style={styles.homeMenu} >
                 <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
-                <ScrollView style={{ marginTop: 10 }}
-                    horizontal={false}>
+                {/* <ScrollView style={{ marginTop: 10 }}
+                    horizontal={false}> */}
                     <View style={[styles.listContainer]}>
                         <FlatList style={[styles.homeMenuList]}
                             data={global.account_balance_raw}
                             renderItem={renderAccountList}
                             keyExtractor={(item) => item.AccountType} />
                     </View>
-                </ScrollView>
+                {/* </ScrollView> */}
             </View>
         </View>
     );
