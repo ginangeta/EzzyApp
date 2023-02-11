@@ -71,12 +71,12 @@ const Login = ({ navigation }) => {
                     'No saved credentials',
                     'Kindly login manually using your phone and pin to proceed.',
                     [
-                        {
-                            text: 'Scan',
-                            onPress: () => {
-                                scanFingerprint(credentials);
-                            },
-                        },
+                        // {
+                        //     text: 'Scan',
+                        //     onPress: () => {
+                        //         scanFingerprint(credentials);
+                        //     },
+                        // },
                         {
                             text: 'Cancel',
                             onPress: () => console.log('Cancel'),
