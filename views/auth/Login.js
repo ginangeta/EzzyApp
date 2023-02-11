@@ -78,7 +78,7 @@ const Login = ({ navigation }) => {
                         //     },
                         // },
                         {
-                            text: 'Cancel',
+                            text: 'Dismiss',
                             onPress: () => console.log('Cancel'),
                             style: 'cancel',
                         },
