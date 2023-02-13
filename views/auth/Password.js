@@ -17,6 +17,7 @@ function Password({ navigation }) {
     const [showCancelButton, setShowCancelButton] = useState(false)
     const [savedLogins, setSavedLogins] = useState(false)
     const [enteredPin, setEnteredPin] = useState("")
+    const [counter, setCounter] = useState(0)
     const [loading, setLoading] = useState({
         isLoading: false
     });
@@ -123,31 +124,47 @@ function Password({ navigation }) {
             isLoading: true,
         });
 
-        console.log("Loading: " + loading.isLoading);
-        if (enteredPin.length < 0) {
-            Toast.show({
-                type: 'error',
-                text1: 'Transaction Failed',
-                text2: 'Kindly enter pin to proceed 🛑',
-                position: 'top'
-            });
-            setLoading({
-                isLoading: false,
-            });
-        } else if (enteredPin != global.account_pin) {
-            Toast.show({
-                type: 'error',
-                text1: 'Transaction Failed',
-                text2: 'Incorrect Credentials 🛑',
-                position: 'top'
-            });
-            setLoading({
-                isLoading: false,
-            });
-            console.log("Loading: " + global.account_pin);
-        } else {
-            verifyOTP(enteredPin)
+        setCounter(counter + 1);
 
+        console.log("Loading: " + loading.isLoading);
+
+        if (counter < 2) {
+            if (enteredPin.length < 0) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Transaction Failed',
+                    text2: 'Kindly enter pin to proceed 🛑',
+                    position: 'top'
+                });
+                setLoading({
+                    isLoading: false,
+                });
+            } else if (enteredPin != global.account_pin) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Transaction Failed',
+                    text2: 'Incorrect Credentials 🛑',
+                    position: 'top'
+                });
+                setLoading({
+                    isLoading: false,
+                });
+                console.log("Loading: " + global.account_pin);
+            } else {
+                verifyOTP(enteredPin)
+
+            }
+        } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Authentication Failed',
+                text2: 'Wrong pin entered too many times 🛑',
+                position: 'top'
+            });
+            setLoading({
+                isLoading: false,
+            });
+            navigation.navigate("Home");
         }
 
         pinView.current.clearAll()
