@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, { useState, useEffect, useRef } from "react";
 import Toast from 'react-native-toast-message';
-import { NavigationContainer } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { PanResponder } from "react-native"
@@ -23,10 +23,11 @@ import Statements from "./Statements";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const Main = (navigation) => {
+const Main = () => {
 
   const timerId = useRef(false);
   const [timeForinactivityInSecond, setTimeForinactivityInSecond] = useState(3600);
+  const { reset } = useNavigation();
 
   useEffect(() => {
     const requestOptions = {
@@ -67,11 +68,16 @@ const Main = (navigation) => {
 
     timerId.current = setTimeout(() => {
       console.log('System Timeout');
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: 'Login' }],
-      // });
-      // Stack.Navigator.
+
+      Toast.show({
+        type: 'error',
+        text1: 'Logged Out',
+        text2: 'The application was idle for too long 🛑',
+        position: 'top'
+      });
+
+      reset({ index: 0, routes: [{ name: "Login" }] });
+
     }, timeForinactivityInSecond * 10);
   }
 
