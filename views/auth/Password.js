@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { StyleSheet, SafeAreaView, StatusBar, Text } from "react-native"
+import { StyleSheet, SafeAreaView, StatusBar, Text, TouchableOpacity } from "react-native"
 import Constants from 'expo-constants';
 import Background from '../components/Background';
 import Icon from "react-native-vector-icons/Ionicons"
@@ -7,16 +7,26 @@ import ReactNativePinView from "react-native-pin-view"
 import { theme } from '../core/theme'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Toast from 'react-native-toast-message';
+import * as SecureStore from 'expo-secure-store';
+import * as LocalAuthentication from 'expo-local-authentication';
 // import { Constants } from 'expo';
 
 function Password({ navigation }) {
     const pinView = useRef(null)
     const [showRemoveButton, setShowRemoveButton] = useState(false)
     const [showCancelButton, setShowCancelButton] = useState(false)
+    const [savedLogins, setSavedLogins] = useState(false)
     const [enteredPin, setEnteredPin] = useState("")
     const [loading, setLoading] = useState({
         isLoading: false
     });
+    const [state, setState] = useState({
+        compatible: false,
+        fingerprints: false,
+        result: '',
+        error: '',
+    })
+
 
     useEffect(() => {
         if (enteredPin.length > 0) {
@@ -30,7 +40,83 @@ function Password({ navigation }) {
         } else {
             setShowCancelButton(true)
         }
+
+        checkUserStatus();
+
     }, [enteredPin]);
+
+    const checkUserStatus = async () => {
+        try {
+            const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
+
+            console.log("Console Credentials:" + credentials);
+
+            if (credentials != null) {
+                setSavedLogins(true);
+                console.log("Console Status:" + savedLogins);
+                if (state.error != "user_cancel") {
+                    checkDeviceForHardware(credentials);
+                }
+            } else {
+                console.log('No saved credentials');
+            }
+        } catch (error) {
+            console.log("Check status error: " + error);
+        }
+    }
+
+    const getBiometricsFunction = async () => {
+        const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
+
+        checkDeviceForHardware(credentials);
+
+    }
+
+    const checkDeviceForHardware = async (credentials) => {
+        let compatible = await LocalAuthentication.hasHardwareAsync();
+        setState({ compatible });
+
+        console.log("Checking Device:" + compatible);
+
+        if (compatible) {
+            checkForFingerprints(credentials);
+        } else {
+            console.log("Device is not Compatible");
+        }
+    };
+
+    const checkForFingerprints = async (credentials) => {
+        let fingerprints = await LocalAuthentication.isEnrolledAsync();
+        setState({ fingerprints });
+
+        console.log("Fingerprints is enrolled:" + fingerprints);
+
+        if (fingerprints) {
+            scanFingerprint(credentials);
+            // showAndroidAlert(credentials);
+        } else {
+            console.log("No fingerprints enrolled");
+        }
+    };
+
+    const scanFingerprint = async (credentials) => {
+        let result = await LocalAuthentication.authenticateAsync(
+            'Scan your finger.'
+        );
+        console.log('Scan Result:', result);
+        console.log('Scan Result Error:', result['error']);
+        setState({
+            result: JSON.stringify(result),
+            error: result['error']
+        });
+
+        if (result["success"] == true) {
+            console.log(credentials);
+            // loginApi(credentials['username'], credentials['password'], true);
+            verifyOTP(credentials['password'])
+
+        }
+    };
 
     const getPassword = () => {
         setLoading({
@@ -188,13 +274,17 @@ function Password({ navigation }) {
                             navigation.navigate("Home")
                         }
                         if (key === "three") {
-                            alert("You just click to 3")
+                            // alert("You just click to 3")
                         }
                     }}
                     customRightButton={showRemoveButton ? <Icon name={"ios-backspace"} size={46} color={theme.colors.primary} /> : undefined}
                     customLeftButton={showCancelButton ? <Icon name={"ios-close"} size={46} color={theme.colors.primary} /> : undefined}
                 />
             </SafeAreaView>
+            {savedLogins ? <TouchableOpacity style={styles.back}
+                onPress={getBiometricsFunction}>
+                <Icon name={"ios-finger-print"} size={50} color={theme.colors.primary} />
+            </TouchableOpacity> : ''}
         </Background>
     )
 }

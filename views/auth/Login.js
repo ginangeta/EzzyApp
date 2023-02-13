@@ -67,23 +67,23 @@ const Login = ({ navigation }) => {
                 }
             } else {
                 console.log('No saved credentials');
-                Alert.alert(
-                    'No saved credentials',
-                    'Kindly login manually using your phone and pin to proceed.',
-                    [
-                        // {
-                        //     text: 'Scan',
-                        //     onPress: () => {
-                        //         scanFingerprint(credentials);
-                        //     },
-                        // },
-                        {
-                            text: 'Dismiss',
-                            onPress: () => console.log('Cancel'),
-                            style: 'cancel',
-                        },
-                    ]
-                );
+                // Alert.alert(
+                //     'No saved credentials',
+                //     'Kindly login manually using your phone and pin to proceed.',
+                //     [
+                //         // {
+                //         //     text: 'Scan',
+                //         //     onPress: () => {
+                //         //         scanFingerprint(credentials);
+                //         //     },
+                //         // },
+                //         {
+                //             text: 'Dismiss',
+                //             onPress: () => console.log('Cancel'),
+                //             style: 'cancel',
+                //         },
+                //     ]
+                // );
             }
         } catch (error) {
             console.log("Check status error: " + error);
@@ -117,8 +117,8 @@ const Login = ({ navigation }) => {
         console.log("Fingerprints is enrolled:" + fingerprints);
 
         if (fingerprints) {
-            // scanFingerprint(credentials);
-            showAndroidAlert(credentials);
+            scanFingerprint(credentials);
+            // showAndroidAlert(credentials);
         } else {
             console.log("No fingerprints enrolled");
         }
