@@ -67,7 +67,7 @@ const Main = () => {
     clearTimeout(timerId.current);
 
     timerId.current = setTimeout(() => {
-      console.log('System Timeout');
+      // console.log('System Timeout');
 
       Toast.show({
         type: 'error',

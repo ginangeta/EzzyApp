@@ -2,8 +2,8 @@ import { Platform, StyleSheet, View, Text, FlatList, Button, Image, TouchableOpa
 import React, { useEffect, useState } from "react";
 import Toast from 'react-native-toast-message';
 
-export default function Profile({ navigation }) {
-    const [text, setText] = useState("");
+const Profile = ({ navigation }) => {
+    const [balance, setBalance] = useState("");
 
     const AccountItem = ({ item, onPress, backgroundColor, textColor }) => (
         <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
@@ -20,6 +20,10 @@ export default function Profile({ navigation }) {
     );
 
     useEffect(() => {
+        getAccountBalance();
+    }, []);
+
+    const getAccountBalance = () => {
 
         const balanceRequestOptions = {
             method: 'POST',
@@ -43,8 +47,12 @@ export default function Profile({ navigation }) {
                 if (balance_response[0].Is_Successful) {
                     const api_balance_details = balance_response[0].Account;
 
-                    console.log(api_balance_details);
-                    global.account_balance_raw = api_balance_details;
+                    const new_balance_details = api_balance_details.filter(item => item.AccountType != "ORDINARY")
+
+                    console.log(new_balance_details);
+                    setBalance(new_balance_details);
+
+                    return;
                 } else {
                     Toast.show({
                         type: 'error',
@@ -61,8 +69,7 @@ export default function Profile({ navigation }) {
                     position: 'top'
                 });
             });
-
-    });
+    }
 
     const renderAccountList = ({ item }) => {
 
@@ -101,12 +108,12 @@ export default function Profile({ navigation }) {
                 <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
                 {/* <ScrollView style={{ marginTop: 10 }}
                     horizontal={false}> */}
-                    <View style={[styles.listContainer]}>
-                        <FlatList style={[styles.homeMenuList]}
-                            data={global.account_balance_raw}
-                            renderItem={renderAccountList}
-                            keyExtractor={(item) => item.AccountType} />
-                    </View>
+                <View style={[styles.listContainer]}>
+                    <FlatList style={[styles.homeMenuList]}
+                        data={balance}
+                        renderItem={renderAccountList}
+                        keyExtractor={(item) => item.AccountType} />
+                </View>
                 {/* </ScrollView> */}
             </View>
         </View>
@@ -320,3 +327,5 @@ const styles = StyleSheet.create({
         fontWeight: "700"
     },
 });
+
+export default Profile;

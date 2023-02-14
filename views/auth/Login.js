@@ -125,9 +125,11 @@ const Login = ({ navigation }) => {
     };
 
     const scanFingerprint = async (credentials) => {
-        let result = await LocalAuthentication.authenticateAsync(
-            'Scan your finger.'
-        );
+        let result = await LocalAuthentication.authenticateAsync({
+            promptMessage: "Login with Biometrics",
+            cancelLabel: "Cancel",
+            disableDeviceFallback: false,
+        });
         console.log('Scan Result:', result);
         console.log('Scan Result Error:', result['error']);
         setState({
