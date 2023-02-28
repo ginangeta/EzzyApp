@@ -23,12 +23,12 @@
     "android": {
       "package": "com.ezzy.ezzyapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logos/asili.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logos/asili.png"
     },
     "extra": {
       "eas": {

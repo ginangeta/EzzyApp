@@ -64,19 +64,20 @@ const Main = () => {
   )
 
   const resetInactivityTimeout = () => {
+    console.log('System Timeout Reset');
     clearTimeout(timerId.current);
 
     timerId.current = setTimeout(() => {
-      // console.log('System Timeout');
+      console.log('System Timeout');
 
-      Toast.show({
-        type: 'error',
-        text1: 'Logged Out',
-        text2: 'The application was idle for too long 🛑',
-        position: 'top'
-      });
+      // Toast.show({
+      //   type: 'error',
+      //   text1: 'Logged Out',
+      //   text2: 'The application was idle for too long 🛑',
+      //   position: 'top'
+      // });
 
-      reset({ index: 0, routes: [{ name: "Login" }] });
+      // reset({ index: 0, routes: [{ name: "Login" }] });
 
     }, timeForinactivityInSecond * 10);
   }

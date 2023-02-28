@@ -335,8 +335,8 @@ function Password({ navigation }) {
     const resetCountDown = () => {
         // setFinishTime(0)
         setCount(60);
-        console.log(finishTime)
-        setShowRetryOTP(!showRetryOTP)
+        console.log("Reset: " + finishTime)
+        setShowRetryOTP(false)
     }
 
     const resendOTP = () => {

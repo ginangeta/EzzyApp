@@ -128,7 +128,7 @@ const Login = ({ navigation }) => {
         let result = await LocalAuthentication.authenticateAsync({
             promptMessage: "Login with Biometrics",
             cancelLabel: "Cancel",
-            disableDeviceFallback: false,
+            disableDeviceFallback: true,
         });
         console.log('Scan Result:', result);
         console.log('Scan Result Error:', result['error']);

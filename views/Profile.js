@@ -7,7 +7,7 @@ const Profile = ({ navigation }) => {
 
     const AccountItem = ({ item, onPress, backgroundColor, textColor }) => (
         <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-            <Text style={[styles.title, textColor]}>{item.AccountType}</Text>
+            <Text style={[styles.title, textColor]}>{item.AccountType.toUpperCase()}</Text>
             <View>
                 <Text style={{
                     fontWeight: "bold",
@@ -84,39 +84,38 @@ const Profile = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.homeHeader} >
-                <View style={styles.userInfo}>
-                    <TouchableOpacity style={styles.userImg}
-                        onPress={() => navigation.navigate("")}>
-                        <Image style={styles.imagestyle} source={require('../assets/users/user.jpg')} />
-                    </TouchableOpacity>
-                    <View style={styles.homeHeaderText}>
-                        <Text style={styles.salutation}></Text>
-                        <Text style={styles.userName}>{global.member_details.Name}</Text>
-                    </View>
-
-                    <View style={styles.topHomeIcons}>
-                        <TouchableOpacity style={styles.topIconsContainer}
-                            onPress={() => { navigation.navigate("Login") }}>
-                            <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
+            <ScrollView horizontal={false} style={styles.scrollview}>
+                <View style={styles.homeHeader} >
+                    <View style={styles.userInfo}>
+                        <TouchableOpacity style={styles.userImg}
+                            onPress={() => navigation.navigate("")}>
+                            <Image style={styles.imagestyle} source={require('../assets/users/user.jpg')} />
                         </TouchableOpacity>
+                        <View style={styles.homeHeaderText}>
+                            <Text style={styles.salutation}></Text>
+                            <Text style={styles.userName}>{global.member_details.Name}</Text>
+                        </View>
+
+                        <View style={styles.topHomeIcons}>
+                            <TouchableOpacity style={styles.topIconsContainer}
+                                onPress={() => { navigation.navigate("Login") }}>
+                                <Image style={styles.topSideIcon} source={require('../assets/icons/logout.png')} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </View>
 
-            <View style={styles.homeMenu} >
-                <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
-                {/* <ScrollView style={{ marginTop: 10 }}
-                    horizontal={false}> */}
-                <View style={[styles.listContainer]}>
-                    <FlatList style={[styles.homeMenuList]}
-                        data={balance}
-                        renderItem={renderAccountList}
-                        keyExtractor={(item) => item.AccountType} />
+                <View style={styles.homeMenu} >
+                    <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
+                    <View style={[styles.listContainer]}>
+                        <FlatList style={[styles.homeMenuList]}
+                            data={balance}
+                            renderItem={renderAccountList}
+                            keyExtractor={(item) => item.AccountType} />
+                    </View>
                 </View>
-                {/* </ScrollView> */}
-            </View>
-        </View>
+            </ScrollView>
+        </View >
     );
 }
 
@@ -126,7 +125,7 @@ const styles = StyleSheet.create({
         height: "100%",
         backgroundColor: 'white',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
     },
     topHomeIcons: {
         display: 'flex',
@@ -146,15 +145,26 @@ const styles = StyleSheet.create({
         marginTop: 10,
         alignItems: "flex-end"
     },
+    scrollview: {
+        display: 'flex',
+        width: '100%',
+        flexDirection: 'column',
+    },
     homeHeader: {
-        height: '50%',
-        paddingTop: 50,
-        paddingHorizontal: 30,
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'white',
+        // height: '50%',
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        ...Platform.select({
+            ios: {
+                paddingTop: 20,
+            },
+            android: {
+                paddingTop: 50,
+            },
+        }),
+        paddingTop: 20,
+        paddingBottom: 30,
         overflow: 'hidden',
     },
     userInfo: {
@@ -203,23 +213,21 @@ const styles = StyleSheet.create({
         color: "#3e6cce",
     },
     homeMenu: {
-        backgroundColor: 'white',
-        position: 'absolute',
         width: "100%",
-        bottom: 0,
+        paddingHorizontal: 30,
+        // bottom: 50,
         marginBottom: 0,
-        marginHorizontal: 30
 
     },
     listContainer: {
-        padding: 10,
+        // padding: 10,
         backgroundColor: "white",
         borderRadius: 30
     },
     item: {
         padding: 10,
-        marginVertical: 8,
-        marginHorizontal: 16,
+        // marginVertical: 8,
+        // marginHorizontal: 16,
         borderBottomColor: 'lightgrey',
         borderBottomWidth: 1
     },
@@ -241,7 +249,6 @@ const styles = StyleSheet.create({
         padding: 10,
         justifyContent: 'space-between',
         flexDirection: 'row',
-        position: 'absolute'
     },
     topHomeIcons: {
         justifyContent: 'flex-end',
