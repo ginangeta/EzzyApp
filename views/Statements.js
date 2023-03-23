@@ -2,6 +2,7 @@ import {
     SafeAreaView,
     Text,
     StyleSheet,
+    ImageBackground,
     View,
     Image,
     FlatList,
@@ -118,23 +119,22 @@ export default function Statement({ navigation }) {
     );
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
-                <TextInput
-                    style={styles.textInputStyle}
-                    onChangeText={(text) => searchFilterFunction(text)}
-                    value={search}
-                    underlineColorAndroid="transparent"
-                    placeholder="Search Here"
-                />
-                <FlatList
-                    data={filteredData}
-                    keyExtractor={(item, index) => item.desc.toString()}
-                    ItemSeparatorComponent={ItemSeparatorView}
-                    renderItem={renderItem}
-                />
-            </View>
-        </SafeAreaView>
+        <ImageBackground source={require('./src/assets/celian_blue.jpg')}
+            resizeMode="cover" imageStyle={{ opacity: 0.2 }} style={styles.container}>
+            <TextInput
+                style={styles.textInputStyle}
+                onChangeText={(text) => searchFilterFunction(text)}
+                value={search}
+                underlineColorAndroid="transparent"
+                placeholder="Search Here"
+            />
+            <FlatList
+                data={filteredData}
+                keyExtractor={(item, index) => item.desc.toString()}
+                ItemSeparatorComponent={ItemSeparatorView}
+                renderItem={renderItem}
+            />
+        </ImageBackground>
     );
 }
 
@@ -144,11 +144,15 @@ const styles = StyleSheet.create({
         fontSize: 20,
         textAlign: "center",
     },
+    backgroundImage: {
+        alignSelf: 'stretch',
+        width: null,
+    },
     container: {
+        flex: 1,
         paddingTop: 50,
+        paddingHorizontal: 20,
         paddingBottom: 20,
-        marginHorizontal: 15,
-        marginTop: 10,
     },
     itemStyle: {
         padding: 10,

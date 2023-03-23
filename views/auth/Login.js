@@ -35,7 +35,6 @@ const Login = ({ navigation }) => {
             if (value !== null) {
                 setPhone({ value: value, error: '' })
                 console.log(value);
-                setSavedLogins(true);
             } else {
                 console.log("Error: Empty Value");
             }
@@ -67,23 +66,8 @@ const Login = ({ navigation }) => {
                 }
             } else {
                 console.log('No saved credentials');
-                // Alert.alert(
-                //     'No saved credentials',
-                //     'Kindly login manually using your phone and pin to proceed.',
-                //     [
-                //         // {
-                //         //     text: 'Scan',
-                //         //     onPress: () => {
-                //         //         scanFingerprint(credentials);
-                //         //     },
-                //         // },
-                //         {
-                //             text: 'Dismiss',
-                //             onPress: () => console.log('Cancel'),
-                //             style: 'cancel',
-                //         },
-                //     ]
-                // );
+                console.log(savedLogins);
+                setSavedLogins(false);
             }
         } catch (error) {
             console.log("Check status error: " + error);
@@ -387,7 +371,7 @@ const Login = ({ navigation }) => {
 
                     console.log(debitable_accounts);
                     global.debitable_accounts = debitable_accounts;
-                    loanAccountsApi();
+                    loanEligibilityAccountsApi();
                     // navigation.navigate("Home")
                 } else {
                     Toast.show({
@@ -408,7 +392,7 @@ const Login = ({ navigation }) => {
 
     }
 
-    const loanAccountsApi = () => {
+    const loanEligibilityAccountsApi = () => {
         const loanAccountRequest = {
             method: 'POST',
             headers: {
@@ -436,7 +420,12 @@ const Login = ({ navigation }) => {
                         if (loan.LoanCode == "Chap Chap") {
                             global.ChapChapLoanAccountNumber = loan.AccountNo;
                             global.ChapChaploanAccountName = loan.LoanCode;
-                            global.ChapChaploanLoanLimit = loan.MinAmount + " - " + loan.MaxAmount;
+                            global.ChapChaploanLoanLimit = loan.MaxAmount;
+                            if (parseInt(loan.MaxAmount) > 0) {
+                                global.ChapChaploanLoanLimitColor = 'red'
+                            } else {
+                                global.ChapChaploanLoanLimitColor = 'green'
+                            }
                         } else {
                             console.log("Other Loan Type");
                         }
@@ -447,7 +436,6 @@ const Login = ({ navigation }) => {
                     console.log(new_loan_account);
                     global.loan_accounts = new_loan_account;
                     creditablesApi();
-                    // navigation.navigate("Home")
                 } else {
                     Toast.show({
                         type: 'error',
@@ -575,7 +563,7 @@ const Login = ({ navigation }) => {
                 />
 
             </KeyboardAvoidingView>
-            {savedLogins ? <TouchableOpacity style={styles.back}
+            {savedLogins == true ? <TouchableOpacity style={styles.back}
                 onPress={getBiometricsFunction}>
                 <Icon name={"ios-finger-print"} size={50} color={theme.colors.primary} />
             </TouchableOpacity> : ''}

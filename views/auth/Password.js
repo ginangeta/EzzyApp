@@ -174,6 +174,10 @@ function Password({ navigation }) {
 
     const verifyOTP = () => {
 
+        setLoading({
+            isLoading: true,
+        })
+
         const otpRequestOptions = {
             method: 'POST',
             headers: {
@@ -193,6 +197,10 @@ function Password({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/GetOTP", otpRequestOptions)
             .then((response) => response.json())
             .then(response => {
+                setLoading({
+                    isLoading: false,
+                })
+
                 console.log(response, "\n", otpRequestOptions);
                 if (response[0].Is_Successful) {
                     global.otp = response[0].otp;
@@ -226,7 +234,7 @@ function Password({ navigation }) {
         <Background>
             <Spinner
                 visible={loading.isLoading}
-                textContent={'Thank you for being patient. Processing transaction.....'}
+                textContent={'Thank you for being patient. Processing pin.....'}
                 textStyle={styles.spinnerTextStyle}
             />
             <StatusBar barStyle="dark-content" />

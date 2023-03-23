@@ -1,7 +1,8 @@
 import { StyleSheet, SafeAreaView, View, Text, TextInput, Button, Image, TouchableOpacity, StatusBar } from "react-native";
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import { StackActions } from '@react-navigation/native';
-import Icon from "react-native-vector-icons/Ionicons"
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import IOSIcon from "react-native-vector-icons/Ionicons"
 import React, { useState } from "react";
 import { theme } from './core/theme'
 import Toast from 'react-native-toast-message';
@@ -43,12 +44,9 @@ export default function Dial({ navigation }) {
         }}>
             <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
             <TouchableOpacity style={styles.back}
-                // onPress={() => navigation.navigate("Home")}>
-                onPress={() => navigation.dispatch(StackActions.popToTop())}>
-                <Icon name={"ios-arrow-back-outline"} size={30} color={theme.colors.primary} />
+                onPress={() => navigation.navigate("Home")}>
+                <Icon name={"arrow-left-thin"} borderRadius={20} size={35} color={theme.colors.text} />
             </TouchableOpacity>
-            {/* <Icon name={"ios-chevron-back-circle-outline"} style={styles.back} size={40} color={theme.colors.primary} onPress={() => navigation.navigate("Home")} /> */}
-
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: "rgba(255, 255, 255, 0.8)", justifyContent: 'center', paddingTop: 50, alignItems: "center", width: "100%" }}>
                 <View style={{
@@ -154,7 +152,7 @@ export default function Dial({ navigation }) {
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItemNoBorder}>
                                 <TouchableOpacity style={[styles.dailPadContainer, { padding: 0 }]} onPress={onDeleteHandler.bind(this, 0)}>
                                     {/* <Image style={styles.dailPadDelete} source={require('../assets/icons/delete.png')} /> */}
-                                    <Icon name={"ios-backspace"} size={46} color={theme.colors.primary} />
+                                    <IOSIcon name={"ios-backspace"} size={46} color={theme.colors.primary} />
                                 </TouchableOpacity>
                             </Col>
                         </Row>

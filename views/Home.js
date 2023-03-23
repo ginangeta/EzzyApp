@@ -18,8 +18,8 @@ const WithdrawItem = ({ item, onPress, backgroundColor, textColor }) => (
 
 const LoanItem = ({ item, onPress, backgroundColor, textColor }) => (
     <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-        <Text style={[styles.title, textColor]}>{item.LoanCode}</Text>
-        <Text style={[styles.sub_title, textColor]}>Min Limit: {item.MinAmount} - Max Limit: {item.MaxAmount}</Text>
+        <Text style={[styles.title, textColor]}>{item.LoanName}</Text>
+        <Text style={[styles.sub_title, textColor]}>Loan No: {item.LoanNo}</Text>
     </TouchableOpacity>
 );
 
@@ -105,21 +105,19 @@ const Home = ({ navigation }) => {
         );
     };
 
-    const setChosenLoanAccount = (loanAccountNumber, loanAccountName) => {
+    const setChosenLoanAccount = (LoanNo, LoanName, LoanBal, LoanCode, LoanAccountNumber) => {
         setHasLoanOpacity(!hasLoanOpacity)
 
-        // Toast.show({
-        //     type: 'error',
-        //     text1: loanAccountName,
-        //     position: 'top'
-        // });
-
         global.transactionType = "Loan";
-        global.LoanAccountNumber = loanAccountNumber;
-        global.loanAccountName = loanAccountName;
+        global.LoanNo = LoanNo;
+        global.LoanAccount = LoanAccountNumber;
+        global.loanAccountName = LoanName;
+        global.LoanBal = LoanBal;
+        global.LoanCode = LoanCode;
 
+        navigation.navigate("Loan")
 
-        toDial();
+        // toDial();
     }
 
     const renderLoanAccountList = ({ item }) => {
@@ -129,7 +127,7 @@ const Home = ({ navigation }) => {
         return (
             <LoanItem
                 item={item}
-                onPress={() => setChosenLoanAccount(item.AccountNo, item.LoanCode)}
+                onPress={() => setChosenLoanAccount(item.LoanNo, item.LoanName, item.LoanBal, item.LoanCode, item.LoanAccount)}
                 backgroundColor={{ backgroundColor }}
                 textColor={{ color }}
             />
@@ -138,12 +136,6 @@ const Home = ({ navigation }) => {
 
     const setChosenUtilitiesAccount = (utilitiesTypeNumber, utilitiesTypeName) => {
         setHasUtilitiesOpacity(!hasUtilitiesOpacity)
-
-        // Toast.show({
-        //     type: 'error',
-        //     text1: utilitiesTypeName,
-        //     position: 'top'
-        // });
 
         global.transactionType = "Utilities";
         global.UtilitiesType = utilitiesTypeNumber;
@@ -269,7 +261,7 @@ const Home = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
-            <ScrollView style={{ width: '100%' }}
+            <ScrollView style={{ width: '100%', marginTop: 40 }}
                 horizontal={false}>
                 <View style={styles.homeHeader} >
                     <View style={styles.topHomeIcons}>
@@ -308,7 +300,7 @@ const Home = ({ navigation }) => {
                                 <View style={styles.userBalanceHeader}>
                                     <Text style={{ fontSize: 12 }}>Chap Chap Loan Limit</Text>
                                 </View>
-                                <Text style={styles.balance}>KES {global.ChapChaploanLoanLimit}</Text>
+                                <Text style={[styles.balance, { color: global.ChapChaploanLoanLimitColor }]}>KES {global.ChapChaploanLoanLimit}</Text>
                             </View>
                         </View>
                     ) : null}
@@ -386,7 +378,8 @@ const Home = ({ navigation }) => {
                         <Col sm={4} md={4} lg={3} style={styles.menuItem}>
                             <TouchableOpacity style={styles.menuIconsContainer}
                                 onPress={() => {
-                                    setHasLoanOpacity(!hasLoanOpacity)
+                                    // setHasLoanOpacity(!hasLoanOpacity)
+                                    navigation.navigate("Loan")
                                 }}>
                                 <Image style={styles.menuIcons} source={require('../assets/icons/signing.png')} />
                             </TouchableOpacity>
@@ -489,12 +482,12 @@ const Home = ({ navigation }) => {
                         }}>
                         <View style={styles.centeredView}>
                             <View style={[styles.listContainer]}>
-                                <Text style={styles.listTitle}>Select Account to Borrow From</Text>
+                                <Text style={styles.listTitle}>Select Loan to Proceed</Text>
                                 <View style={styles.divider}></View>
                                 <FlatList style={[styles.homeMenuList]}
-                                    data={global.loan_accounts}
+                                    data={global.loan_accounts_list}
                                     renderItem={renderLoanAccountList}
-                                    keyExtractor={(item) => item.AccountNo}
+                                    keyExtractor={(item) => item.LoanNo}
                                     extraData={selectedLoanId}
                                 />
                                 <Pressable
@@ -588,14 +581,6 @@ const styles = StyleSheet.create({
         alignItems: "flex-end"
     },
     homeHeader: {
-        ...Platform.select({
-            ios: {
-                paddingTop: 10,
-            },
-            android: {
-                paddingTop: 30,
-            },
-        }),
         backgroundColor: "#ffffff",
         // height: '30%',
         margin: 10,

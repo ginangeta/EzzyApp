@@ -71,7 +71,10 @@ function Password({ navigation }) {
         } else {
             if (global.transactionType == "Loan") {
                 verfyLoan()
-            } else if (global.transactionType == "Deposit") {
+            } else if (global.transactionType == "LoanRepay") {
+                repayLoan()
+            }
+            else if (global.transactionType == "Deposit") {
                 verfyDeposit()
             } else if (global.transactionType == "Utilities") {
                 verfyUtilities()
@@ -285,6 +288,64 @@ function Password({ navigation }) {
                     Toast.show({
                         type: 'error',
                         text1: 'Loan Request Failed',
+                        text2: 'Incorrect Credentials 🛑',
+                        position: 'top'
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                Toast.show({
+                    type: 'error',
+                    text1: err,
+                    position: 'top'
+                })
+            }).finally(() => {
+                setLoading({
+                    isLoading: false,
+                })
+                console.log("Loading: " + loading.isLoading)
+            })
+    }
+
+    const repayLoan = () => {
+
+        const loanRepaymentOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                DeviceID: "",
+                LoanNo: global.LoanNo,
+                Amount: global.transaction_amount,
+                PhoneNo: global.account_phone
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/LoanRepayment", loanRepaymentOptions)
+            .then((response) => response.json())
+            .then(response => {
+                console.log(response, "\n", loanRepaymentOptions)
+                if (response[0].Is_Successful) {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Loan Repayment Successful',
+                        text2: 'KES ' + global.transaction_amount + ' Loan Repayment Being Processed. An M-pesa push has been sent to your registered number and balance will be updated accordingly 😊',
+                        position: 'top'
+                    })
+
+                    navigation.navigate("Home")
+
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Loan Repayment Failed',
                         text2: 'Incorrect Credentials 🛑',
                         position: 'top'
                     })

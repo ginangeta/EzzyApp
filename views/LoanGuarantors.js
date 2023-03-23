@@ -1,6 +1,7 @@
 import { Platform, StyleSheet, View, Text, TextInput, Button, Image, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState } from "react";
 import { Column as Col, Row } from 'react-native-flexbox-grid';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
 export default function LoanGuarantors({ navigation }) {
     const [text, setText] = useState("");
@@ -8,10 +9,10 @@ export default function LoanGuarantors({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.pageHeader}>
-                <TouchableOpacity style={styles.back}
-                    onPress={() => navigation.navigate("Home")}>
-                    <Image style={styles.backIcon} source={require('../assets/icons/black-left-arrow.png')} />
-                </TouchableOpacity>
+            <TouchableOpacity style={styles.back}
+                onPress={() => navigation.navigate("Home")}>
+                <Icon name={"arrow-left-thin"} borderRadius={20} size={35} color={theme.colors.text} />
+            </TouchableOpacity>
                 <View style={styles.topHomeIcons}>
                     <TouchableOpacity style={styles.topIconsContainer}
                         onPress={() => navigation.navigate("")}>
@@ -248,10 +249,6 @@ const styles = StyleSheet.create({
     topIconsContainer: {
         width: 45,
         height: 35,
-    },
-    back: {
-        height: 20,
-        width: 20,
     },
     topIcons: {
         marginHorizontal: 20,

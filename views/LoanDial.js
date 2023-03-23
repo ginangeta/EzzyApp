@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text, TextInput, Button, Image, TouchableOpacity, StatusBar } from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import React, { useState } from "react";
 import Toast from 'react-native-toast-message';
@@ -28,7 +29,7 @@ export default function LoanDial({ navigation }) {
         <View style={styles.container}>
             <TouchableOpacity style={styles.back}
                 onPress={() => navigation.navigate("Home")}>
-                <Image style={styles.backIcon} source={require('../assets/icons/black-left-arrow.png')} />
+                <Icon name={"arrow-left-thin"} borderRadius={20} size={35} color={theme.colors.text} />
             </TouchableOpacity>
             <View style={styles.dailPad}>
                 <View style={styles.dailPadInput}>

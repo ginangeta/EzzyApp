@@ -12,6 +12,7 @@ import Dial from "./Dail";
 import AccountDial from "./AccountDail";
 import LoanDial from "./LoanDial";
 import Loan from "./Loan";
+import LoanDetails from "./LoanDetails";
 import Profile from "./Profile";
 import LoanApplication from "./LoanApplication";
 import LoanGuarantors from "./LoanGuarantors";
@@ -173,6 +174,7 @@ const HomeStack = () => {
       <Stack.Screen name="AccountDial" component={AccountDial} options={{ headerShown: false }} />
       <Stack.Screen name="LoanDial" component={LoanDial} options={{ headerShown: false }} />
       <Stack.Screen name="Loan" component={Loan} options={{ headerShown: false }} />
+      <Stack.Screen name="LoanDetails" component={LoanDetails} options={{ headerShown: false }} />
       <Stack.Screen name="Password" component={Password} options={{ headerShown: false }} />
       <Stack.Screen name="OTP" component={OTP} options={{ headerShown: false }} />
       <Stack.Screen name="LoanGuarantors" component={LoanGuarantors} options={{ headerShown: false }} />

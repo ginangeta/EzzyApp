@@ -1,179 +1,156 @@
-import { Platform, StyleSheet, View, Text, TextInput, Button, Image, TouchableOpacity, ScrollView } from "react-native";
+import { Platform, StyleSheet, View, Text, FlatList, Button, Image, TouchableOpacity, ScrollView, ImageBackground } from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import { Column as Col, Row } from 'react-native-flexbox-grid';
+import Spinner from 'react-native-loading-spinner-overlay'
+import Toast from 'react-native-toast-message';
 import React, { useState } from "react";
+import { theme } from './core/theme';
+import { useEffect } from "react";
 
 export default function Loan({ navigation }) {
-    const [text, setText] = useState("");
+    const [loanStateAccounts, setStateLoanAccounts] = useState();
+    let loanAccounts = [];
+    const [loading, setLoading] = useState({
+        isLoading: true
+    })
+
+    useEffect(() => {
+        loanAccountsApi();
+    }, []);
+
+    const LoanItem = ({ item, onPress, backgroundColor, textColor }) => (
+        <TouchableOpacity onPress={onPress} style={[styles.item]}>
+            <View style={{
+                borderBottomWidth: 1, display: 'flex', flexDirection: 'row', width: '100%',
+                justifyContent: 'space-between', paddingBottom: 20, alignItems: 'center', borderBottomColor: 'lightgrey'
+            }}>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', alignContent: 'center' }}>
+                    <Image style={styles.Image} source={require('../assets/blue_loan.png')} />
+                    <View>
+                        <Text style={[styles.title, textColor]}>{item.LoanName.toUpperCase()}</Text>
+                        <Text style={{
+                            fontWeight: "bold",
+                            marginTop: 5,
+                            color: 'grey'
+                        }}>
+                            Account: {item.LoanAccount}
+                        </Text>
+                    </View>
+                </View>
+
+                <Icon name={"arrow-right-drop-circle"} borderRadius={20} size={35} color={theme.colors.lightgrey} />
+            </View>
+        </TouchableOpacity>
+    );
+
+    const setChosenLoanAccount = (LoanNo, LoanName, LoanBal, LoanCode, LoanAccountNumber) => {
+        global.transactionType = "Loan";
+        global.LoanNo = LoanNo;
+        global.LoanAccount = LoanAccountNumber;
+        global.loanAccountName = LoanName;
+        global.LoanBal = LoanBal;
+        global.LoanCode = LoanCode;
+
+        navigation.navigate("LoanDetails")
+
+    }
+
+    const loanAccountsApi = () => {
+
+        const loanAccountRequest = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                phoneNo: global.account_phone,
+            })
+        }
+
+        fetch("https://testasili.devopsfoundry.cloud:8050/LoanList", loanAccountRequest)
+            .then((loan_acc_response) => loan_acc_response.json())
+            .then(loan_acc_response => {
+                console.log("Before Error: ", loan_acc_response);
+
+                if (loan_acc_response[0].Is_Successful) {
+                    const loan_accounts = loan_acc_response[0].list;
+
+                    global.loan_accounts_list = loan_accounts;
+
+                    loanAccounts = loan_accounts;
+
+                    setStateLoanAccounts(loanAccounts);
+
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: "Can't get loan accounts at this point",
+                        position: 'top'
+                    });
+                }
+
+                setLoading({
+                    isLoading: false,
+                })
+            })
+            .catch((error) => {
+                console.log("Loan Accounts Error: ", error);
+                Toast.show({
+                    type: 'error',
+                    text1: error,
+                    position: 'top'
+                });
+            });
+
+
+    }
+
+    const renderLoanAccountList = ({ item }) => {
+
+        return (
+            <LoanItem
+                item={item}
+                backgroundColor="white"
+                onPress={() => setChosenLoanAccount(item.LoanNo, item.LoanName, item.LoanBal, item.LoanCode, item.LoanAccount)}
+                textColor="white"
+            />
+        );
+    };
 
     return (
-        <View style={styles.container}>
+        <ImageBackground source={require('./src/assets/celian_blue.jpg')}
+            resizeMode="cover" imageStyle={{ opacity: 0.3 }} style={styles.container}>
+            <Spinner
+                visible={loading.isLoading}
+                textContent={'Obtaining Loan...'}
+                textStyle={styles.spinnerTextStyle}
+            />
             <View style={styles.pageHeader}>
                 <TouchableOpacity style={styles.back}
                     onPress={() => navigation.navigate("Home")}>
-                    <Image style={styles.backIcon} source={require('../assets/icons/black-left-arrow.png')} />
+                    <Icon name={"arrow-left-thin"} borderRadius={20} size={35} color={theme.colors.text} />
                 </TouchableOpacity>
-                <View style={styles.topHomeIcons}>
-                    <TouchableOpacity style={styles.topIconsContainer}
-                        onPress={() => navigation.navigate("")}>
-                        <Image style={styles.topIcons} source={require('../assets/icons/notification.png')} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.topIconsContainer}
-                        onPress={() => navigation.navigate("")}>
-                        <Image style={styles.topIcons} source={require('../assets/icons/more.png')} />
-                    </TouchableOpacity>
-                </View>
+                <Text style={{ fontWeight: "700", fontSize: 23, marginRight: 20 }}>Loan Accounts</Text>
             </View>
+            <ScrollView nestedScrollEnabled={true} horizontal={false} style={styles.scrollview}>
             <View style={styles.loanHeader}>
-                <Text style={{ fontWeight: "700", fontSize: 23, }}>Balance</Text>
-                <TouchableOpacity onPress={() => navigation.navigate("LoanGuarantors")}>
-                    <Text style={{ fontWeight: "bold", color: "#3e6cce" }}>Borrow Loan</Text>
-                </TouchableOpacity>
             </View>
-            <View style={styles.loanMetric}>
-                <Image style={styles.dailPadDelete} source={require('../assets/icons/loanSample.png')} />
-            </View>
-            <View>
-                <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}>Running Loans</Text>
-
-                <ScrollView style={{ marginTop: 10 }}
-                    showsHorizontalScrollIndicator={false}
-                    horizontal={true}>
-                    <View style={[styles.shadowProp]}>
-                        <View style={styles.loan}>
-                            <Text style={styles.loanName}>Instant Loan</Text>
-                            <Text style={styles.LoanDueDate}>Due 12 Sep 2020</Text>
-                            <Text style={styles.LoanAmount}>325,000</Text>
-                            <TouchableOpacity style={styles.confirmation}
-                                onPress={() => navigation.navigate("Dial")}>
-                                <Text style={styles.confirmationText}>Pay Loan</Text>
-                            </TouchableOpacity>
-                        </View>
+                <View style={styles.homeMenu} >
+                    <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
+                    <View style={[styles.listContainer]}>
+                        <FlatList style={[styles.homeMenuList]}
+                            data={loanStateAccounts}
+                            renderItem={renderLoanAccountList}
+                            keyExtractor={(item) => item.LoanNo} />
                     </View>
-                    <View style={[styles.shadowProp]}>
-                        <View style={styles.loan}>
-                            <Text style={styles.loanName}>Instant Loan</Text>
-                            <Text style={styles.LoanDueDate}>Due 12 Sep 2020</Text>
-                            <Text style={styles.LoanAmount}>325,000</Text>
-                            <TouchableOpacity style={styles.confirmation}
-                                onPress={() => navigation.navigate("Dial")}>
-                                <Text style={styles.confirmationText}>Pay Loan</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={[styles.shadowProp]}>
-                        <View style={styles.loan}>
-                            <Text style={styles.loanName}>Instant Loan</Text>
-                            <Text style={styles.LoanDueDate}>Due 12 Sep 2020</Text>
-                            <Text style={styles.LoanAmount}>325,000</Text>
-                            <TouchableOpacity style={styles.confirmation}
-                                onPress={() => navigation.navigate("Dial")}>
-                                <Text style={styles.confirmationText}>Pay Loan</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={[styles.shadowProp]}>
-                        <View style={styles.loan}>
-                            <Text style={styles.loanName}>Instant Loan</Text>
-                            <Text style={styles.LoanDueDate}>Due 12 Sep 2020</Text>
-                            <Text style={styles.LoanAmount}>325,000</Text>
-                            <TouchableOpacity style={styles.confirmation}
-                                onPress={() => navigation.navigate("Dial")}>
-                                <Text style={styles.confirmationText}>Pay Loan</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </ScrollView>
-
-                <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}>Repayment History</Text>
-
-                <ScrollView style={{ marginTop: 10 }}
-                    horizontal={false}>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                    <View style={styles.loanrepayment}>
-                        <View>
-                            <Text style={styles.LoanDueDate}>Instant Loan</Text>
-                            <Text style={styles.loanName}>12 Sep 2020 10:32 AM</Text>
-                        </View>
-                        <Text style={styles.paymentAmount}>KES 352,000</Text>
-                    </View>
-                </ScrollView>
-            </View>
-        </View>
+                </View>
+            </ScrollView>
+        </ImageBackground>
     );
 }
 
@@ -194,7 +171,7 @@ const styles = StyleSheet.create({
     pageHeader: {
         width: "100%",
         marginTop: 50,
-        marginLeft: 15,
+        marginHorizontal: 15,
         paddingRight: 25,
         padding: 10,
         justifyContent: 'space-between',
@@ -210,8 +187,6 @@ const styles = StyleSheet.create({
         height: 35,
     },
     back: {
-        height: 20,
-        width: 20,
     },
     topIcons: {
         marginHorizontal: 20,
@@ -219,11 +194,50 @@ const styles = StyleSheet.create({
     },
     loanHeader: {
         marginTop: 100,
+        marginBottom: 10,
         width: "100%",
         paddingHorizontal: 30,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between'
+    },
+    homeMenu: {
+        display: 'flex',
+        // backgroundColor: 'red',
+        paddingBottom: 20,
+        marginHorizontal: 30
+    },
+    menuItem: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 30,
+
+    },
+    menuIconsContainer: {
+        width: "80%",
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 60,
+        marginHorizontal: 30,
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 30,
+    },
+    menuIcons: {
+        width: 70,
+        height: 70,
+    },
+    menuItemText: {
+        fontSize: 16,
+        color: 'black',
+        width: 70,
+        fontWeight: '600',
+        textAlign: 'center',
+        marginHorizontal: 10,
+        marginTop: 10,
+        marginBottom: 10,
+        textTransform: 'uppercase'
     },
     loan: {
         padding: 10,
@@ -284,4 +298,32 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: "700"
     },
+    homeMenu: {
+        width: "100%",
+        paddingHorizontal: 30,
+        marginBottom: 0,
+    },
+    scrollview: {
+        display: 'flex',
+        width: '100%',
+        flexDirection: 'column',
+    },
+    listContainer: {
+        width: '100%',
+        borderRadius: 30
+    },
+    Image: {
+        height: 40,
+        width: 40,
+        marginRight: 10,
+
+    },
+    title: {
+        fontSize: 16,
+        color: 'black',
+        fontWeight: '700',
+        textAlign: 'center',
+        marginTop: 10,
+        textTransform: 'uppercase'
+    }
 });

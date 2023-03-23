@@ -8,5 +8,9 @@ export const theme = {
     primary: '#195b91',
     secondary: '#414757',
     error: '#f13a59',
+    success: '#229617',
+    lightgrey: '#cdd6da',
   },
 }
+
+
