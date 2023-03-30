@@ -4,7 +4,7 @@
     "slug": "ezzyapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logos/asili.png",
+    "icon": "./assets/logos/asili_no_bg.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -23,12 +23,12 @@
     "android": {
       "package": "com.ezzy.ezzyapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logos/asili.png",
+        "foregroundImage": "./assets/logos/asili_no_bg.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./assets/logos/asili.png"
+      "favicon": "./assets/logos/asili_no_bg.png"
     },
     "extra": {
       "eas": {

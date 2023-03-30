@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
     },
     dailPadItemText: {
-        fontSize: 25,
+        fontSize: 20,
         color: 'black',
         fontWeight: "400",
     },

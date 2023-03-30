@@ -33,12 +33,15 @@ function Password({ navigation }) {
             setShowRemoveButton(false)
         }
         if (enteredPin.length === 4) {
-            // setShowCancelButton(true)
             processTransaction()
         } else {
             setShowCancelButton(true)
         }
-        startCountDown()
+        if (showRetryOTP) {
+            startCountDown();
+        } else {
+            resetCountDown();
+        }
     }, [enteredPin])
 
     const processTransaction = () => {
@@ -73,8 +76,7 @@ function Password({ navigation }) {
                 verfyLoan()
             } else if (global.transactionType == "LoanRepay") {
                 repayLoan()
-            }
-            else if (global.transactionType == "Deposit") {
+            } else if (global.transactionType == "Deposit") {
                 verfyDeposit()
             } else if (global.transactionType == "Utilities") {
                 verfyUtilities()
@@ -366,23 +368,10 @@ function Password({ navigation }) {
             })
     }
 
-    const startCount = () => {
-        const interval = setInterval(() => {
-            console.log(count);
-            setCount((prevCounter) => prevCounter + 1);
-        }, 1000);
-
-        setTimeout(() => {
-            return () => {
-                clearInterval(interval)
-                setShowRetryOTP(!showRetryOTP)
-            };
-        }, 60000);
-
-    }
-
     const startCountDown = () => {
-        // console.log('Logs every minute');
+        console.log('Logs every time start count down is called');
+        setCount(60);
+        console.log(count);
         const interval = setInterval(() => {
             setCount((prevCounter) => prevCounter - 1);
         }, 1000);
@@ -394,7 +383,6 @@ function Password({ navigation }) {
     }
 
     const resetCountDown = () => {
-        // setFinishTime(0)
         setCount(60);
         console.log("Reset: " + finishTime)
         setShowRetryOTP(false)
@@ -423,7 +411,7 @@ function Password({ navigation }) {
                 console.log(response, "\n", otpRequestOptions)
                 if (response[0].Is_Successful) {
                     global.otp = response[0].otp
-                    console.log("Input OTP: " + global.otp)
+                    console.log("Resent Input OTP: " + global.otp)
                     startCountDown()
                     setShowRetryOTP(true)
                 } else {
@@ -465,7 +453,7 @@ function Password({ navigation }) {
                         paddingTop: 24,
                         paddingBottom: 10,
                         color: theme.colors.primary,
-                        fontSize: 28,
+                        fontSize: 25,
                         textAlign: 'center',
                     }}>
                     Enter One Time Pin
@@ -563,7 +551,7 @@ function Password({ navigation }) {
 const styles = StyleSheet.create({
     confirmationText: {
         color: "white",
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: "700"
     },
     spinnerTextStyle: {
