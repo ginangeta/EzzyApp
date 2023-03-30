@@ -38,17 +38,17 @@ export function BiometricAuthScreen() {
 
             if (results.success) {
                 setResult(EResult.SUCCESS);
-                console.log(result);
+                // console.log(result);
             } else if (results.error === 'unknown') {
                 setResult(EResult.DISABLED);
-                console.log(result);
+                // console.log(result);
             } else if (
                 results.error === 'user_cancel' ||
                 results.error === 'system_cancel' ||
                 results.error === 'app_cancel'
             ) {
                 setResult(EResult.CANCELLED);
-                console.log(result);
+                // console.log(result);
             }
         } catch (error) {
             setResult(EResult.ERROR);

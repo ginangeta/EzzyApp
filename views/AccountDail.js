@@ -2,6 +2,7 @@ import { StyleSheet, SafeAreaView, View, Text, TextInput, Button, Image, Touchab
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import { StackActions } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import IOSIcon from "react-native-vector-icons/Ionicons"
 import React, { useState } from "react";
 import Toast from 'react-native-toast-message';
 import { theme } from './core/theme'
@@ -164,7 +165,7 @@ export default function AccountDial({ navigation }) {
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItemNoBorder}>
                                 <TouchableOpacity style={[styles.dailPadContainer, { padding: 0 }]} onPress={onDeleteHandler.bind(this, 0)}>
                                     {/* <Image style={styles.dailPadDelete} source={require('../assets/icons/delete.png')} /> */}
-                                    <Icon name={"ios-backspace"} size={46} color={theme.colors.primary} />
+                                    <IOSIcon name={"ios-backspace"} size={46} color={theme.colors.primary} />
                                 </TouchableOpacity>
                             </Col>
                         </Row>
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
     },
     dailPadItemText: {
-        fontSize: 25,
+        fontSize: 20,
         color: 'black',
         fontWeight: "400",
     },

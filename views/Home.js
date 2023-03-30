@@ -213,14 +213,14 @@ const Home = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/BalanceEnquiry", balanceRequestOptions)
             .then((balance_response) => balance_response.json())
             .then(balance_response => {
-                // console.log("Before Error: ", balance_response[0].Is_Successful);
+                // // console.log("Before Error: ", balance_response[0].Is_Successful);
 
                 let balance_arr = {};
 
                 if (balance_response[0].Is_Successful) {
                     api_balance_details = balance_response[0].Account;
                     api_balance_details.forEach(api_balance_detail => {
-                        console.log(api_balance_detail, "\n")
+                        // console.log(api_balance_detail, "\n")
                         balance_acc_name = api_balance_detail.AccountType.trim();
                         balance_acc_amount = api_balance_detail.Amount;
 
@@ -234,7 +234,7 @@ const Home = ({ navigation }) => {
                         setUserBalance({ value: "" })
                     }
 
-                    console.log(balance_arr);
+                    // console.log(balance_arr);
                     global.account_balance_raw = api_balance_details;
                     global.account_balance = balance_arr;
                     // navigation.navigate("Home");
@@ -248,7 +248,7 @@ const Home = ({ navigation }) => {
                 }
             })
             .catch((error) => {
-                console.log("Balance Error: ", error);
+                // console.log("Balance Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,

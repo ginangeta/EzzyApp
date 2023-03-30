@@ -75,7 +75,7 @@ export default function Loan({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/LoanList", loanAccountRequest)
             .then((loan_acc_response) => loan_acc_response.json())
             .then(loan_acc_response => {
-                console.log("Before Error: ", loan_acc_response);
+                // console.log("Before Error: ", loan_acc_response);
 
                 if (loan_acc_response[0].Is_Successful) {
                     const loan_accounts = loan_acc_response[0].list;
@@ -99,7 +99,7 @@ export default function Loan({ navigation }) {
                 })
             })
             .catch((error) => {
-                console.log("Loan Accounts Error: ", error);
+                // console.log("Loan Accounts Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,

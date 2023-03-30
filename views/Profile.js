@@ -74,7 +74,7 @@ const Profile = ({ navigation }) => {
 
                     const new_balance_details = api_balance_details.filter(item => item.AccountType != "ORDINARY")
 
-                    console.log(new_balance_details);
+                    // console.log(new_balance_details);
                     setBalance(new_balance_details);
 
                     return;
@@ -87,7 +87,7 @@ const Profile = ({ navigation }) => {
                 }
             })
             .catch((error) => {
-                console.log("Balance Error: ", error);
+                // console.log("Balance Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -122,7 +122,7 @@ const Profile = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/PinChange", passwordRequestOptions)
             .then((password_response) => password_response.json())
             .then(password_response => {
-                console.log(password_response, "\n", passwordRequestOptions);
+                // console.log(password_response, "\n", passwordRequestOptions);
                 if (password_response[0].Is_Successful) {
                     setHasChangePasswordOpacity(!hasChangePasswordOpacity)
                     setLoading({
@@ -138,7 +138,7 @@ const Profile = ({ navigation }) => {
                 }
             })
             .catch((error) => {
-                console.log("Balance Error: ", error);
+                // console.log("Balance Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -163,15 +163,15 @@ const Profile = ({ navigation }) => {
     const checkUserStatus = async () => {
         try {
             const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
-            console.log("Console Credentials:" + JSON.stringify(credentials));
+            // console.log("Console Credentials:" + JSON.stringify(credentials));
             if (credentials != null) {
                 setSavedLogins(true);
-                console.log("Console Status:" + savedLogins);
+                // console.log("Console Status:" + savedLogins);
             } else {
-                console.log('No saved credentials');
+                // console.log('No saved credentials');
             }
         } catch (error) {
-            console.log("Check status error: " + error);
+            // console.log("Check status error: " + error);
         }
     }
 
@@ -185,22 +185,22 @@ const Profile = ({ navigation }) => {
                     onPress: async () => {
                         try {
                             const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
-                            console.log("Console Credentials:" + JSON.stringify(credentials));
+                            // console.log("Console Credentials:" + JSON.stringify(credentials));
                             if (credentials != null) {
                                 setSavedLogins(false);
                                 await SecureStore.deleteItemAsync('Credentials');
                             } else {
-                                console.log('Failed to delete credentials');
+                                // console.log('Failed to delete credentials');
                             }
                         } catch (error) {
-                            console.log("Delete biometrics error: " + error);
+                            // console.log("Delete biometrics error: " + error);
                         }
                     },
                 },
                 {
                     text: 'No',
                     onPress: () => {
-                        console.log('Cancel')
+                        // console.log('Cancel')
                     },
                     style: 'cancel',
                 },
@@ -229,12 +229,12 @@ const Profile = ({ navigation }) => {
         let compatible = await LocalAuthentication.hasHardwareAsync();
         setState({ compatible });
 
-        console.log("Checking Device:" + compatible);
+        // console.log("Checking Device:" + compatible);
 
         if (compatible) {
             checkForFingerprints(credentials);
         } else {
-            console.log("Device is not Compatible");
+            // console.log("Device is not Compatible");
         }
     };
 
@@ -242,12 +242,12 @@ const Profile = ({ navigation }) => {
         let fingerprints = await LocalAuthentication.isEnrolledAsync();
         setState({ fingerprints });
 
-        console.log("Fingerprints is enrolled:" + fingerprints);
+        // console.log("Fingerprints is enrolled:" + fingerprints);
 
         if (fingerprints) {
             scanFingerprint(credentials);
         } else {
-            console.log("No fingerprints enrolled");
+            // console.log("No fingerprints enrolled");
         }
     };
 
@@ -257,7 +257,7 @@ const Profile = ({ navigation }) => {
             cancelLabel: "Cancel",
             disableDeviceFallback: true,
         });
-        console.log('Scan Result:', result);
+        // console.log('Scan Result:', result);
 
         setState({
             result: JSON.stringify(result),

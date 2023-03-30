@@ -47,10 +47,10 @@ const Main = () => {
       .then(response => {
         global.token = response[0].token;
         global.apiKey = 'QWRTY0987Dezy';
-        console.log(response, "\n", token, "\n", apiKey);
+        // console.log(response, "\n", token, "\n", apiKey);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
 
       });
 
@@ -65,11 +65,11 @@ const Main = () => {
   )
 
   const resetInactivityTimeout = () => {
-    console.log('System Timeout Reset');
+    // console.log('System Timeout Reset');
     clearTimeout(timerId.current);
 
     timerId.current = setTimeout(() => {
-      console.log('System Timeout');
+      // console.log('System Timeout');
 
       // Toast.show({
       //   type: 'error',

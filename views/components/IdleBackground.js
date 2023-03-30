@@ -23,11 +23,11 @@ export default function IdleBackground({ children }) {
   )
 
   const resetInactivityTimeout = () => {
-    console.log('System Timeout Reset');
+    // console.log('System Timeout Reset');
     clearTimeout(timerId.current);
 
     timerId.current = setTimeout(() => {
-      console.log('System Timeout');
+      // console.log('System Timeout');
 
       // Toast.show({
       //   type: 'error',

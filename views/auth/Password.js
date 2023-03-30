@@ -50,19 +50,19 @@ function Password({ navigation }) {
         try {
             const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
 
-            console.log("Console Credentials:" + credentials);
+            // console.log("Console Credentials:" + credentials);
 
             if (credentials != null) {
                 setSavedLogins(true);
-                console.log("Console Status:" + savedLogins);
+                // console.log("Console Status:" + savedLogins);
                 if (state.error != "user_cancel") {
                     checkDeviceForHardware(credentials);
                 }
             } else {
-                console.log('No saved credentials');
+                // console.log('No saved credentials');
             }
         } catch (error) {
-            console.log("Check status error: " + error);
+            // console.log("Check status error: " + error);
         }
     }
 
@@ -77,12 +77,12 @@ function Password({ navigation }) {
         let compatible = await LocalAuthentication.hasHardwareAsync();
         setState({ compatible });
 
-        console.log("Checking Device:" + compatible);
+        // console.log("Checking Device:" + compatible);
 
         if (compatible) {
             checkForFingerprints(credentials);
         } else {
-            console.log("Device is not Compatible");
+            // console.log("Device is not Compatible");
         }
     };
 
@@ -90,13 +90,13 @@ function Password({ navigation }) {
         let fingerprints = await LocalAuthentication.isEnrolledAsync();
         setState({ fingerprints });
 
-        console.log("Fingerprints is enrolled:" + fingerprints);
+        // console.log("Fingerprints is enrolled:" + fingerprints);
 
         if (fingerprints) {
             scanFingerprint(credentials);
             // showAndroidAlert(credentials);
         } else {
-            console.log("No fingerprints enrolled");
+            // console.log("No fingerprints enrolled");
         }
     };
 
@@ -106,15 +106,15 @@ function Password({ navigation }) {
             cancelLabel: "Cancel",
             disableDeviceFallback: true,
         });
-        console.log('Scan Result:', result);
-        console.log('Scan Result Error:', result['error']);
+        // console.log('Scan Result:', result);
+        // console.log('Scan Result Error:', result['error']);
         setState({
             result: JSON.stringify(result),
             error: result['error']
         });
 
         if (result["success"] == true) {
-            console.log(credentials);
+            // console.log(credentials);
             // loginApi(credentials['username'], credentials['password'], true);
             verifyOTP(credentials['password'])
 
@@ -128,7 +128,7 @@ function Password({ navigation }) {
 
         setCounter(counter + 1);
 
-        console.log("Loading: " + loading.isLoading);
+        // console.log("Loading: " + loading.isLoading);
 
         if (counter < 2) {
             if (enteredPin.length < 0) {
@@ -151,7 +151,7 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 });
-                console.log("Loading: " + global.account_pin);
+                // console.log("Loading: " + global.account_pin);
             } else {
                 verifyOTP(enteredPin)
 
@@ -201,10 +201,10 @@ function Password({ navigation }) {
                     isLoading: false,
                 })
 
-                console.log(response, "\n", otpRequestOptions);
+                // console.log(response, "\n", otpRequestOptions);
                 if (response[0].Is_Successful) {
                     global.otp = response[0].otp;
-                    console.log("Input OTP: " + global.otp);
+                    // console.log("Input OTP: " + global.otp);
                     navigation.navigate("OTP");
                 } else {
                     Toast.show({
@@ -216,7 +216,7 @@ function Password({ navigation }) {
                 }
             })
             .catch(err => {
-                console.log(err);
+                // console.log(err);
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -226,7 +226,7 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 });
-                console.log("Loading: " + loading.isLoading);
+                // console.log("Loading: " + loading.isLoading);
             });
     }
 

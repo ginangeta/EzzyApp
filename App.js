@@ -27,7 +27,7 @@ const App = () => {
     } catch (e) {
       console.warn(e);
     } finally {
-      console.log("Done Promise");
+      // console.log("Done Promise");
       // SplashScreen.hideAsync();
     }
   }
@@ -47,11 +47,11 @@ const App = () => {
       .then(response => {
         global.token = response[0].token;
         global.apiKey = 'QWRTY0987Dezy';
-        console.log(response, "\n", token, "\n", apiKey, "\n");
+        // console.log(response, "\n", token, "\n", apiKey, "\n");
         // getData();
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
 
       });
   }

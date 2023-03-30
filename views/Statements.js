@@ -40,7 +40,7 @@ export default function Statement({ navigation }) {
             .then(response => response.json())
             .then(response => {
                 const data = response[0].ministatements;
-                console.log(data)
+                // console.log(data)
                 setData(data);
                 setFilteredData(data);
             })
@@ -50,7 +50,7 @@ export default function Statement({ navigation }) {
                     text1: err,
                     position: 'top'
                 });
-                console.log(err);
+                // console.log(err);
 
             });
 

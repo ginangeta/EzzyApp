@@ -29,12 +29,12 @@ const Login = ({ navigation }) => {
             const value = await AsyncStorage.getItem('user_phone')
             if (value !== null) {
                 setPhone({ value: value, error: '' })
-                console.log(value);
+                // console.log(value);
             } else {
-                console.log("Error: Empty Value");
+                // console.log("Error: Empty Value");
             }
         } catch (e) {
-            console.log("Error: " + e);
+            // console.log("Error: " + e);
         }
     }
 
@@ -58,7 +58,7 @@ const Login = ({ navigation }) => {
         let result = await LocalAuthentication.authenticateAsync(
             'Scan your finger.'
         );
-        console.log('Scan Result:', result);
+        // console.log('Scan Result:', result);
         setState({
             result: JSON.stringify(result),
         });
@@ -77,7 +77,7 @@ const Login = ({ navigation }) => {
                 },
                 {
                     text: 'Cancel',
-                    onPress: () => console.log('Cancel'),
+                    onPress: () => // console.log('Cancel'),
                     style: 'cancel',
                 },
             ]
@@ -121,7 +121,7 @@ const Login = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/login", loginRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", loginRequestOptions);
+                // console.log(response, "\n", loginRequestOptions);
                 if (response[0].Is_Successfull) {
                     global.member_details = response[0].MemberDetails[0];
                     global.account_pin = password.value;
@@ -139,7 +139,7 @@ const Login = ({ navigation }) => {
                 }
             })
             .catch(err => {
-                console.log(err);
+                // console.log(err);
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -180,14 +180,14 @@ const Login = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/GetUtilityType", utilitiesRequestOptions)
             .then((utilities_response) => utilities_response.json())
             .then(utilities_response => {
-                // console.log("Before Error: ", utilities_response[0].Is_Successful);
+                // // console.log("Before Error: ", utilities_response[0].Is_Successful);
 
                 let utilities_arr = {};
 
                 if (utilities_response[0].Is_Successful) {
                     api_utilities_details = utilities_response[0].utilties;
 
-                    console.log(api_utilities_details);
+                    // console.log(api_utilities_details);
                     global.account_utilities = api_utilities_details;
                     // navigation.navigate("Home");
 
@@ -202,7 +202,7 @@ const Login = ({ navigation }) => {
                 }
             })
             .catch((error) => {
-                console.log("Utilities Error: ", error);
+                // console.log("Utilities Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -230,12 +230,12 @@ const Login = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/GetDebitableAccounts", debitableAccountRequest)
             .then((debitable_acc_response) => debitable_acc_response.json())
             .then(debitable_acc_response => {
-                // console.log("Before Error: ", debitable_acc_response, "\n", debitableAccountRequest);
+                // // console.log("Before Error: ", debitable_acc_response, "\n", debitableAccountRequest);
 
                 if (debitable_acc_response[0].Is_Successful) {
                     const debitable_accounts = debitable_acc_response[0].debitables;
 
-                    console.log(debitable_accounts);
+                    // console.log(debitable_accounts);
                     global.debitable_accounts = debitable_accounts;
                     loanAccountsApi();
                     // navigation.navigate("Home")
@@ -248,7 +248,7 @@ const Login = ({ navigation }) => {
                 }
             })
             .catch((error) => {
-                console.log("Debitable Accounts Error: ", error);
+                // console.log("Debitable Accounts Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -277,7 +277,7 @@ const Login = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/LoanEligibilty", loanAccountRequest)
             .then((loan_acc_response) => loan_acc_response.json())
             .then(loan_acc_response => {
-                // console.log("Before Error: ", loan_acc_response);
+                // // console.log("Before Error: ", loan_acc_response);
 
                 if (loan_acc_response[0].Is_Successful) {
                     const loan_accounts = loan_acc_response[0].EAmount;
@@ -286,13 +286,13 @@ const Login = ({ navigation }) => {
                             global.ChapChapLoanAccountNumber = loan.AccountNo;
                             global.ChapChaploanAccountName = loan.LoanCode;
                         } else {
-                            console.log("Other Loan Type");
+                            // console.log("Other Loan Type");
                         }
                     });
 
                     const new_loan_account = loan_accounts.filter(item => item.LoanCode != "Chap Chap")
 
-                    console.log(new_loan_account);
+                    // console.log(new_loan_account);
                     global.loan_accounts = new_loan_account;
                     creditablesApi();
                     // navigation.navigate("Home")
@@ -305,7 +305,7 @@ const Login = ({ navigation }) => {
                 }
             })
             .catch((error) => {
-                console.log("Debitable Accounts Error: ", error);
+                // console.log("Debitable Accounts Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -334,12 +334,12 @@ const Login = ({ navigation }) => {
         fetch("https://testasili.devopsfoundry.cloud:8050/GetCreditableAccounts", creditableAccountRequest)
             .then((creditable_acc_response) => creditable_acc_response.json())
             .then(creditable_acc_response => {
-                // console.log("Before Error: ", creditable_acc_response);
+                // // console.log("Before Error: ", creditable_acc_response);
 
                 if (creditable_acc_response[0].Is_Successful) {
                     const creditable_accounts = creditable_acc_response[0].debitables;
 
-                    console.log(creditable_accounts);
+                    // console.log(creditable_accounts);
                     global.creditable_accounts = creditable_accounts;
                     navigation.navigate("Main")
                 } else {
@@ -351,7 +351,7 @@ const Login = ({ navigation }) => {
                 }
             })
             .catch((error) => {
-                console.log("Creditable Accounts Error: ", error);
+                // console.log("Creditable Accounts Error: ", error);
                 Toast.show({
                     type: 'error',
                     text1: error,

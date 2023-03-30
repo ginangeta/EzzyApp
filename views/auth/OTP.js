@@ -49,7 +49,7 @@ function Password({ navigation }) {
             isLoading: true,
         })
 
-        console.log("Loading: " + loading.isLoading)
+        // console.log("Loading: " + loading.isLoading)
         if (enteredPin.length < 0) {
             Toast.show({
                 type: 'error',
@@ -70,7 +70,7 @@ function Password({ navigation }) {
             setLoading({
                 isLoading: false,
             })
-            console.log("OTP: " + enteredPin)
+            // console.log("OTP: " + enteredPin)
         } else {
             if (global.transactionType == "Loan") {
                 verfyLoan()
@@ -110,7 +110,7 @@ function Password({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", transactionRequestOptions)
+                // console.log(response, "\n", transactionRequestOptions)
                 if (response[0].Is_Successful) {
                     Toast.show({
                         type: 'success',
@@ -131,7 +131,7 @@ function Password({ navigation }) {
                 }
             })
             .catch(err => {
-                console.log(err)
+                // console.log(err)
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -141,7 +141,7 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 })
-                console.log("Loading: " + loading.isLoading)
+                // console.log("Loading: " + loading.isLoading)
             })
     }
 
@@ -168,7 +168,7 @@ function Password({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/PayUtility", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", transactionRequestOptions)
+                // console.log(response, "\n", transactionRequestOptions)
                 if (response[0].Is_Successful) {
                     Toast.show({
                         type: 'success',
@@ -189,7 +189,7 @@ function Password({ navigation }) {
                 }
             })
             .catch(err => {
-                console.log(err)
+                // console.log(err)
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -199,7 +199,7 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 })
-                console.log("Loading: " + loading.isLoading)
+                // console.log("Loading: " + loading.isLoading)
             })
     }
 
@@ -227,7 +227,7 @@ function Password({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/Deposit", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", transactionRequestOptions)
+                // console.log(response, "\n", transactionRequestOptions)
                 Toast.show({
                     type: 'success',
                     text1: 'Transaction Successful',
@@ -238,7 +238,7 @@ function Password({ navigation }) {
                 navigation.navigate("Home")
             })
             .catch(err => {
-                console.log(err)
+                // console.log(err)
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -248,7 +248,7 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 })
-                console.log("Loading: " + loading.isLoading)
+                // console.log("Loading: " + loading.isLoading)
             })
     }
 
@@ -275,7 +275,7 @@ function Password({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", loanRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", loanRequestOptions)
+                // console.log(response, "\n", loanRequestOptions)
                 if (response[0].Is_Successful) {
                     Toast.show({
                         type: 'success',
@@ -296,7 +296,7 @@ function Password({ navigation }) {
                 }
             })
             .catch(err => {
-                console.log(err)
+                // console.log(err)
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -306,7 +306,7 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 })
-                console.log("Loading: " + loading.isLoading)
+                // console.log("Loading: " + loading.isLoading)
             })
     }
 
@@ -333,7 +333,7 @@ function Password({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/LoanRepayment", loanRepaymentOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", loanRepaymentOptions)
+                // console.log(response, "\n", loanRepaymentOptions)
                 if (response[0].Is_Successful) {
                     Toast.show({
                         type: 'success',
@@ -354,7 +354,7 @@ function Password({ navigation }) {
                 }
             })
             .catch(err => {
-                console.log(err)
+                // console.log(err)
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -364,14 +364,14 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 })
-                console.log("Loading: " + loading.isLoading)
+                // console.log("Loading: " + loading.isLoading)
             })
     }
 
     const startCountDown = () => {
-        console.log('Logs every time start count down is called');
+        // console.log('Logs every time start count down is called');
         setCount(60);
-        console.log(count);
+        // console.log(count);
         const interval = setInterval(() => {
             setCount((prevCounter) => prevCounter - 1);
         }, 1000);
@@ -384,7 +384,7 @@ function Password({ navigation }) {
 
     const resetCountDown = () => {
         setCount(60);
-        console.log("Reset: " + finishTime)
+        // console.log("Reset: " + finishTime)
         setShowRetryOTP(false)
     }
 
@@ -408,10 +408,10 @@ function Password({ navigation }) {
         fetch("https://testasili.devopsfoundry.cloud:8050/GetOTP", otpRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                console.log(response, "\n", otpRequestOptions)
+                // console.log(response, "\n", otpRequestOptions)
                 if (response[0].Is_Successful) {
                     global.otp = response[0].otp
-                    console.log("Resent Input OTP: " + global.otp)
+                    // console.log("Resent Input OTP: " + global.otp)
                     startCountDown()
                     setShowRetryOTP(true)
                 } else {
@@ -424,7 +424,7 @@ function Password({ navigation }) {
                 }
             })
             .catch(err => {
-                console.log(err)
+                // console.log(err)
                 Toast.show({
                     type: 'error',
                     text1: err,
@@ -434,7 +434,7 @@ function Password({ navigation }) {
                 setLoading({
                     isLoading: false,
                 })
-                console.log("Loading: " + loading.isLoading)
+                // console.log("Loading: " + loading.isLoading)
             })
     }
 
