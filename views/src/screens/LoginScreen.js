@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   forgot: {
-    fontSize: 13,
+    fontSize: 14,
     color: theme.colors.secondary,
   },
   link: {

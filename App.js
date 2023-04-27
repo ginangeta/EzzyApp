@@ -1,13 +1,11 @@
 import "react-native-gesture-handler";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import React, { useState, useEffect, useCallback } from "react";
-import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect } from "react";
+import { BackHandler, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Login from "./views/auth/Login";
 import Main from "./views/Main";
-
 
 const Stack = createStackNavigator();
 
@@ -15,9 +13,40 @@ const Stack = createStackNavigator();
 
 const App = () => {
 
+  const navigationRef = useNavigationContainerRef(); // You can also use a regular ref with `React.useRef()`
+
   useEffect(() => {
     prepare();
-  }, [])
+
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {
+          text: 'YES', onPress: () => {
+            resetToLogin();
+            BackHandler.exitApp()
+          }
+        },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+
+  const resetToLogin = () => {
+    navigationRef.navigate('Login')
+  }
 
   async function prepare() {
     try {
@@ -42,12 +71,12 @@ const App = () => {
       })
     }
 
-    fetch("https://testasili.devopsfoundry.cloud:8050/Token", requestOptions)
+    fetch("https://asili.devopsfoundry.cloud:7074/" + "Token", requestOptions)
       .then(response => response.json())
       .then(response => {
         global.token = response[0].token;
-        global.apiKey = 'QWRTY0987Dezy';
-        // console.log(response, "\n", token, "\n", apiKey, "\n");
+        global.apiKey = "QWRTY0987Dezy";
+        console.log(response, "\n", token, "\n", apiKey, "\n");
         // getData();
       })
       .catch(err => {

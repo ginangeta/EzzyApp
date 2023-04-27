@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     LoanDueDate: {
-        fontSize: 18,
+        fontSize: 16,
     },
     loanrepayment: {
         justifyContent: 'space-between',
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#dfe7fa",
         fontWeight: 'bold',
         marginStart: 10,
-        fontSize: 18,
+        fontSize: 16,
         width: "100%"
     },
     scrollViewStyle: {
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     },
     confirmationText: {
         color: "white",
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "700"
     },
     userImageView: {

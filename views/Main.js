@@ -42,11 +42,11 @@ const Main = () => {
 
     resetInactivityTimeout();
 
-    fetch("https://testasili.devopsfoundry.cloud:8050/Token", requestOptions)
+    fetch("https://asili.devopsfoundry.cloud:7074/" + "Token", requestOptions)
       .then(response => response.json())
       .then(response => {
         global.token = response[0].token;
-        global.apiKey = 'QWRTY0987Dezy';
+        global.apiKey = "QWRTY0987Dezy";
         // console.log(response, "\n", token, "\n", apiKey);
       })
       .catch(err => {

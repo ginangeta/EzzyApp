@@ -174,14 +174,14 @@ const styles = StyleSheet.create({
     balanceInfo: {
         marginTop: 10,
         fontWeight: "700",
-        fontSize: 20,
+        fontSize: 18,
         color: "white",
     },
     userBalanceAmount: {
         marginTop: 10,
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: 18,
     },
     homeMenu: {
         position: 'absolute',
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
         height: 80,
     },
     menuItemText: {
-        fontSize: 18,
+        fontSize: 16,
         color: 'white',
         width: 70,
         fontWeight: '700',
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     },
     confirmationText: {
         color: "white",
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "700"
     },
     userImageView: {
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     LoanDueDate: {
-        fontSize: 18,
+        fontSize: 16,
     },
     loanrepayment: {
         justifyContent: 'space-between',
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#dfe7fa",
         fontWeight: 'bold',
         marginStart: 10,
-        fontSize: 18,
+        fontSize: 16,
         width: "100%"
     },
     scrollViewStyle: {

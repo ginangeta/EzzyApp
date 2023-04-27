@@ -1,6 +1,6 @@
 {
   "name": "ezzyapp",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -17,9 +17,10 @@
     "@react-navigation/native-stack": "6.5.0",
     "@react-navigation/stack": "6.1.1",
     "bootstrap": "5.2.2",
+    "dotenv": "^16.0.3",
     "expo": "47.0.0",
     "expo-build-properties": "~0.4.1",
-    "expo-constants": "14.0.2",
+    "expo-constants": "~14.0.2",
     "expo-local-authentication": "13.0.2",
     "expo-secure-store": "12.0.0",
     "expo-splash-screen": "0.17.5",
@@ -32,8 +33,9 @@
     "react-bootstrap": "2.5.0",
     "react-dom": "18.1.0",
     "react-moment": "^1.1.3",
-    "react-native": "0.70.5",
+    "react-native": "0.70.8",
     "react-native-animate-loading-button": "1.0.3",
+    "react-native-animated-spinkit": "^1.5.2",
     "react-native-drop-shadow": "0.0.4",
     "react-native-flexbox-grid": "0.3.2",
     "react-native-gesture-handler": "2.8.0",
@@ -56,6 +58,8 @@
   },
   "devDependencies": {
     "@babel/core": "7.19.3",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.4",
+    "react-native-dotenv": "^3.4.8",
     "react-native-obfuscating-transformer": "^1.0.0"
   },
   "private": true

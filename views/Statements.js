@@ -36,7 +36,7 @@ export default function Statement({ navigation }) {
             })
         }
 
-        const resp = await fetch("https://testasili.devopsfoundry.cloud:8050/Ministatement", miniStatementRequest)
+        const resp = await fetch("https://asili.devopsfoundry.cloud:7074/" + "Ministatement", miniStatementRequest)
             .then(response => response.json())
             .then(response => {
                 const data = response[0].ministatements;
@@ -141,7 +141,7 @@ export default function Statement({ navigation }) {
 const styles = StyleSheet.create({
     text: {
         paddingBottom: 10,
-        fontSize: 20,
+        fontSize: 18,
         textAlign: "center",
     },
     backgroundImage: {

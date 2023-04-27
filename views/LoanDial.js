@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
         height: 100
     },
     dailPadItemText: {
-        fontSize: 30,
+        fontSize: 26,
         color: 'black',
         fontWeight: "700",
     },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
         width: 50
     },
     dailPadCurrency: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         fontWeight: "700",
         backgroundColor: "#dfe7fa",
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     },
     confirmationText: {
         color: "white",
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "700"
     },
     back: {

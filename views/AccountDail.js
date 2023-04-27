@@ -71,7 +71,7 @@ export default function AccountDial({ navigation }) {
                             paddingTop: 24,
                             paddingBottom: 10,
                             color: theme.colors.primary,
-                            fontSize: 28,
+                            fontSize: 24,
                             textAlign: 'center',
                         }}>
                         Enter Account
@@ -81,7 +81,7 @@ export default function AccountDial({ navigation }) {
                             paddingTop: 10,
                             paddingBottom: 58,
                             color: theme.colors.primary,
-                            fontSize: 18,
+                            fontSize: 16,
                             textAlign: 'center',
                         }}>
                         Kindly input the account you wish to send to
@@ -154,7 +154,7 @@ export default function AccountDial({ navigation }) {
                         <Row size={12}>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
                                 <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, '00')}>
-                                    <Text style={[styles.dailPadItemText, { fontSize: 20 }]}>00</Text>
+                                    <Text style={[styles.dailPadItemText, { fontSize: 18 }]}>00</Text>
                                 </TouchableOpacity>
                             </Col>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     dailPadInputText: {
-        fontSize: 30,
+        fontSize: 26,
         fontWeight: '500',
         color: 'black',
         textAlign: 'center'
@@ -218,14 +218,14 @@ const styles = StyleSheet.create({
     dailPadItem: {
         justifyContent: 'center',
         alignItems: 'center',
-        height: 80,
+        height: 75,
         borderWidth: 2,
         margin: 10,
         borderRadius: 50,
         borderColor: 'lightgrey',
     },
     dailPadItemText: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         fontWeight: "400",
     },
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
         width: 40
     },
     dailPadCurrency: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         fontWeight: "700",
         backgroundColor: "#dfe7fa",
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     },
     confirmationText: {
         color: "white",
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "700"
     },
     back: {

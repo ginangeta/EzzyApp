@@ -32,16 +32,20 @@ function Password({ navigation }) {
         } else {
             setShowRemoveButton(false)
         }
+
         if (enteredPin.length === 4) {
             processTransaction()
         } else {
             setShowCancelButton(true)
         }
-        if (showRetryOTP) {
-            startCountDown();
-        } else {
-            resetCountDown();
-        }
+
+        // console.log(count);
+
+        // if (showRetryOTP & count === 60) {
+        //     startCountDown();
+        // } else {
+        //     resetCountDown();
+        // }
     }, [enteredPin])
 
     const processTransaction = () => {
@@ -72,6 +76,9 @@ function Password({ navigation }) {
             })
             // console.log("OTP: " + enteredPin)
         } else {
+
+            resetCountDown();
+
             if (global.transactionType == "Loan") {
                 verfyLoan()
             } else if (global.transactionType == "LoanRepay") {
@@ -107,10 +114,10 @@ function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", transactionRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "withdrawal", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
-                // console.log(response, "\n", transactionRequestOptions)
+                console.log(response, "\n", transactionRequestOptions)
                 if (response[0].Is_Successful) {
                     Toast.show({
                         type: 'success',
@@ -125,7 +132,7 @@ function Password({ navigation }) {
                     Toast.show({
                         type: 'error',
                         text1: 'Transaction Failed',
-                        text2: 'Incorrect Credentials 🛑',
+                        text2: response[0].Error + ' 🛑',
                         position: 'top'
                     })
                 }
@@ -134,7 +141,7 @@ function Password({ navigation }) {
                 // console.log(err)
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: "Transaction Failed Kindly Try Again",
                     position: 'top'
                 })
             }).finally(() => {
@@ -165,7 +172,7 @@ function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/PayUtility", transactionRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "PayUtility", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", transactionRequestOptions)
@@ -183,7 +190,7 @@ function Password({ navigation }) {
                     Toast.show({
                         type: 'error',
                         text1: 'Transaction Failed',
-                        text2: 'Incorrect Credentials 🛑',
+                        text2: response[0].Error + ' 🛑',
                         position: 'top'
                     })
                 }
@@ -192,10 +199,10 @@ function Password({ navigation }) {
                 // console.log(err)
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: "Transaction Failed Kindly Try Again",
                     position: 'top'
                 })
-            }).finally(() => {
+                resetCountDown();
                 setLoading({
                     isLoading: false,
                 })
@@ -217,34 +224,45 @@ function Password({ navigation }) {
                     Token: global.token
                 },
                 IsMpesa: true,
-                SourcAcccount: global.depositAccountNumber,
-                DestAcccount: global.transaction_account,
+                SourcAcccount: "",
+                DestAcccount: global.depositAccountNumber,
                 Amount: global.transaction_amount,
                 PhoneNo: global.account_phone
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/Deposit", transactionRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "Deposit", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", transactionRequestOptions)
-                Toast.show({
-                    type: 'success',
-                    text1: 'Transaction Successful',
-                    text2: 'KES ' + global.transaction_amount + ' Deposited 😊',
-                    position: 'top'
-                })
+                if (response[0].Is_Successful) {
+                    Toast.show({
+                        type: 'success',
+                        text1: 'Transaction Successful',
+                        text2: 'KES ' + global.transaction_amount + ' Deposited 😊',
+                        position: 'top'
+                    })
 
-                navigation.navigate("Home")
+                    navigation.navigate("Home");
+
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Transaction Failed',
+                        text2: response[0].Error + ' 🛑',
+                        position: 'top'
+                    })
+                }
             })
             .catch(err => {
                 // console.log(err)
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: "Transaction Failed Kindly Try Again",
                     position: 'top'
                 })
             }).finally(() => {
+                resetCountDown();
                 setLoading({
                     isLoading: false,
                 })
@@ -272,7 +290,7 @@ function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", loanRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "withdrawal", loanRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", loanRequestOptions)
@@ -290,7 +308,7 @@ function Password({ navigation }) {
                     Toast.show({
                         type: 'error',
                         text1: 'Loan Request Failed',
-                        text2: 'Incorrect Credentials 🛑',
+                        text2: response[0].Error + ' 🛑',
                         position: 'top'
                     })
                 }
@@ -299,10 +317,11 @@ function Password({ navigation }) {
                 // console.log(err)
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: "Transaction Failed Kindly Try Again",
                     position: 'top'
                 })
             }).finally(() => {
+                resetCountDown();
                 setLoading({
                     isLoading: false,
                 })
@@ -310,7 +329,7 @@ function Password({ navigation }) {
             })
     }
 
-    const repayLoan = () => {
+    const repayLoan = () => {   
 
         const loanRepaymentOptions = {
             method: 'POST',
@@ -326,14 +345,15 @@ function Password({ navigation }) {
                 DeviceID: "",
                 LoanNo: global.LoanNo,
                 Amount: global.transaction_amount,
-                PhoneNo: global.account_phone
+                PhoneNo: global.account_phone,
+                IsMpesa: true
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/LoanRepayment", loanRepaymentOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "LoanRepayment", loanRepaymentOptions)
             .then((response) => response.json())
             .then(response => {
-                // console.log(response, "\n", loanRepaymentOptions)
+                console.log(response, "\n", loanRepaymentOptions)
                 if (response[0].Is_Successful) {
                     Toast.show({
                         type: 'success',
@@ -357,10 +377,11 @@ function Password({ navigation }) {
                 // console.log(err)
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: "Transaction Failed Kindly Try Again",
                     position: 'top'
                 })
             }).finally(() => {
+                resetCountDown();
                 setLoading({
                     isLoading: false,
                 })
@@ -405,13 +426,13 @@ function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetOTP", otpRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetOTP", otpRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", otpRequestOptions)
                 if (response[0].Is_Successful) {
                     global.otp = response[0].otp
-                    // console.log("Resent Input OTP: " + global.otp)
+                    console.log("Resent Input OTP: " + global.otp)
                     startCountDown()
                     setShowRetryOTP(true)
                 } else {
@@ -427,7 +448,7 @@ function Password({ navigation }) {
                 // console.log(err)
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: "Transaction Failed Kindly Try Again",
                     position: 'top'
                 })
             }).finally(() => {
@@ -463,7 +484,7 @@ function Password({ navigation }) {
                         paddingTop: 10,
                         paddingBottom: 10,
                         color: theme.colors.primary,
-                        fontSize: 18,
+                        fontSize: 16,
                         textAlign: 'center',
                     }}>
                     Kindly input the one time pin sent to your registered number
@@ -473,7 +494,7 @@ function Password({ navigation }) {
                         paddingTop: 10,
                         paddingBottom: 58,
                         color: theme.colors.secondary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: 'bold',
                         textAlign: 'center',
                     }}>RESEND OTP: {count}
@@ -488,7 +509,7 @@ function Password({ navigation }) {
                                 paddingTop: 10,
                                 paddingBottom: 58,
                                 color: theme.colors.primary,
-                                fontSize: 18,
+                                fontSize: 16,
                                 textAlign: 'center',
                                 fontWeight: 'bold',
                             }}>
@@ -551,7 +572,7 @@ function Password({ navigation }) {
 const styles = StyleSheet.create({
     confirmationText: {
         color: "white",
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "700"
     },
     spinnerTextStyle: {

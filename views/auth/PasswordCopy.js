@@ -72,7 +72,7 @@ export default function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", transactionRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "withdrawal", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", transactionRequestOptions);
@@ -130,7 +130,7 @@ export default function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/PayUtility", transactionRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "PayUtility", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", transactionRequestOptions);
@@ -189,7 +189,7 @@ export default function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/Deposit", transactionRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "Deposit", transactionRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", transactionRequestOptions);
@@ -237,7 +237,7 @@ export default function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/withdrawal", loanRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "withdrawal", loanRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", loanRequestOptions);
@@ -413,11 +413,11 @@ const styles = StyleSheet.create({
         height: 100
     },
     dailPadItemText: {
-        fontSize: 30,
+        fontSize: 26,
         color: 'white',
         fontWeight: "700",
     }, dailPadItemCancel: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'white',
         fontWeight: "700",
     },
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
         width: 40
     },
     dailPadCurrency: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         fontWeight: "700",
         backgroundColor: "#dfe7fa",

@@ -1,6 +1,7 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity, KeyboardAvoidingView, Alert } from "react-native";
 import AnimateLoadingButton from "react-native-animate-loading-button";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Fold } from 'react-native-animated-spinkit'
 import Icon from "react-native-vector-icons/Ionicons"
 import * as LocalAuthentication from 'expo-local-authentication';
 // import PhoneInput from 'react-native-smooth-phone-input';
@@ -21,6 +22,7 @@ const Login = ({ navigation }) => {
     const [phone, setPhone] = useState({ value: '', error: '' })
     const [password, setPassword] = useState({ value: '', error: '' })
     const [savedLogins, setSavedLogins] = useState(false)
+    const [authLogins, setAuthLogins] = useState(false)
     const [state, setState] = useState({
         compatible: false,
         fingerprints: false,
@@ -149,13 +151,35 @@ const Login = ({ navigation }) => {
         );
     };
 
-    const showBiometricOptionAlert = () => {
+    const showBiometricOptionAlert = async () => {
 
         checkUserStatus();
 
         if (savedLogins == true) {
-            // checkUserStatus();
-            proceedLogin();
+            const credentials = JSON.parse(await SecureStore.getItemAsync('Credentials'));
+            if (credentials['username'] != phone.value || credentials['password'] != password.value) {
+                Alert.alert(
+                    'Biometric Options',
+                    'Save new credentials and use biometrics on next login?',
+                    [
+                        {
+                            text: 'Yes',
+                            onPress: () => {
+                                promptForBiometrics();
+                            },
+                        },
+                        {
+                            text: 'No',
+                            onPress: () => {
+                                proceedLogin();
+                            },
+                            style: 'cancel',
+                        },
+                    ]
+                );
+            } else {
+                proceedLogin();
+            }
         } else {
             Alert.alert(
                 'Biometric Options',
@@ -208,6 +232,7 @@ const Login = ({ navigation }) => {
     }
 
     const proceedLogin = () => {
+        loginButton.showLoading(false);
         utilitiesApi();
     }
 
@@ -246,7 +271,9 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/login", loginRequestOptions)
+        console.log(loginRequestOptions);
+
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "login", loginRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", loginRequestOptions);
@@ -255,8 +282,8 @@ const Login = ({ navigation }) => {
                     global.account_pin = password_input;
                     global.account_phone = phone_input;
                     storeData(phone_input);
-
                     if (is_logged_in == true) {
+                        setAuthLogins(true);
                         proceedLogin();
                     } else {
                         showBiometricOptionAlert();
@@ -275,12 +302,14 @@ const Login = ({ navigation }) => {
                 }
             })
             .catch(err => {
-                // console.log(err);
                 Toast.show({
                     type: 'error',
-                    text1: err,
+                    text1: "Login Failed",
+                    text2: 'Server Error. Kindly try again in a few 🛑',
                     position: 'top'
                 });
+
+                loginButton.showLoading(false);
             });
     }
 
@@ -313,10 +342,10 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetUtilityType", utilitiesRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetUtilityType", utilitiesRequestOptions)
             .then((utilities_response) => utilities_response.json())
             .then(utilities_response => {
-                // // console.log("Before Error: ", utilities_response[0].Is_Successful);
+                console.log("Uitilities Before Error: ", utilities_response[0].Is_Successful);
 
                 let utilities_arr = {};
 
@@ -339,6 +368,7 @@ const Login = ({ navigation }) => {
             })
             .catch((error) => {
                 // console.log("Utilities Error: ", error);
+                setAuthLogins(false);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -363,13 +393,21 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetDebitableAccounts", debitableAccountRequest)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetDebitableAccounts", debitableAccountRequest)
             .then((debitable_acc_response) => debitable_acc_response.json())
             .then(debitable_acc_response => {
-                // console.log("Before Error: ", debitable_acc_response, "\n", debitableAccountRequest);
+                console.log("Before Debitables Error: ", debitable_acc_response, "\n", debitableAccountRequest);
 
                 if (debitable_acc_response[0].Is_Successful) {
                     const debitable_accounts = debitable_acc_response[0].debitables;
+
+                    debitable_accounts.forEach(account => {
+                        if (account.ProductName == "ORDINARY ACCOUNTS") {
+                            global.ordinaryAccNo = account.AccountNo;
+                            global.ordinaryAccName = account.ProductName;
+                        }
+
+                    });
 
                     // console.log(debitable_accounts);
                     global.debitable_accounts = debitable_accounts;
@@ -385,6 +423,7 @@ const Login = ({ navigation }) => {
             })
             .catch((error) => {
                 // console.log("Debitable Accounts Error: ", error);
+                setAuthLogins(false);
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -410,10 +449,10 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/LoanEligibilty", loanAccountRequest)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "LoanEligibilty", loanAccountRequest)
             .then((loan_acc_response) => loan_acc_response.json())
             .then(loan_acc_response => {
-                // // console.log("Before Error: ", loan_acc_response);
+                console.log("Before LoanEligibility Error: ", loan_acc_response);
 
                 if (loan_acc_response[0].Is_Successful) {
                     const loan_accounts = loan_acc_response[0].EAmount;
@@ -448,6 +487,8 @@ const Login = ({ navigation }) => {
             })
             .catch((error) => {
                 // console.log("Debitable Accounts Error: ", error);
+                setAuthLogins(false);
+
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -473,25 +514,16 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetCreditableAccounts", creditableAccountRequest)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetCreditableAccounts", creditableAccountRequest)
             .then((creditable_acc_response) => creditable_acc_response.json())
             .then(creditable_acc_response => {
-                // // console.log("Before Error: ", creditable_acc_response);
+                console.log("Before Creditables Error: ", creditable_acc_response);
 
                 if (creditable_acc_response[0].Is_Successful) {
                     const creditable_accounts = creditable_acc_response[0].debitables;
 
-                    creditable_accounts.forEach(account => {
-                        if (account.ProductName == "ORDINARY ACCOUNTS") {
-                            global.ordinaryAccNo = account.AccountNo;
-                            global.ordinaryAccName = account.ProductName;
-                        }
-
-                    });
-
-                    // console.log(creditable_accounts);
                     global.creditable_accounts = creditable_accounts;
-                    // navigation.navigate("Main")
+
                     navigation.reset({
                         index: 0,
                         routes: [{ name: 'Main' }],
@@ -506,6 +538,8 @@ const Login = ({ navigation }) => {
             })
             .catch((error) => {
                 // console.log("Creditable Accounts Error: ", error);
+                setAuthLogins(false);
+
                 Toast.show({
                     type: 'error',
                     text1: error,
@@ -519,7 +553,7 @@ const Login = ({ navigation }) => {
     return (
         <Background>
             <Logo />
-            <Header>Welcome back.</Header>
+            <Header>Welcome to Eazy Asili.</Header>
             <KeyboardAvoidingView style={styles.container} >
                 <TextInput
                     label="Phone"
@@ -569,6 +603,37 @@ const Login = ({ navigation }) => {
                 onPress={getBiometricsFunction}>
                 <Icon name={"ios-finger-print"} size={50} color={theme.colors.primary} />
             </TouchableOpacity> : ''}
+
+            {authLogins == true ? <View style={{
+                flex: 1,
+                left: 0,
+                top: 0,
+                width: "100%",
+                height: "100%",
+                opacity: 0.9,
+                position: 'absolute',
+                backgroundColor: '#195b91',
+                alignSelf: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+
+            }}>
+                <Fold size={120} color="#FFF"></Fold>
+                <Header style={{
+                    fontSize: 23,
+                    fontWeight: 'bold',
+                    paddingVertical: 12,
+                    color: "white",
+                    marginTop: 25,
+                }}>Preparing Application.</Header>
+                <Text style={{
+                    fontSize: 16,
+                    fontWeight: 'normal',
+                    color: "white",
+                    opacity: 0.9,
+                    marginTop: 5,
+                }}>This might take a while...</Text>
+            </View> : ""}
         </Background >
     )
 }

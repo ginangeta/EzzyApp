@@ -65,7 +65,7 @@ const Profile = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/BalanceEnquiry", balanceRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "BalanceEnquiry", balanceRequestOptions)
             .then((balance_response) => balance_response.json())
             .then(balance_response => {
 
@@ -119,7 +119,7 @@ const Profile = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/PinChange", passwordRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "PinChange", passwordRequestOptions)
             .then((password_response) => password_response.json())
             .then(password_response => {
                 // console.log(password_response, "\n", passwordRequestOptions);
@@ -333,7 +333,7 @@ const Profile = ({ navigation }) => {
             </View>
 
             <View style={styles.homeMenu} >
-                <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
+                <Text style={{ fontWeight: "700", fontSize: 16, paddingHorizontal: 30 }}></Text>
                 <View style={[styles.listContainer]}>
                     <FlatList style={[styles.homeMenuList]}
                         data={balance}
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
     userName: {
         fontWeight: "bold",
         color: '#000000',
-        fontSize: 18,
+        fontSize: 16,
     },
     imagestyle: {
         width: 200,
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     LoanDueDate: {
-        fontSize: 18,
+        fontSize: 16,
     },
     loanrepayment: {
         justifyContent: 'space-between',
@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
         fontWeight: "700"
     },
     listTitle: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         fontWeight: '700',
         padding: 15,

@@ -34,7 +34,7 @@ export default function LoanDetails({ navigation }) {
             <View style={[styles.homeMenu]}>
                 <Text style={{ fontWeight: "700", fontSize: 23, marginRight: 20 }}>Balance:  {global.LoanBal}</Text>
 
-                <Text style={{ fontWeight: "700", fontSize: 18, marginTop: 10, color: 'darkgrey' }}>Loan Transactions</Text>
+                <Text style={{ fontWeight: "700", fontSize: 16, marginTop: 10, color: 'darkgrey' }}>Loan Transactions</Text>
 
                 <Row size={12} style={{ marginTop: 5 }}>
                     <Col sm={6} md={6} lg={3} style={styles.menuItem}>
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     LoanDueDate: {
-        fontSize: 18,
+        fontSize: 16,
     },
     loanrepayment: {
         justifyContent: 'space-between',

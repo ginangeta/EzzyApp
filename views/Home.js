@@ -41,6 +41,76 @@ const Home = ({ navigation }) => {
     const [selectedUtilitiesType, setSelectedUtilitiesType] = useState(null);
     const [userBalance, setUserBalance] = useState({ value: '' });
 
+    useEffect(() => {
+        setHasBalanceOpacity(false);
+        loanEligibilityAccountsApi();
+    }, [navigation]);
+
+    const loanEligibilityAccountsApi = () => {
+        const loanAccountRequest = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                key: {
+                    Api_Key: global.apiKey,
+                    Token: global.token
+                },
+                phoneNo: global.account_phone,
+            })
+        }
+
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "LoanEligibilty", loanAccountRequest)
+            .then((loan_acc_response) => loan_acc_response.json())
+            .then(loan_acc_response => {
+                console.log("Before LoanEligibility Error: ", loan_acc_response);
+
+                if (loan_acc_response[0].Is_Successful) {
+                    const loan_accounts = loan_acc_response[0].EAmount;
+                    loan_accounts.forEach(loan => {
+                        // console.log("Before Error: ", loan.LoanCode);
+                        if (loan.LoanCode == "Chap Chap") {
+                            global.ChapChapLoanAccountNumber = loan.AccountNo;
+                            global.ChapChaploanAccountName = loan.LoanCode;
+                            global.ChapChaploanLoanLimit = loan.MaxAmount;
+                            if (parseInt(loan.MaxAmount) > 0) {
+                                global.ChapChaploanLoanLimitColor = 'red'
+                            } else {
+                                global.ChapChaploanLoanLimitColor = 'green'
+                            }
+                        } else {
+                            // console.log("Other Loan Type");
+                        }
+                    });
+
+                    const new_loan_account = loan_accounts.filter(item => item.LoanCode == "Chap Chap")
+
+                    // console.log(new_loan_account);
+                    global.loan_accounts = new_loan_account;
+                    creditablesApi();
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: "Can't get loan accounts at this point",
+                        position: 'top'
+                    });
+                }
+            })
+            .catch((error) => {
+                // console.log("Debitable Accounts Error: ", error);
+                setAuthLogins(false);
+
+                Toast.show({
+                    type: 'error',
+                    text1: error,
+                    position: 'top'
+                });
+            });
+
+    } 
+
     const setChosenWithdrawAccount = (withdrawAccountNumber, withdrawAccountName) => {
         setHasWithdrawOpacity(!hasWithdrawOpacity)
 
@@ -210,7 +280,7 @@ const Home = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/BalanceEnquiry", balanceRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "BalanceEnquiry", balanceRequestOptions)
             .then((balance_response) => balance_response.json())
             .then(balance_response => {
                 // // console.log("Before Error: ", balance_response[0].Is_Successful);
@@ -329,7 +399,7 @@ const Home = ({ navigation }) => {
                         marginTop: 5,
                         fontWeight: "bold",
                         color: '#000000',
-                        fontSize: 18,
+                        fontSize: 16,
                     }}>Services</Text>
                     <Row size={12} style={{
                         marginTop: 5,
@@ -538,7 +608,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         height: "100%",
-        backgroundColor: "#dfe7fa",
+        backgroundColor: "#E1F6FF",
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'flex-start',
@@ -561,7 +631,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1
     },
     title: {
-        fontSize: 18,
+        fontSize: 16,
         textTransform: 'capitalize',
     },
     topHomeIcons: {
@@ -600,7 +670,7 @@ const styles = StyleSheet.create({
     },
     salutation: {
         color: '#000000',
-        fontSize: 18,
+        fontSize: 16,
     },
     homeHeaderText: {
         marginLeft: 15,
@@ -610,7 +680,7 @@ const styles = StyleSheet.create({
     userName: {
         fontWeight: "bold",
         color: '#000000',
-        fontSize: 18,
+        fontSize: 16,
     },
     imagestyle: {
         width: 70,
@@ -636,14 +706,14 @@ const styles = StyleSheet.create({
     balance: {
         marginTop: 10,
         fontWeight: "700",
-        fontSize: 20,
+        fontSize: 18,
         color: "#3e6cce",
     },
     userBalanceAmount: {
         marginTop: 10,
         color: 'black',
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: 18,
     },
     homeMenu: {
         display: 'flex',
@@ -678,7 +748,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     listTitle: {
-        fontSize: 20,
+        fontSize: 18,
         color: 'black',
         fontWeight: '700',
         padding: 15,

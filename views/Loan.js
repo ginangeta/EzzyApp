@@ -72,7 +72,7 @@ export default function Loan({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/LoanList", loanAccountRequest)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "LoanList", loanAccountRequest)
             .then((loan_acc_response) => loan_acc_response.json())
             .then(loan_acc_response => {
                 // console.log("Before Error: ", loan_acc_response);
@@ -141,7 +141,7 @@ export default function Loan({ navigation }) {
             <View style={styles.loanHeader}>
             </View>
                 <View style={styles.homeMenu} >
-                    <Text style={{ fontWeight: "700", fontSize: 18, paddingHorizontal: 30 }}></Text>
+                    <Text style={{ fontWeight: "700", fontSize: 16, paddingHorizontal: 30 }}></Text>
                     <View style={[styles.listContainer]}>
                         <FlatList style={[styles.homeMenuList]}
                             data={loanStateAccounts}
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     LoanDueDate: {
-        fontSize: 18,
+        fontSize: 16,
     },
     loanrepayment: {
         justifyContent: 'space-between',

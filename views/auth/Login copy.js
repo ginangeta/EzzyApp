@@ -118,7 +118,7 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/login", loginRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "login", loginRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 // console.log(response, "\n", loginRequestOptions);
@@ -177,7 +177,7 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetUtilityType", utilitiesRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetUtilityType", utilitiesRequestOptions)
             .then((utilities_response) => utilities_response.json())
             .then(utilities_response => {
                 // // console.log("Before Error: ", utilities_response[0].Is_Successful);
@@ -227,7 +227,7 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetDebitableAccounts", debitableAccountRequest)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetDebitableAccounts", debitableAccountRequest)
             .then((debitable_acc_response) => debitable_acc_response.json())
             .then(debitable_acc_response => {
                 // // console.log("Before Error: ", debitable_acc_response, "\n", debitableAccountRequest);
@@ -274,7 +274,7 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/LoanEligibilty", loanAccountRequest)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "LoanEligibilty", loanAccountRequest)
             .then((loan_acc_response) => loan_acc_response.json())
             .then(loan_acc_response => {
                 // // console.log("Before Error: ", loan_acc_response);
@@ -331,7 +331,7 @@ const Login = ({ navigation }) => {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetCreditableAccounts", creditableAccountRequest)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetCreditableAccounts", creditableAccountRequest)
             .then((creditable_acc_response) => creditable_acc_response.json())
             .then(creditable_acc_response => {
                 // // console.log("Before Error: ", creditable_acc_response);

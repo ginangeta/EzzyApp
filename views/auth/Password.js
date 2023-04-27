@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
-import { StyleSheet, SafeAreaView, StatusBar, Text, TouchableOpacity } from "react-native"
+import { StyleSheet, SafeAreaView, StatusBar, Text, TouchableOpacity, View, Modal, Pressable } from "react-native"
 import Constants from 'expo-constants';
 import Background from '../components/Background';
 import Icon from "react-native-vector-icons/Ionicons"
@@ -15,8 +15,10 @@ function Password({ navigation }) {
     const pinView = useRef(null)
     const [showRemoveButton, setShowRemoveButton] = useState(false)
     const [showCancelButton, setShowCancelButton] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
     const [savedLogins, setSavedLogins] = useState(false)
     const [enteredPin, setEnteredPin] = useState("")
+    const [transactionType, setTransactionType] = useState("")
     const [counter, setCounter] = useState(0)
     const [loading, setLoading] = useState({
         isLoading: false
@@ -36,13 +38,14 @@ function Password({ navigation }) {
             setShowRemoveButton(false)
         }
         if (enteredPin.length === 4) {
-            // setShowCancelButton(true)
             getPassword()
         } else {
             setShowCancelButton(true)
         }
 
-        checkUserStatus();
+        setModalVisible(true);
+
+        setTransactionType(global.transactionType);
 
     }, [enteredPin]);
 
@@ -194,7 +197,7 @@ function Password({ navigation }) {
             })
         }
 
-        fetch("https://testasili.devopsfoundry.cloud:8050/GetOTP", otpRequestOptions)
+        fetch("https://asili.devopsfoundry.cloud:7074/" + "GetOTP", otpRequestOptions)
             .then((response) => response.json())
             .then(response => {
                 setLoading({
@@ -204,7 +207,7 @@ function Password({ navigation }) {
                 // console.log(response, "\n", otpRequestOptions);
                 if (response[0].Is_Successful) {
                     global.otp = response[0].otp;
-                    // console.log("Input OTP: " + global.otp);
+                    console.log("Input OTP: " + global.otp);
                     navigation.navigate("OTP");
                 } else {
                     Toast.show({
@@ -245,7 +248,7 @@ function Password({ navigation }) {
                         paddingTop: 24,
                         paddingBottom: 10,
                         color: theme.colors.primary,
-                        fontSize: 28,
+                        fontSize: 24,
                         textAlign: 'center',
                     }}>
                     Enter Pin
@@ -255,7 +258,7 @@ function Password({ navigation }) {
                         paddingTop: 10,
                         paddingBottom: 58,
                         color: theme.colors.primary,
-                        fontSize: 18,
+                        fontSize: 16,
                         textAlign: 'center',
                     }}>
                     Kindly input your mobile banking pin
@@ -312,10 +315,99 @@ function Password({ navigation }) {
                 onPress={getBiometricsFunction}>
                 <Icon name={"ios-finger-print"} size={50} color={theme.colors.primary} />
             </TouchableOpacity> : ''}
+            <View style={styles.centeredView}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    shouldCloseOnOverlayClick={true}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                        Toast.show({
+                            type: 'info',
+                            text1: 'Cancelled',
+                            text2: 'Transaction Cancelled🛑',
+                            position: 'top'
+                        });
+                        navigation.navigate("Home");
+                    }}>
+                    <View style={[styles.centeredView, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]}>
+                        <View style={styles.modalView}>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={styles.modalTitle}>Confirmation</Text>
+                                <Pressable
+                                    style={{ paddingTop: 2 }}
+                                    onPress={() => {
+                                        setModalVisible(!modalVisible);
+                                        Toast.show({
+                                            type: 'info',
+                                            text1: 'Cancelled',
+                                            text2: 'Transaction Cancelled🛑',
+                                            position: 'top'
+                                        });
+                                        navigation.navigate("Home");
+                                    }}>
+                                    <Icon name={"ios-close"} size={25} color={theme.colors.error} />
+                                </Pressable>
+                            </View>
+                            <View style={{ display: 'flex', justifyContent: 'center', marginTop: 10, marginBottom: 15 }}>
+                                <Text style={styles.modalText}>Transaction Type</Text>
+                                <Text style={styles.modalImportantText}>{global.transactionType}</Text>
+
+                                <Text style={styles.modalText}>Transaction Amount</Text>
+                                <Text style={styles.modalImportantText}>KES {global.transaction_amount}</Text>
+
+                                {transactionType == "Withdraw" ?
+                                    <View>
+                                        <Text style={styles.modalText}>Withdraw Acccount</Text>
+                                        <Text style={styles.modalImportantText}>{global.withdrawAccountNumber}</Text>
+                                    </View>
+                                    : ''
+                                }
+
+                                {transactionType == "Deposit" ?
+                                    <View>
+                                        <Text style={styles.modalText}>Destination Acccount</Text>
+                                        <Text style={styles.modalImportantText}>{global.depositAccountNumber}</Text>
+                                    </View>
+                                    : ''
+                                }
+
+                                {transactionType == "Loan" ?
+                                    <View>
+                                        <Text style={styles.modalText}>Loan Acccount</Text>
+                                        <Text style={styles.modalImportantText}>{global.LoanAccountNumber}</Text>
+                                    </View>
+                                    : ''
+                                }
+
+                                {transactionType == "LoanRepay" ?
+                                    <View>
+                                        <Text style={styles.modalText}>Loan Acccount No</Text>
+                                        <Text style={styles.modalImportantText}>{global.LoanNo}</Text>
+                                    </View>
+                                    : ''
+                                }
+
+                                <Text style={styles.modalText}>Account Phone</Text>
+                                <Text style={styles.modalImportantText}>{global.account_phone}</Text>
+
+                            </View>
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => {
+                                    setModalVisible(!modalVisible);
+                                    checkUserStatus();
+                                }}>
+                                <Text style={styles.textStyle}>Proceed</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </Modal>
+            </View>
         </Background>
     )
 }
-
 const styles = StyleSheet.create({
     confirmationText: {
         color: "white",
@@ -324,6 +416,66 @@ const styles = StyleSheet.create({
     },
     spinnerTextStyle: {
         color: '#FFF'
+    },
+    centeredView: {
+        flex: 1,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalTitle: {
+        paddingBottom: 10,
+        paddingRight: 35,
+        color: theme.colors.primary,
+        fontSize: 25,
+        textAlign: 'center',
+    },
+    modalImportantText: {
+        color: theme.colors.success,
+        marginBottom: 10,
+        fontSize: 18,
+        textAlign: 'center',
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    buttonOpen: {
+        backgroundColor: '#F194FF',
+    },
+    buttonClose: {
+        backgroundColor: '#2196F3',
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    modalText: {
+        marginBottom: 5,
+        fontWeight: '700',
+        textAlign: 'center',
     },
 });
 
