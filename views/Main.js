@@ -5,7 +5,7 @@ import Toast from 'react-native-toast-message';
 import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { PanResponder } from "react-native"
+import { PanResponder, BackHandler, Alert } from "react-native"
 import Home from "./Home";
 import About from "./About";
 import Dial from "./Dail";
@@ -16,7 +16,6 @@ import LoanDetails from "./LoanDetails";
 import Profile from "./Profile";
 import LoanApplication from "./LoanApplication";
 import LoanGuarantors from "./LoanGuarantors";
-import Login from "./auth/Login";
 import Password from "./auth/Password";
 import OTP from "./auth/OTP";
 import Statements from "./Statements";
@@ -54,11 +53,41 @@ const Main = () => {
 
       });
 
-  }, [])
+    const backAction = () => {
+      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
+        {
+          text: 'Cancel',
+          onPress: () => null,
+          style: 'cancel',
+        },
+        {
+          text: 'YES', onPress: () => {
+            resetToLogin();
+            BackHandler.exitApp()
+          }
+        },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+
+  }, []);
+
+  const resetToLogin = () => {
+
+    reset({ index: 0, routes: [{ name: "Login" }] });
+  }
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponderCapture: () => {
+        // console.log("###Here");
         resetInactivityTimeout();
       }
     })
@@ -71,6 +100,7 @@ const Main = () => {
     timerId.current = setTimeout(() => {
       // console.log('System Timeout');
 
+      
       // Toast.show({
       //   type: 'error',
       //   text1: 'Logged Out',

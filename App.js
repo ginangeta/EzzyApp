@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import { NavigationContainer, useNavigationContainerRef } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect } from "react";
 import { BackHandler, Alert } from 'react-native';
@@ -9,44 +9,11 @@ import Main from "./views/Main";
 
 const Stack = createStackNavigator();
 
-// SplashScreen.preventAutoHideAsync();
-
 const App = () => {
-
-  const navigationRef = useNavigationContainerRef(); // You can also use a regular ref with `React.useRef()`
 
   useEffect(() => {
     prepare();
-
-    const backAction = () => {
-      Alert.alert('Hold on!', 'Are you sure you want to go back?', [
-        {
-          text: 'Cancel',
-          onPress: () => null,
-          style: 'cancel',
-        },
-        {
-          text: 'YES', onPress: () => {
-            resetToLogin();
-            BackHandler.exitApp()
-          }
-        },
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
-
-    return () => backHandler.remove();
   }, []);
-
-
-  const resetToLogin = () => {
-    navigationRef.navigate('Login')
-  }
 
   async function prepare() {
     try {
