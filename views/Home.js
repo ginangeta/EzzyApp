@@ -65,7 +65,7 @@ const Home = ({ navigation }) => {
         fetch("https://asili.devopsfoundry.cloud:7074/" + "LoanEligibilty", loanAccountRequest)
             .then((loan_acc_response) => loan_acc_response.json())
             .then(loan_acc_response => {
-                console.log("Before LoanEligibility Error: ", loan_acc_response);
+                // console.log("Before LoanEligibility Error: ", loan_acc_response, loanAccountRequest);
 
                 if (loan_acc_response[0].Is_Successful) {
                     const loan_accounts = loan_acc_response[0].EAmount;
@@ -89,7 +89,6 @@ const Home = ({ navigation }) => {
 
                     // console.log(new_loan_account);
                     global.loan_accounts = new_loan_account;
-                    creditablesApi();
                 } else {
                     Toast.show({
                         type: 'error',
@@ -100,7 +99,7 @@ const Home = ({ navigation }) => {
             })
             .catch((error) => {
                 // console.log("Debitable Accounts Error: ", error);
-                setAuthLogins(false);
+                // setAuthLogins(false);
 
                 Toast.show({
                     type: 'error',
@@ -109,7 +108,7 @@ const Home = ({ navigation }) => {
                 });
             });
 
-    } 
+    }
 
     const setChosenWithdrawAccount = (withdrawAccountNumber, withdrawAccountName) => {
         setHasWithdrawOpacity(!hasWithdrawOpacity)

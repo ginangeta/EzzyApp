@@ -2,7 +2,6 @@ import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect } from "react";
-import { BackHandler, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Login from "./views/auth/Login";
 import Main from "./views/Main";
