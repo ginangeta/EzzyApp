@@ -5,7 +5,8 @@ import Toast from 'react-native-toast-message';
 import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { TouchableWithoutFeedback, InteractionManager, AppState, BackHandler, Alert } from "react-native"
+import { BackHandler, Alert } from "react-native"
+import { IdleTimerManager } from 'react-native-idle-timer';
 import Home from "./Home";
 import About from "./About";
 import Dial from "./Dail";
@@ -27,24 +28,11 @@ const Main = () => {
 
   const timerId = useRef(false);
   const [timeForinactivityInSecond, setTimeForinactivityInSecond] = useState(3600);
-  const [lastActiveTime, setLastActiveTime] = useState(Date.now());
   const { reset } = useNavigation();
 
   useEffect(() => {
-    const appStateListener = AppState.addEventListener('change', (nextAppState) => {
-      console.log('App state changed:', nextAppState);
-      if (nextAppState === 'active') {
-        setLastActiveTime(Date.now());
-      } else {
-        setTimeout(() => {
-          console.log('counting');
-          if (Date.now() - lastActiveTime > 5000) {
-            console.log('User has exited the app...');
-            resetToLogin();
-          }
-        }, 1000);
-      }
-    });
+
+    getToken();
 
     const backAction = () => {
       Alert.alert('Hold on!', 'Are you sure you want to go back?', [
@@ -68,41 +56,54 @@ const Main = () => {
       backAction,
     );
 
-    return () => {
-      backHandler.remove();
-      appStateListener.remove();
-    };
+    // IdleTimerManager.setIdleTimerDisabled(false); // enable the idle timer
+    // IdleTimerManager.setTimeout(30000); // set the timeout to 30 seconds
+    // IdleTimerManager.addListener('onIdleTimeout', handleIdleTimeout); // register the callback function
+
+    // return () => {
+    //   backHandler.remove();
+    //   IdleTimerManager.setIdleTimerDisabled(true); // disable the idle timer
+    //   IdleTimerManager.removeListener('onIdleTimeout', handleIdleTimeout); // unregister the callback function
+    // };
 
   }, []);
 
-  useEffect(() => {
-    const interactionHandler = InteractionManager.createInteractionHandle();
+  function handleIdleTimeout() {
+    // do something when the user is idle for too long
+    // for example, navigate back to the login screen or log the user out
 
-    const timeout = setTimeout(() => {
-      console.log('Timeout function called!');
-      InteractionManager.clearInteractionHandle(interactionHandler);
-
-      if (AppState.currentState !== 'active' && Date.now() - lastActiveTime > 5000) {
-        console.log('User has been idle for too long. Logging out...');
-        // Add code here to log out the user or perform any other actions.
-
-        Toast.show({
-          type: 'error',
-          text1: 'Logged Out',
-          text2: 'User has been idle for too long. Logging out... 🛑',
-          position: 'top'
-        });
-
-        resetToLogin();
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [lastActiveTime]);
+    resetToLogin();
+  }
 
   const resetToLogin = () => {
 
     reset({ index: 0, routes: [{ name: "Login" }] });
+  }
+
+  const getToken = () => {
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ApiKey: "QWRTY0987Dezy",
+        SecretKey: "EZYCASH"
+      })
+    }
+
+    // resetInactivityTimeout();
+
+    fetch("https://asili.devopsfoundry.cloud:7074/" + "Token", requestOptions)
+      .then(response => response.json())
+      .then(response => {
+        global.token = response[0].token;
+        global.apiKey = "QWRTY0987Dezy";
+        // console.log(response, "\n", token, "\n", apiKey);
+      })
+      .catch(err => {
+        // console.log(err);
+
+      });
   }
 
   const resetInactivityTimeout = () => {
@@ -186,48 +187,42 @@ const Main = () => {
 
 const StatementStack = () => {
   return (
-    <TouchableWithoutFeedback>
-      <Stack.Navigator
-        initialRouteName="Statements"
-        screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Statements" component={Statements} options={{ headerShown: false }} />
-        <Stack.Screen name="StatementDetails" component={Statements} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </TouchableWithoutFeedback>
+    <Stack.Navigator
+      initialRouteName="Statements"
+      screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Statements" component={Statements} options={{ headerShown: false }} />
+      <Stack.Screen name="StatementDetails" component={Statements} options={{ headerShown: false }} />
+    </Stack.Navigator>
   );
 }
 
 const SettingsStack = () => {
   return (
-    <TouchableWithoutFeedback>
-      <Stack.Navigator
-        initialRouteName="Profile"
-        screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </TouchableWithoutFeedback>
+    <Stack.Navigator
+      initialRouteName="Profile"
+      screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+    </Stack.Navigator>
   );
 }
 
 const HomeStack = () => {
   return (
-    <TouchableWithoutFeedback>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
-        <Stack.Screen name="About" component={About} options={{ headerShown: false }} />
-        <Stack.Screen name="Dial" component={Dial} options={{ headerShown: false }} />
-        <Stack.Screen name="AccountDial" component={AccountDial} options={{ headerShown: false }} />
-        <Stack.Screen name="LoanDial" component={LoanDial} options={{ headerShown: false }} />
-        <Stack.Screen name="Loan" component={Loan} options={{ headerShown: false }} />
-        <Stack.Screen name="LoanDetails" component={LoanDetails} options={{ headerShown: false }} />
-        <Stack.Screen name="Password" component={Password} options={{ headerShown: false }} />
-        <Stack.Screen name="OTP" component={OTP} options={{ headerShown: false }} />
-        <Stack.Screen name="LoanGuarantors" component={LoanGuarantors} options={{ headerShown: false }} />
-        <Stack.Screen name="LoanApplication" component={LoanApplication} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </TouchableWithoutFeedback>
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+      <Stack.Screen name="About" component={About} options={{ headerShown: false }} />
+      <Stack.Screen name="Dial" component={Dial} options={{ headerShown: false }} />
+      <Stack.Screen name="AccountDial" component={AccountDial} options={{ headerShown: false }} />
+      <Stack.Screen name="LoanDial" component={LoanDial} options={{ headerShown: false }} />
+      <Stack.Screen name="Loan" component={Loan} options={{ headerShown: false }} />
+      <Stack.Screen name="LoanDetails" component={LoanDetails} options={{ headerShown: false }} />
+      <Stack.Screen name="Password" component={Password} options={{ headerShown: false }} />
+      <Stack.Screen name="OTP" component={OTP} options={{ headerShown: false }} />
+      <Stack.Screen name="LoanGuarantors" component={LoanGuarantors} options={{ headerShown: false }} />
+      <Stack.Screen name="LoanApplication" component={LoanApplication} options={{ headerShown: false }} />
+    </Stack.Navigator>
   );
 }
 

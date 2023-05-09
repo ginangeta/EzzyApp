@@ -39,6 +39,7 @@
     "react-native-drop-shadow": "0.0.4",
     "react-native-flexbox-grid": "0.3.2",
     "react-native-gesture-handler": "2.8.0",
+    "react-native-idle-timer": "^2.2.1",
     "react-native-keychain": "8.1.1",
     "react-native-loading-spinner-overlay": "3.0.1",
     "react-native-paper": "4.11.2",

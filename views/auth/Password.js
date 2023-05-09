@@ -32,6 +32,8 @@ function Password({ navigation }) {
 
 
     useEffect(() => {
+        setModalVisible(true);
+
         if (enteredPin.length > 0) {
             setShowRemoveButton(true)
         } else {
@@ -42,8 +44,6 @@ function Password({ navigation }) {
         } else {
             setShowCancelButton(true)
         }
-
-        setModalVisible(true);
 
         setTransactionType(global.transactionType);
 
@@ -248,7 +248,7 @@ function Password({ navigation }) {
                         paddingTop: 24,
                         paddingBottom: 10,
                         color: theme.colors.primary,
-                        fontSize: 24,
+                        fontSize: 22,
                         textAlign: 'center',
                     }}>
                     Enter Pin
@@ -258,7 +258,7 @@ function Password({ navigation }) {
                         paddingTop: 10,
                         paddingBottom: 58,
                         color: theme.colors.primary,
-                        fontSize: 16,
+                        fontSize: 14,
                         textAlign: 'center',
                     }}>
                     Kindly input your mobile banking pin
@@ -271,6 +271,7 @@ function Password({ navigation }) {
                     onValueChange={value => setEnteredPin(value)}
                     buttonAreaStyle={{
                         marginTop: 24,
+                        marginHorizontal: 20,
                     }}
                     inputAreaStyle={{
                         marginBottom: 34,
@@ -411,7 +412,7 @@ function Password({ navigation }) {
 const styles = StyleSheet.create({
     confirmationText: {
         color: "white",
-        fontSize: 22,
+        fontSize: 18,
         fontWeight: "700"
     },
     spinnerTextStyle: {
@@ -447,13 +448,13 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingRight: 35,
         color: theme.colors.primary,
-        fontSize: 25,
+        fontSize: 23,
         textAlign: 'center',
     },
     modalImportantText: {
         color: theme.colors.success,
         marginBottom: 10,
-        fontSize: 18,
+        fontSize: 16,
         textAlign: 'center',
     },
     button: {
