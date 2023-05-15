@@ -553,7 +553,7 @@ const Login = ({ navigation }) => {
     return (
         <Background>
             <Logo />
-            <Header>Welcome to Eazy Asili.</Header>
+            <Header>Welcome to Ezzy Asili.</Header>
             <KeyboardAvoidingView style={styles.container} >
                 <TextInput
                     label="Phone"
@@ -562,6 +562,7 @@ const Login = ({ navigation }) => {
                     onChangeText={(text) => setPhone({ value: text, error: '' })}
                     error={!!phone.error}
                     errorText={phone.error}
+                    placeholder="+254XXXXXXXXX"
                     autoCapitalize="none"
                     autoCompleteType="tel"
                     textContentType="telephoneNumber"

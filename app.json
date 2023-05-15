@@ -2,7 +2,7 @@
   "expo": {
     "name": "ezzyapp",
     "slug": "ezzyapp",
-    "version": "6",
+    "version": "7",
     "orientation": "portrait",
     "icon": "./assets/logos/ezzyapp_logo_big.png",
     "splash": {
@@ -19,11 +19,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ezzy.ezzyapp",
-      "buildNumber": "6"
+      "buildNumber": "7"
     },
     "android": {
       "package": "com.ezzy.ezzyapp",
-      "versionCode": 7,
+      "versionCode": 14,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logos/ezzyapp_logo_big.png",
         "backgroundColor": "#FFFFFF"

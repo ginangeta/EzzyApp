@@ -2,6 +2,7 @@ import { StyleSheet, SafeAreaView, View, Text, TextInput, Button, Image, Touchab
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import { StackActions } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import VirtualKeyboard from 'react-native-virtual-keyboard'
 import IOSIcon from "react-native-vector-icons/Ionicons"
 import React, { useState } from "react";
 import { theme } from './core/theme'
@@ -54,6 +55,8 @@ export default function Dial({ navigation }) {
                     maxWidth: 350,
                 }}>
                     <Text
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
                         style={{
                             paddingTop: 24,
                             paddingBottom: 10,
@@ -64,9 +67,11 @@ export default function Dial({ navigation }) {
                         Enter Transaction Amount
                     </Text>
                     <Text
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
                         style={{
                             paddingTop: 10,
-                            paddingBottom: 58,
+                            paddingBottom: 10,
                             color: theme.colors.primary,
                             fontSize: 14,
                             textAlign: 'center',
@@ -84,10 +89,30 @@ export default function Dial({ navigation }) {
                         </View>
                         <Row size={12}>
                             <Col sm={12} style={styles.dailPadItemNoBorder}>
-                                <Text style={styles.dailPadCurrency}>KSH</Text>
+                                <Text numberOfLines={1}
+                                    adjustsFontSizeToFit
+                                    style={styles.dailPadCurrency}>KSH</Text>
                             </Col>
                         </Row>
-                        <Row size={12}>
+                        <VirtualKeyboard
+                            color='black'
+                            cellStyle={{
+                                justifyContent: 'center',
+                                borderWidth: 2,
+                                padding: 20,
+                                margin: 5,
+                                borderRadius: 50,
+                                borderColor: 'lightgrey'
+                            }}
+                            backspaceImg={require("../assets/icons/delete-black-small.png")}
+                            textStyle={{
+                                fontSize: 14
+                            }}
+                            pressMode='string'  
+                            onPress={
+                                (text) => setText(text)} />
+
+                        {/* <Row size={12} style={{ marginBottom: 0, PaddingBottom: 0 }}>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
                                 <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 1)}>
                                     <Text style={styles.dailPadItemText}>1</Text>
@@ -104,7 +129,7 @@ export default function Dial({ navigation }) {
                                 </TouchableOpacity>
                             </Col>
                         </Row>
-                        <Row size={12}>
+                        <Row size={12} style={{ marginBottom: 0, PaddingBottom: 0 }}>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
                                 <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 4)}>
                                     <Text style={styles.dailPadItemText}>4</Text>
@@ -121,7 +146,7 @@ export default function Dial({ navigation }) {
                                 </TouchableOpacity>
                             </Col>
                         </Row>
-                        <Row size={12}>
+                        <Row size={12} style={{ marginBottom: 0, PaddingBottom: 0 }}>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
                                 <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 7)}>
                                     <Text style={styles.dailPadItemText}>7</Text>
@@ -138,10 +163,10 @@ export default function Dial({ navigation }) {
                                 </TouchableOpacity>
                             </Col>
                         </Row>
-                        <Row size={12}>
+                        <Row size={12} style={{ marginBottom: 0, PaddingBottom: 0 }}>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
                                 <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, '00')}>
-                                    <Text style={[styles.dailPadItemText, { fontSize: 16 }]}>00</Text>
+                                    <Text style={[styles.dailPadItemText, { fontSize: 14 }]}>00</Text>
                                 </TouchableOpacity>
                             </Col>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
@@ -151,11 +176,10 @@ export default function Dial({ navigation }) {
                             </Col>
                             <Col sm={3} md={3} lg={3} style={styles.dailPadItemNoBorder}>
                                 <TouchableOpacity style={[styles.dailPadContainer, { padding: 0 }]} onPress={onDeleteHandler.bind(this, 0)}>
-                                    {/* <Image style={styles.dailPadDelete} source={require('../assets/icons/delete.png')} /> */}
                                     <IOSIcon name={"ios-backspace"} size={46} color={theme.colors.primary} />
                                 </TouchableOpacity>
                             </Col>
-                        </Row>
+                        </Row> */}
                         <TouchableOpacity style={styles.confirmation}
                             onPress={toConfirmation}>
                             <Text style={styles.confirmationText}>CONTINUE</Text>
@@ -186,29 +210,29 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     dailPad: {
-        // position: 'absolute',
         // bottom: 0,
+        // backgroundColor: 'red',
         justifyContent: 'center',
         alignItems: 'center'
     },
     dailPadContainer: {
-        padding: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        margin: 10,
     },
     dailPadItemNoBorder: {
         justifyContent: 'center',
         alignItems: 'center',
-        height: 80,
+        marginTop: 10,
+        height: 70,
     },
     dailPadItem: {
         justifyContent: 'center',
-        alignItems: 'center',
-        height: 70,
+        aspectRatio: 0.8,
         borderWidth: 2,
         margin: 10,
         borderRadius: 50,
+        marginBottom: 0,
+        PaddingBottom: 0,
         borderColor: 'lightgrey',
     },
     dailPadItemText: {
@@ -233,8 +257,8 @@ const styles = StyleSheet.create({
         width: "80%",
         justifyContent: 'center',
         padding: 20,
-        margin: 20,
         borderRadius: 50,
+        marginTop: 10,
         paddingHorizontal: 50,
         alignItems: 'center',
         backgroundColor: theme.colors.primary,

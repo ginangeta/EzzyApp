@@ -16,6 +16,7 @@ function Password({ navigation }) {
     const [showRemoveButton, setShowRemoveButton] = useState(false)
     const [showCancelButton, setShowCancelButton] = useState(false)
     const [modalVisible, setModalVisible] = useState(false);
+    const [proceed, setProceed] = useState(false);
     const [savedLogins, setSavedLogins] = useState(false)
     const [enteredPin, setEnteredPin] = useState("")
     const [transactionType, setTransactionType] = useState("")
@@ -32,7 +33,9 @@ function Password({ navigation }) {
 
 
     useEffect(() => {
-        setModalVisible(true);
+        if (proceed == false) {
+            setModalVisible(true);
+        }
 
         if (enteredPin.length > 0) {
             setShowRemoveButton(true)
@@ -271,7 +274,7 @@ function Password({ navigation }) {
                     onValueChange={value => setEnteredPin(value)}
                     buttonAreaStyle={{
                         marginTop: 24,
-                        marginHorizontal: 20,
+                        marginHorizontal: 40,
                     }}
                     inputAreaStyle={{
                         marginBottom: 34,
@@ -398,6 +401,7 @@ function Password({ navigation }) {
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => {
                                     setModalVisible(!modalVisible);
+                                    setProceed(true);
                                     checkUserStatus();
                                 }}>
                                 <Text style={styles.textStyle}>Proceed</Text>

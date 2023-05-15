@@ -8,7 +8,7 @@
       "distribution": "store",
       "extends": "production",
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "apk"
       }
     },
     "preview2": {

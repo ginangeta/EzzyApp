@@ -738,7 +738,7 @@ const styles = StyleSheet.create({
         height: 50,
     },
     menuItemText: {
-        fontSize: 14,
+        fontSize: 12,
         color: 'black',
         width: 70,
         fontWeight: '700',
