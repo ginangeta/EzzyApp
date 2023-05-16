@@ -99,7 +99,7 @@ export default function Dial({ navigation }) {
                             cellStyle={{
                                 justifyContent: 'center',
                                 borderWidth: 2,
-                                padding: 20,
+                                padding: 10,
                                 margin: 5,
                                 borderRadius: 50,
                                 borderColor: 'lightgrey'
