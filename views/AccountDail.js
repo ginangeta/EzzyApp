@@ -1,7 +1,8 @@
-import { StyleSheet, SafeAreaView, View, Text, TextInput, Button, Image, TouchableOpacity, StatusBar } from "react-native";
+import { StyleSheet, SafeAreaView, ScrollView, View, Text, TextInput, Button, Image, TouchableOpacity, StatusBar } from "react-native";
 import { Column as Col, Row } from 'react-native-flexbox-grid';
 import { StackActions } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+import VirtualKeyboard from 'react-native-virtual-keyboard'
 import IOSIcon from "react-native-vector-icons/Ionicons"
 import React, { useState } from "react";
 import Toast from 'react-native-toast-message';
@@ -62,119 +63,73 @@ export default function AccountDial({ navigation }) {
 
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: "rgba(255, 255, 255, 0.8)", justifyContent: 'center', paddingTop: 50, alignItems: "center", width: "100%" }}>
-                <View style={{
-                    padding: 15,
-                    maxWidth: 350,
-                }}>
-                    <Text
-                        style={{
-                            paddingTop: 24,
-                            paddingBottom: 10,
-                            color: theme.colors.primary,
-                            fontSize: 24,
-                            textAlign: 'center',
-                        }}>
-                        Enter Account
-                    </Text>
-                    <Text
-                        style={{
-                            paddingTop: 10,
-                            paddingBottom: 58,
-                            color: theme.colors.primary,
-                            fontSize: 16,
-                            textAlign: 'center',
-                        }}>
-                        Kindly input the account you wish to send to
-                    </Text>
-                    <View style={styles.dailPad}>
-                        <View style={styles.dailPadInput}>
-                            <TextInput
-                                style={styles.dailPadInputText}
-                                placeholder=""
-                                onChangeText={newText => setText(newText)}
-                                editable={false}
-                                value={text} />
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+                    style={{
+                        padding: 15,
+                        maxWidth: 350,
+                    }}>
+                    <View style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <Text
+                            style={{
+                                paddingTop: 24,
+                                paddingBottom: 10,
+                                color: theme.colors.primary,
+                                fontSize: 24,
+                                textAlign: 'center',
+                            }}>
+                            Enter Account
+                        </Text>
+                        <Text
+                            style={{
+                                paddingTop: 10,
+                                paddingBottom: 58,
+                                color: theme.colors.primary,
+                                fontSize: 16,
+                                textAlign: 'center',
+                            }}>
+                            Kindly input the account you wish to send to
+                        </Text>
+                        <View style={styles.dailPad}>
+                            <View style={styles.dailPadInput}>
+                                <TextInput
+                                    style={styles.dailPadInputText}
+                                    placeholder=""
+                                    onChangeText={newText => setText(newText)}
+                                    editable={false}
+                                    value={text} />
+                            </View>
+                            <Row size={12}>
+                                <Col sm={12} style={styles.dailPadItemNoBorder}>
+                                    <Text numberOfLines={1}
+                                        adjustsFontSizeToFit
+                                        style={styles.dailPadCurrency}>{global.UtilitiesName}</Text>
+                                </Col>
+                            </Row>
+                            <VirtualKeyboard
+                                color='black'
+                                cellStyle={{
+                                    justifyContent: 'center',
+                                    borderWidth: 2,
+                                    padding: 10,
+                                    margin: 5,
+                                    borderRadius: 50,
+                                    borderColor: 'lightgrey'
+                                }}
+                                backspaceImg={require("../assets/icons/delete-black-small.png")}
+                                textStyle={{
+                                    fontSize: 14
+                                }}
+                                pressMode='string'
+                                onPress={
+                                    (text) => setText(text)} />
+                            <TouchableOpacity style={styles.confirmation}
+                                onPress={toConfirmation}>
+                                <Text style={styles.confirmationText}>CONTINUE</Text>
+                            </TouchableOpacity>
                         </View>
-                        <Row size={12}>
-                            <Col sm={12} style={styles.dailPadItemNoBorder}>
-                                <Text style={styles.dailPadCurrency}>{global.UtilitiesName}</Text>
-                            </Col>
-                        </Row>
-                        <Row size={12}>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 1)}>
-                                    <Text style={styles.dailPadItemText}>1</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 2)}>
-                                    <Text style={styles.dailPadItemText}>2</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 3)}>
-                                    <Text style={styles.dailPadItemText}>3</Text>
-                                </TouchableOpacity>
-                            </Col>
-                        </Row>
-                        <Row size={12}>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 4)}>
-                                    <Text style={styles.dailPadItemText}>4</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 5)}>
-                                    <Text style={styles.dailPadItemText}>5</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 6)}>
-                                    <Text style={styles.dailPadItemText}>6</Text>
-                                </TouchableOpacity>
-                            </Col>
-                        </Row>
-                        <Row size={12}>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 7)}>
-                                    <Text style={styles.dailPadItemText}>7</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 8)}>
-                                    <Text style={styles.dailPadItemText}>8</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 9)}>
-                                    <Text style={styles.dailPadItemText}>9</Text>
-                                </TouchableOpacity>
-                            </Col>
-                        </Row>
-                        <Row size={12}>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, '00')}>
-                                    <Text style={[styles.dailPadItemText, { fontSize: 18 }]}>00</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItem}>
-                                <TouchableOpacity style={styles.dailPadContainer} onPress={onPressHandler.bind(this, 0)}>
-                                    <Text style={styles.dailPadItemText}>0</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col sm={3} md={3} lg={3} style={styles.dailPadItemNoBorder}>
-                                <TouchableOpacity style={[styles.dailPadContainer, { padding: 0 }]} onPress={onDeleteHandler.bind(this, 0)}>
-                                    {/* <Image style={styles.dailPadDelete} source={require('../assets/icons/delete.png')} /> */}
-                                    <IOSIcon name={"ios-backspace"} size={46} color={theme.colors.primary} />
-                                </TouchableOpacity>
-                            </Col>
-                        </Row>
-                        <TouchableOpacity style={styles.confirmation}
-                            onPress={toConfirmation}>
-                            <Text style={styles.confirmationText}>CONTINUE</Text>
-                        </TouchableOpacity>
                     </View>
-                </View>
+                </ScrollView>
             </SafeAreaView>
         </PinBackground>
     );
