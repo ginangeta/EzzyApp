@@ -19,11 +19,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ezzy.ezzyapp",
-      "buildNumber": "7"
+      "buildNumber": "8"
     },
     "android": {
       "package": "com.ezzy.ezzyapp",
-      "versionCode": 15,
+      "versionCode": 19,
       "adaptiveIcon": {
         "foregroundImage": "./assets/logos/ezzyapp_logo_big.png",
         "backgroundColor": "#FFFFFF"
